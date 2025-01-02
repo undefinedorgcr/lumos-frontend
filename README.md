@@ -1,5 +1,7 @@
 # Lumos - Advanced DeFi Tool for Liquidity Management
 
+![alt text](LumosLogo.png)
+
 Lumos is an advanced tool designed to empower users in the DeFi ecosystem. It provides essential features such as:
 
 - **Impermanent Loss (IL) Calculator**: Accurately calculate potential IL for your liquidity positions.
