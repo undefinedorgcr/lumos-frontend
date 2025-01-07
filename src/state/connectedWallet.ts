@@ -1,6 +1,6 @@
-import { atomWithReset } from "jotai/utils";
-import { StarknetWindowObject } from "starknetkit";
+// state/connectedWallet.ts
+import { atomWithStorage } from 'jotai/utils'
+import { StarknetWindowObject } from 'starknetkit'
 
-export const walletStarknetkitLatestAtom = atomWithReset<
-  StarknetWindowObject | null | undefined
->(undefined);
+export const walletStarknetkitLatestAtom = atomWithStorage<undefined | null | StarknetWindowObject>
+  ('walletStarknetkitLatest', undefined)

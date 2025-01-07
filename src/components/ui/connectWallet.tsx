@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Image from 'next/image'
 import { ARGENT_WEBWALLET_URL, CHAIN_ID, provider } from "@/constants";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { useAtom } from "jotai";
 import { connect, disconnect } from "starknetkit";
+import { useState } from 'react';
 
 export default function WalletConnector() {
   const [wallet, setWallet] = useAtom(walletStarknetkitLatestAtom);
@@ -14,7 +16,7 @@ export default function WalletConnector() {
       setIsHover(!isHover);
   }
 
-  const handleConnect = async (event: any) => {
+  const handleConnect = async () => {
     try {
       const { wallet } = await connect({
         provider,
