@@ -16,6 +16,15 @@ export default {
         neue: ['neue', 'sans-serif'],
         neuethin: ['neuethin', 'sans-serif'],
       },
+      keyframes: {
+        twinkle: {
+          '0%, 100%': { opacity: '0' },
+          '50%': { opacity: '1' },
+        },
+      },
+      animation: {
+        twinkle: 'twinkle 2s ease-in-out infinite',
+      },
     },
   },
   plugins: [],
