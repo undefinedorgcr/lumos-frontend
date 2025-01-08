@@ -9,8 +9,8 @@ export default function Navbar() {
                 <a href="/" className="justify-items-center">
                     <Image
                         src="/images/LumosLogo.png"
-                        width={40}
-                        height={40}
+                        width={55}
+                        height={55}
                         alt="Lumos app logo"
                     />
                 </a>

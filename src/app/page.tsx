@@ -1,11 +1,14 @@
+'use client'
 import React from 'react';
 import Image from 'next/image'
 import Footer from '@/components/ui/footer';
 import WalletConnector from '@/components/ui/connectWallet';
+import StarField from '@/components/animations/starfield';
 
 const LandingPage = () => {
   return (
     <div className="min-h-screen p-6">
+      <StarField/>
       <nav className="flex justify-between items-center m-7">
         <div className="text-xl flex gap-8">
           {/* <a href="#" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Pools</a> */}
