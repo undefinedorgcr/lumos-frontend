@@ -50,7 +50,7 @@ export default function WalletConnector() {
     <div className="flex justify-center items-center">
       {wallet ? (
         <button className="text-xl font-neuethin bg-white text-black px-10 py-2 rounded-md flex items-center gap-2
-                      hover:bg-[#FF875C] hover:text-white transition duration-500"
+                      hover:bg-[#4D4FB6] hover:text-white transition duration-500"
         onClick={handleDisconnect}
         >
           Log Out
@@ -61,12 +61,12 @@ export default function WalletConnector() {
             onMouseLeave={handleArgentLogoChange}
             onClick={handleConnect}
             className="text-xl font-neuethin bg-white text-black px-10 py-2 rounded-md flex items-center gap-2
-                      hover:bg-[#FF875C] hover:text-white transition duration-500"
+                      hover:bg-[#4D4FB6] hover:text-white transition duration-500"
         >
             Login
             {!isHover &&
                 <Image
-                    src="/images/ArgentLogo.png"
+                    src="/images/bravos-logo.png"
                     width={25}
                     height={25}
                     alt="Lumos app logo"
@@ -75,7 +75,7 @@ export default function WalletConnector() {
             }
             {isHover &&
                 <Image
-                    src="/images/LightArgentLogo.png"
+                    src="/images/light-bravos-logo.png"
                     width={25}
                     height={25}
                     alt="Lumos app logo"
