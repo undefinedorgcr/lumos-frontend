@@ -2,7 +2,7 @@ import React from "react";
 
 const Footer = (): React.JSX.Element => {
   return (
-    <footer className="flex flex-col items-center mt-16 p-10 flex-grow-0">
+    <footer className="flex flex-col items-center p-10 flex-grow-0">
       <aside className="mb-3">
         <p className="font-neue">Lumos App - Copyright © {new Date().getFullYear()} - All right reserved</p>
       </aside>
