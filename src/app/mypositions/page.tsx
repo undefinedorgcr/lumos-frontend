@@ -37,9 +37,9 @@ export default function MyPositions() {
 
   return (
     <div className="min-h-screen p-6">
-      <Navbar></Navbar>
+      <Navbar/>
 
-      <div className="min-h-screen bg-black text-white p-8">
+      <div className="bg-black text-white p-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl mb-6">Select the protocol</h1>
 
@@ -123,7 +123,7 @@ export default function MyPositions() {
         </div>
       </div>
 
-      <Footer></Footer>
+      <Footer/>
     </div>
   );
 }

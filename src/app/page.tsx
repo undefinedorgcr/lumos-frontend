@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Footer from '@/components/ui/footer';
 import WalletConnector from '@/components/ui/connectWallet';
 import StarField from '@/components/animations/starfield';
+import Link from 'next/link';
 
 const LandingPage = () => {
   return (
@@ -12,8 +13,8 @@ const LandingPage = () => {
       <nav className="flex justify-between items-center m-7">
         <div className="text-xl flex gap-8">
           {/* <a href="#" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Pools</a> */}
-          <a href="/calculators" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Calculators</a>
-          <a href="mypositions" className="text-gray-300 hover:text-white font-neuethin transition duration-300">My positions</a>
+          <Link href="/calculators" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Calculators</Link>
+          <Link href="mypositions" className="text-gray-300 hover:text-white font-neuethin transition duration-300">My positions</Link>
         </div>
         <WalletConnector></WalletConnector>
       </nav>
