@@ -218,7 +218,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                 </button>
                             </div>
                         </div>
-
+                        {/* TODO: implement charts */}
                         <div className="col-span-2 space-y-3">
                             <div className="bg-[#1E1E1E] rounded-lg p-3">
                                 <h2 className="text-base mb-2">Liquidity Position</h2>
