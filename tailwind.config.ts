@@ -15,6 +15,7 @@ export default {
       fontFamily: {
         neue: ['neue', 'sans-serif'],
         neuethin: ['neuethin', 'sans-serif'],
+        neueblack: ['neueblack', 'sans-serif'],
       },
       keyframes: {
         twinkle: {

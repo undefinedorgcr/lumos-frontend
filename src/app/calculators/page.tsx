@@ -1,6 +1,6 @@
-import ProtocolCard from "@/components/ui/calculatorCard";
-import Footer from "@/components/ui/footer";
-import Navbar from "@/components/ui/navbar";
+import ProtocolCard from "@/components/ui/CalculatorCard";
+import Footer from "@/components/ui/Footer";
+import Navbar from "@/components/ui/Navbar";
 
 export default function Calculators() {
   return (

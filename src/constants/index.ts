@@ -1,20 +1,13 @@
 import { RpcProvider, constants } from "starknet"
 
-export const ETHTokenAddress =
-  "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7"
-
-export const DAITokenAddress =
-  "0x00da114221cb83fa859dbdb4c44beeaa0bb37c7537ad5ae66fe5e0efd20e6eb3"
-
-export const ARGENT_DUMMY_CONTRACT_ADDRESS =
-  "0x001c515f991f706039696a54f6f33730e9b0e8cc5d04187b13c2c714401acfd4"
+export const EKUBO_CORE_MAINNET_ADDRESS = "0x00000005dd3D2F4429AF886cD1a3b08289DBcEa99A294197E9eB43b0e0325b4b";
 
 export const CHAIN_ID =
   process.env.NEXT_PUBLIC_CHAIN_ID === constants.NetworkName.SN_MAIN
     ? constants.NetworkName.SN_MAIN
     : constants.NetworkName.SN_SEPOLIA
 
-const NODE_URL = process.env.NEXT_PUBLIC_RPC;
+const NODE_URL = "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/0pG_54sTivt8faMuQTfrp4MCO5DjHbLW";
 
 export const provider = new RpcProvider({
   nodeUrl: NODE_URL,

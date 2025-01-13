@@ -1,10 +1,10 @@
 'use client'
 import React from 'react';
 import Image from 'next/image'
-import Footer from '@/components/ui/footer';
-import WalletConnector from '@/components/ui/connectWallet';
 import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
+import WalletConnector from '@/components/ui/ConnectWallet';
+import Footer from '@/components/ui/Footer';
 
 const LandingPage = () => {
   return (
