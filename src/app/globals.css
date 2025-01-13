@@ -17,6 +17,12 @@
   src: url("/fonts/HelveticaNeueThin.otf");
 }
 
+@font-face {
+  font-family: "neueblack";
+  src: url("/fonts/HelveticaNeueBold.otf");
+}
+
+
 body {
   color: var(--foreground);
   background: var(--background);

@@ -1,7 +1,7 @@
 'use client'
 
-import Footer from "@/components/ui/footer";
-import Navbar from "@/components/ui/navbar";
+import Footer from "@/components/ui/Footer";
+import Navbar from "@/components/ui/Navbar";
 import Image from 'next/image'
 import Link from 'next/link'; // Importamos Link de Next.js
 import { useState } from "react";
