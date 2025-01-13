@@ -104,13 +104,11 @@ export const fetchLiquidityInRange = async (t1: Token, t2: Token, minPrice: numb
 
         [...liquidityData].forEach((entry: { tick: number; net_liquidity_delta_diff: string }) => {
             const price = tickToPrice(entry.tick) * 10 ** 12;
-            console.log(price);
             const liquidity = BigInt(entry.net_liquidity_delta_diff) * BigInt(1);
             if (price >= minPrice && price <= maxPrice) {
                 totalLiquidity += Number(liquidity);
             }
         });
-        console.log(`Total liquidity in range [${minPrice}, ${maxPrice}]: ${totalLiquidity / 10 ** 6}`);
         return totalLiquidity / 10 ** 10;
     } catch (error) {
         console.error("Error fetching liquidity data:", error);
