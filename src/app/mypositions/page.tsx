@@ -1,22 +1,26 @@
 'use client'
 
-import Footer from "@/components/ui/footer";
-import Navbar from "@/components/ui/navbar";
+import Footer from "@/components/ui/Footer";
+import Navbar from "@/components/ui/Navbar";
 import Image from 'next/image'
 import Link from 'next/link'; // Importamos Link de Next.js
 import { useEffect, useState } from "react";
 import { Position } from "@/types/Position";
 import { fetchPosition } from "@/apis/ekuboApi";
+import { useAtomValue } from "jotai";
+import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
   const [protocol, setProtocol] = useState("Ekubo");
   const [positions, setPositions] = useState<Position[] | undefined>([]);
+  const wallet = useAtomValue(walletStarknetkitLatestAtom);
+
 
   useEffect(() => {
     async function getPositions() {
         try {
-          setPositions(await fetchPosition("0x0528A7ba821024a8eC44dff0bFFe15443d811F233e4de7AB1a8C26f251597c4c"));
+          setPositions(await fetchPosition(wallet?.account?.address));
         }
         catch(err) {
             console.log(err);

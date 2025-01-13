@@ -111,8 +111,8 @@ export const fetchPosition = async(address: string) => {
 					const token2Formatted = formatToken(positionHistoryRecord.delta1, positionExtractValues.token2);
 					const token1PriceInUSD = await fetchCryptoPrice(positionExtractValues.token1);
 					const token2PriceInUSD = await fetchCryptoPrice(positionExtractValues.token2);
-					const token1InUSD = calculateUSDByToken(token1Formatted, token1PriceInUSD.RAW?.[positionExtractValues.token1]?.USD.PRICE);
-					const token2InUSD = calculateUSDByToken(token2Formatted, token2PriceInUSD.RAW?.[positionExtractValues.token2]?.USD.PRICE);
+					const token1InUSD = calculateUSDByToken(token1Formatted, token1PriceInUSD);
+					const token2InUSD = calculateUSDByToken(token2Formatted, token2PriceInUSD);
 					const positionHistoryRecordLiquidity = (token1InUSD + token2InUSD);
 					positionHistoryLiquidity = positionHistoryLiquidity + positionHistoryRecordLiquidity;
 				}
@@ -131,7 +131,7 @@ export const fetchPosition = async(address: string) => {
 					min: positionExtractValues.price1,
 					max: positionExtractValues.price2,
 				},
-				currentPrice: mainTokenPriceInUSD.DISPLAY?.[positionExtractValues.token1]?.USD.PRICE
+				currentPrice: mainTokenPriceInUSD
 			};
 			positions.push(newPosition);
 		}
