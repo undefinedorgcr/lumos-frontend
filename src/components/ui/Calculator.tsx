@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
 import { fetchCryptoPrice } from '@/apis/chainLink';
+import { fetchLiquidityInRange } from '@/apis/ekuboApi';
 
 interface CalculatorProps {
     token1: Token;
@@ -20,7 +21,6 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
     const [minPrice, setMinPrice] = useState(initialMin);
     const [maxPrice, setMaxPrice] = useState(initialMax);
     const [t1CurrentPrice, setT1CurrentPrice] = useState(0);
-
     useEffect(() => {
         async function setupCalculator() {
             try {
@@ -50,33 +50,33 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
         setupCalculator();
     });
 
-    function handlePricesChange(min: number, max: number, amount: number) {
-        // TODO: implement liquidity by price range
-        if (volume !== null && liquidity > 0 && !isNaN(min) && !isNaN(max)) {
-            if (amount <= 0 || t1CurrentPrice <= 0 || volume <= 0 || min >= max) {
+    async function handlePricesChange(min: number, max: number, amount: number) {
+        const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max);
+        if (volume !== null && currentLiquidity != null && !isNaN(min) && !isNaN(max)) {
+            if (amount <= 0 || t1CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
                 setFee(0);
                 return;
             }
-    
+
             let marketRangeWidth = 0;
             if (t1CurrentPrice >= min && t1CurrentPrice <= max) {
                 marketRangeWidth = t1CurrentPrice - min;
             }
-    
+
             if (marketRangeWidth === 0) {
                 setFee(0);
                 return;
             }
-    
+
             const rangeWidth = max - min;
             const volumeInRange = volume * (marketRangeWidth / rangeWidth);
-            const tvlInRange = liquidity * (marketRangeWidth / rangeWidth);
+            const tvlInRange = currentLiquidity * (marketRangeWidth / rangeWidth);
             const userLiquidityShare = tvlInRange > 0 ? (amount / tvlInRange) : 0;
             const totalFeesGenerated = volumeInRange * (feeRate / 100);
-            
+
             setFee(totalFeesGenerated * userLiquidityShare);
         }
-    }    
+    }
 
     function onMinChange(min: number) {
         setMinPrice(min);
@@ -151,7 +151,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                     </div>
                                 </div>
 
-                                <div className="space-y-1">
+                                {/* <div className="space-y-1">
                                     {[token1, token2].map((token) => (
                                         <div key={token.symbol} className="flex items-center justify-between bg-zinc-800 p-2 rounded text-xs">
                                             <div className="flex items-center gap-1">
@@ -164,7 +164,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                             </div>
                                         </div>
                                     ))}
-                                </div>
+                                </div> */}
 
                                 <div className="mt-3">
                                     <div className="flex justify-between items-center">

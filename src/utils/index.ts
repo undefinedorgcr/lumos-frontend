@@ -24,3 +24,13 @@ export default function calculateDepositAmounts(
 }
 
 export const normalizeHex = (hex: string) => hex.replace(/^0x0+/, "0x");
+
+export function tickToPrice(tick : number) {
+    const price = Math.pow(1.000001, tick);
+    return price;
+}
+
+export function priceToTick(price: number) {
+    const tick = Math.log(price) / Math.log(1.000001);
+    return Math.round(tick);
+}
