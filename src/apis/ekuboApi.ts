@@ -82,11 +82,9 @@ export async function fetchTvl(t1: Token, t2: Token) {
     }
     else {
         val1 = (response[0].balance / 10 ** 18) * t1price;
-        console.log(val1);
     }
     if (t2.symbol == "USDC" || t2.symbol == "USDT") {
         val2 = (response[1].balance / 10 ** 6) * t2price;
-        console.log(val2)
     }
     else {
         val2 = (response[1].balance / 10 ** 18) * t2price;
