@@ -5,8 +5,11 @@ import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
 import WalletConnector from '@/components/ui/ConnectWallet';
 import Footer from '@/components/ui/Footer';
+import { priceToTick, tickToPrice } from '@/utils';
 
 const LandingPage = () => {
+  console.log(priceToTick(0.00000000301010405397556));
+  console.log(tickToPrice(66777066));
   return (
     <div className="min-h-screen p-6">
       <StarField/>

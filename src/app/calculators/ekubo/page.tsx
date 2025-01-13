@@ -20,8 +20,8 @@ export default function Calculators() {
     const [errorDesc, setErrorDesc] = useState("");
     const [selectedToken, setSelectedToken] = useState(1);
     const [showCalculator, setShowCalculator] = useState(false);
-    const [token1, setToken1] = useState<Token | undefined>(undefined);
-    const [token2, setToken2] = useState<Token | undefined>(undefined);
+    const [token0, setToken1] = useState<Token | undefined>(undefined);
+    const [token1, setToken2] = useState<Token | undefined>(undefined);
     const [volume, setVolume] = useState<number | null>(null);
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(0);
@@ -50,22 +50,25 @@ export default function Calculators() {
     }
 
     async function handleContinue() {
-        if (token1 == undefined || token2 == undefined) {
+        if (token0 == undefined || token1 == undefined) {
             setOpenError(true);
             setErrorTitle("Tokens not selected");
             setErrorDesc("Please select both tokens to continue to IL calculator");
         }
-        else if (token1 == token2) {
+        else if (token0 == token1) {
             setOpenError(true);
             setErrorTitle("Tokens can not be the same");
             setErrorDesc("Please select different tokens to continue to IL calculator");
         }
         else {
             // TODO: implement fetch liquidity by price range
-            setPoolLiquidity(await fetchTvl(token1, token2));
-            setVolume(await fetchLatestPairVolume(token1, token2));
-            setMinPrice(await fetchCryptoPrice(token1.symbol))
-            setMaxPrice(await fetchCryptoPrice(token1.symbol))
+            // if ( BigInt(token0.l2_token_address) > BigInt(token1.l2_token_address) ) {
+            //     return;
+            // }
+            setPoolLiquidity(await fetchTvl(token0, token1));
+            setVolume(await fetchLatestPairVolume(token0, token1));
+            setMinPrice(await fetchCryptoPrice(token0.symbol))
+            setMaxPrice(await fetchCryptoPrice(token0.symbol))
             setShowCalculator(true);
         };
     }
@@ -93,12 +96,12 @@ export default function Calculators() {
                                                 <button className="text-center w-full bg-zinc-800 text-white py-3 px-4 rounded-lg flex items-center justify-between
                                                                hover:bg-zinc-500 transition duration-500"
                                                     onClick={() => handleTokenSelection(1)}>
-                                                    {<>{token1 == undefined ? "Select a token" : token1.symbol}</>}
+                                                    {<>{token0 == undefined ? "Select a token" : token0.symbol}</>}
                                                 </button>
                                                 <button className="text-center w-full bg-zinc-800 text-white py-3 px-4 rounded-lg flex items-center justify-between
                                                                hover:bg-zinc-500 transition duration-500"
                                                     onClick={() => handleTokenSelection(2)}>
-                                                    {<>{token2 == undefined ? "Select a token" : token2.symbol}</>}
+                                                    {<>{token1 == undefined ? "Select a token" : token1.symbol}</>}
                                                 </button>
                                             </div>
                                         </div>
@@ -156,8 +159,8 @@ export default function Calculators() {
                     </div>
                 </div>
             }
-            {showCalculator && token1 !== undefined && token2 !== undefined &&
-                <Calculator token1={token1} token2={token2} feeRate={fee} initialMax={maxPrice} initialMin={minPrice} volume={volume} liquidity={poolLiquidity}></Calculator>
+            {showCalculator && token0 !== undefined && token1 !== undefined &&
+                <Calculator token1={token0} token2={token1} feeRate={fee} initialMax={maxPrice} initialMin={minPrice} volume={volume} liquidity={poolLiquidity}></Calculator>
             }
             <TokenSelectorModal
                 isOpen={openTokenSelector}
