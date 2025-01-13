@@ -4,8 +4,10 @@ import { fetchCryptoPrice } from './chainLink';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { num } from 'starknet';
-import { normalizeHex } from '@/utils';
+import { normalizeHex, tickToPrice } from '@/utils';
 import { Position} from '@/types/Position';
+
+const BASE_URL = "https://mainnet-api.ekubo.org";
 
 export const TOP_TOKENS_SYMBOL = ["STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
     "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI", "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"];
@@ -93,6 +95,28 @@ export async function fetchTvl(t1: Token, t2: Token) {
 
     return val1 + val2;
 }
+
+export const fetchLiquidityInRange = async (t1: Token, t2: Token, minPrice: number, maxPrice: number) => {
+    try {
+        const url = `${BASE_URL}/tokens/${t1.l2_token_address}/${t2.l2_token_address}/liquidity`;
+        const response = await axios.get(url);
+        const liquidityData = response.data.data;
+        let totalLiquidity = 0;
+
+        [...liquidityData].forEach((entry: { tick: number; net_liquidity_delta_diff: string }) => {
+            const price = tickToPrice(entry.tick) * 10 ** 12;
+            const liquidity = BigInt(entry.net_liquidity_delta_diff) * BigInt(1);
+            if (price >= minPrice && price <= maxPrice) {
+                totalLiquidity += Number(liquidity);
+            }
+        });
+        return totalLiquidity / 10 ** 10;
+    } catch (error) {
+        console.error("Error fetching liquidity data:", error);
+        return null;
+    }
+};
+
 
 
 export const fetchPosition = async(address: string) => {
