@@ -19,9 +19,7 @@ const LandingPage = () => {
         <WalletConnector></WalletConnector>
       </nav>
 
-      {/* Main Content */}
       <div className="flex items-center justify-between max-w-6xl mx-auto">
-        {/* Left Column */}
         <div className="w-1/2 justify-items-center">
           <div className="w-[430px] h-[430px] mb-6">
             <Image
