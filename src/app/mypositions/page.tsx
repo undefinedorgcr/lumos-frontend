@@ -3,20 +3,20 @@
 import Footer from "@/components/ui/Footer";
 import Navbar from "@/components/ui/Navbar";
 import Image from 'next/image'
-import Link from 'next/link'; // Importamos Link de Next.js
+import Link from 'next/link';
 import { useEffect, useState } from "react";
 import { Position } from "@/types/Position";
 import { fetchPosition } from "@/apis/ekuboApi";
 import { useAtomValue } from "jotai";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { CircleHelp } from "lucide-react";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
   const [protocol, setProtocol] = useState("Ekubo");
   const [positions, setPositions] = useState<Position[] | undefined>([]);
   const wallet = useAtomValue(walletStarknetkitLatestAtom);
-  // TODO: Implement wallet on change listener
-
 
   useEffect(() => {
     async function getPositions() {
@@ -28,11 +28,21 @@ export default function MyPositions() {
         }
     }
     getPositions();
-  }, []);
+  });
 
   function handleProtocolChange(pProtocol: string) {
     setProtocol(pProtocol)
   }
+
+  const headerTooltips = {
+    "Position ID": "Unique identifier for your liquidity position",
+    "Pool": "Trading pair where you've provided liquidity",
+    "ROI": "Return on Investment - Total return percentage since position creation",
+    "Fee APY": "Annual Percentage Yield from trading fees",
+    "Liquidity": "Total value of assets you've provided to the pool",
+    "Price Range": "Min and max prices where your position is active",
+    "Current Price": "Current trading price of the token pair"
+  };
 
   return (
     <div className="min-h-screen p-6">
@@ -68,51 +78,58 @@ export default function MyPositions() {
             
           {positions != undefined ? (
             <div className="border border-gray-500 rounded-2xl overflow-hidden">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-500">
-                    <th className="px-6 py-4 text-left text-sm font-normal">Position ID</th>
-                    <th className="px-6 py-4 text-left text-sm font-normal">Pool</th>
-                    <th className="px-6 py-4 text-left text-sm font-normal">ROI</th>
-                    <th className="px-6 py-4 text-left text-sm font-normal">Fee APY</th>
-                    <th className="px-6 py-4 text-left text-sm font-normal">Liquidity</th>
-                    <th className="px-6 py-4 text-left text-sm font-normal">Price Range</th>
-                    <th className="px-6 py-4 text-left text-sm font-normal">Current Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {positions.map((position) => (
-                    <tr key={position.positionId} className="border-b border-gray-700">
-                      <td className="px-6 py-4">
-                        <Link 
-                          href="https://app.ekubo.org/positions" 
-                          target="_blank"
-                          className="text-indigo-400 hover:text-indigo-300 transition-colors"
-                        >
-                          {position.positionId}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4">
-                        <Link 
-                          href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t1}&quoteCurrency=${position.pool.t2}`}
-                          target="_blank" 
-                          className="text-indigo-400 hover:text-indigo-300 transition-colors"
-                        >
-                          {position.pool.t1}/{position.pool.t2}
-                        </Link>
-                      </td>
-                      <td className="px-6 py-4">{position.roi}%</td>
-                      <td className="px-6 py-4">{position.feeAPY}%</td>
-                      <td className="px-6 py-4">${position.liquidity.toLocaleString('en-US', {
-                        minimumFractionDigits: 0,
-                        maximumFractionDigits: 1
-                      })}</td>
-                      <td className="px-6 py-4">${position.priceRange.min}-{position.priceRange.max}</td>
-                      <td className="px-6 py-4">{position.currentPrice}</td>
+              <TooltipProvider>
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-500">
+                      {Object.entries(headerTooltips).map(([header, tooltip]) => (
+                        <th key={header} className="px-6 py-4 text-left text-sm font-normal">
+                          <div className="flex items-center gap-2">
+                            {header}
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <CircleHelp className="w-4 h-4 text-gray-400" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{tooltip}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        </th>
+                      ))}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {positions.map((position) => (
+                      <tr key={position.positionId} className="border-b border-gray-700">
+                        <td className="px-6 py-4">
+                          <Link 
+                            href="https://app.ekubo.org/positions" 
+                            target="_blank"
+                            className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                          >
+                            {position.positionId}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4">
+                          <Link 
+                            href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t1}&quoteCurrency=${position.pool.t2}`}
+                            target="_blank" 
+                            className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                          >
+                            {position.pool.t1}/{position.pool.t2}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4">{position.roi}%</td>
+                        <td className="px-6 py-4">{position.feeAPY}%</td>
+                        <td className="px-6 py-4">${position.liquidity.toFixed(2)}</td>
+                        <td className="px-6 py-4">${position.priceRange.min.toFixed(2)}-{position.priceRange.max.toFixed(2)}</td>
+                        <td className="px-6 py-4">${position.currentPrice.toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </TooltipProvider>
             </div>
           ) : (
             <div className="border border-gray-500 rounded-2xl p-12 flex items-center justify-center">

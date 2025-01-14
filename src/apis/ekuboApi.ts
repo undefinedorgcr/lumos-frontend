@@ -4,8 +4,8 @@ import { fetchCryptoPrice } from './chainLink';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { num } from 'starknet';
-import { normalizeHex, tickToPrice } from '@/utils';
 import { Position} from '@/types/Position';
+import { normalizeHex, tickToPrice } from '@/lib/utils';
 
 const BASE_URL = "https://mainnet-api.ekubo.org";
 
