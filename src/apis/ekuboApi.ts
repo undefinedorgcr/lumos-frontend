@@ -122,7 +122,7 @@ export const fetchLiquidityInRange = async (t1: Token, t2: Token, minPrice: numb
 export const fetchPosition = async(address: string) => {
 	try {
 		const positions: Position[] = [];
-		const getPositionsUrl = `https://sepolia-api.ekubo.org/positions/${address}`;
+		const getPositionsUrl = `https://mainnet-api.ekubo.org/positions/${address}`;
 		const userPositions = await axios.get(getPositionsUrl);
 		for (const position of userPositions.data.data) {
 			const positionMetadata = await fetchMetadataByPositionId(position.id);
@@ -190,7 +190,7 @@ const extractValues = (input: string) => {
 	};
 };
 const fetchMetadataByPositionId = async(positionId: string) => {
-	const positionMetadataUrl = `https://sepolia-api.ekubo.org/${positionId}`;
+	const positionMetadataUrl = `https://mainnet-api.ekubo.org/${positionId}`;
 	try {
 		const response = await axios.get(positionMetadataUrl);
 		return response.data;
@@ -200,7 +200,7 @@ const fetchMetadataByPositionId = async(positionId: string) => {
 };
 
 const fetchHistoryByPositionId = async(positionId: number) => {
-	const url = `https://sepolia-api.ekubo.org/${positionId}/history`;
+	const url = `https://mainnet-api.ekubo.org/${positionId}/history`;
 	try {
 		const response = await axios.get(url, {
 			headers: {

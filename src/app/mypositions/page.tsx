@@ -15,6 +15,7 @@ export default function MyPositions() {
   const [protocol, setProtocol] = useState("Ekubo");
   const [positions, setPositions] = useState<Position[] | undefined>([]);
   const wallet = useAtomValue(walletStarknetkitLatestAtom);
+  // TODO: Implement wallet on change listener
 
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function MyPositions() {
     <div className="min-h-screen p-6">
       <Navbar></Navbar>
 
-      <div className="min-h-screen bg-black text-white p-8">
+      <div className="bg-black text-white p-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl mb-6">Select the protocol</h1>
 
