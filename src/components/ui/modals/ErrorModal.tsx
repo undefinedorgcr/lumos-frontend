@@ -1,5 +1,6 @@
 import React from 'react';
 import { X } from 'lucide-react';
+import StarField from '@/components/animations/starfield';
 
 interface ErrorModalProps {
     isOpen: boolean;
@@ -13,6 +14,7 @@ export const ErrorModal = ({ isOpen, onClose, title, message }: ErrorModalProps)
 
     return (
         <div className="fixed inset-0 bg-[#111111]/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <StarField></StarField>
             <div className="bg-[#111111] rounded-lg w-full max-w-md relative border border-white">
                 {/* Close button */}
                 <button
