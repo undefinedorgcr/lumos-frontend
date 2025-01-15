@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import ChatWidget from "@/components/ui/modals/ChatWidget";
 
 export const metadata: Metadata = {
   title: "Lumos",
@@ -17,6 +18,7 @@ export default function RootLayout({
         className={"bg-[#191919] text-white"}
       >
         {children}
+        <ChatWidget></ChatWidget>
       </body>
     </html>
   );
