@@ -96,7 +96,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
     return (
         <>
             {volume !== 0 &&
-                <div className="bg-black text-white max-w-4xl mx-auto">
+                <div className=" text-white max-w-4xl mx-auto">
                     <div className="flex items-center justify-between p-3">
                         <div className="flex items-center space-x-2">
                             <div className="flex items-center">
@@ -210,7 +210,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                     </div> */}
                                 </div>
 
-                                <button className="w-full mt-3 border bg-white hover:bg-black text-black hover:text-white hover:border hover:border-white rounded-lg p-2 flex items-center justify-center gap-1 transition-colors duration-500 text-xs">
+                                <button className="w-full mt-3 border bg-white hover: text-black hover:text-white hover:border hover:border-white rounded-lg p-2 flex items-center justify-center gap-1 transition-colors duration-500 text-xs">
                                     Create Position on Ekubo
                                     <svg className="w-2 h-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                         <path d="M7 17L17 7M17 7H7M17 7V17" strokeLinecap="round" strokeLinejoin="round" />

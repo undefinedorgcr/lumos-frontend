@@ -3,8 +3,8 @@ import React from 'react';
 import Image from 'next/image'
 import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
-import WalletConnector from '@/components/ui/ConnectWallet';
-import Footer from '@/components/ui/Footer';
+import WalletConnector from '@/components/ui/connectWallet';
+import Footer from '@/components/ui/footer';
 
 const LandingPage = () => {
   return (
