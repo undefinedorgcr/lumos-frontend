@@ -1,7 +1,7 @@
 'use client'
 import { fetchLatestPairVolume, fetchTokens, fetchTvl, TOP_TOKENS_SYMBOL } from "@/apis/ekuboApi";
-import Footer from "@/components/ui/Footer";
-import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/footer";
+import Navbar from "@/components/ui/navbar";
 import { Token } from "@/types/Tokens";
 import { useEffect, useState } from "react";
 import Image from 'next/image';
@@ -77,7 +77,7 @@ export default function Calculators() {
         <div className="min-h-screen p-6">
             <Navbar />
             {!showCalculator &&
-                <div className="bg-black text-white p-8">
+                <div className="text-white p-8">
                     <div className="max-w-6xl mx-48">
                         {tokens != undefined &&
                             <div className="border border-white rounded-lg font-neue">

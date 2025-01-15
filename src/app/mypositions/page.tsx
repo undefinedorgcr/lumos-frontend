@@ -1,7 +1,7 @@
 'use client'
 
-import Footer from "@/components/ui/Footer";
-import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/footer";
+import Navbar from "@/components/ui/navbar";
 import Image from 'next/image'
 import Link from 'next/link';
 import { useEffect, useState } from "react";
@@ -28,7 +28,7 @@ export default function MyPositions() {
         }
     }
     getPositions();
-  });
+  }, [wallet?.account?.address]);
 
   function handleProtocolChange(pProtocol: string) {
     setProtocol(pProtocol)
@@ -48,7 +48,7 @@ export default function MyPositions() {
     <div className="min-h-screen p-6">
       <Navbar></Navbar>
 
-      <div className="bg-black text-white p-8">
+      <div className="text-white p-8">
         <div className="max-w-6xl mx-auto">
           <h1 className="text-2xl mb-6">Select the protocol</h1>
 
@@ -120,8 +120,8 @@ export default function MyPositions() {
                             {position.pool.t1}/{position.pool.t2}
                           </Link>
                         </td>
-                        <td className="px-6 py-4">{position.roi}%</td>
-                        <td className="px-6 py-4">{position.feeAPY}%</td>
+                        <td className="px-6 py-4">{position.roi.toFixed(2)}%</td>
+                        <td className="px-6 py-4">{position.feeAPY.toFixed(2)}%</td>
                         <td className="px-6 py-4">${position.liquidity.toFixed(2)}</td>
                         <td className="px-6 py-4">${position.priceRange.min.toFixed(2)}-{position.priceRange.max.toFixed(2)}</td>
                         <td className="px-6 py-4">${position.currentPrice.toFixed(2)}</td>

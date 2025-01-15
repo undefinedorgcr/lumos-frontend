@@ -1,5 +1,5 @@
 import Link from "next/link";
-import WalletConnector from "./ConnectWallet";
+import WalletConnector from "./connectWallet";
 import Image from 'next/image'
 
 export default function Navbar() {

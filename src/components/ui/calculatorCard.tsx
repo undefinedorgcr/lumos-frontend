@@ -9,7 +9,7 @@ interface ProtocolCardProps {
 
 const ProtocolCard = ({ imageSrc, title, href } : ProtocolCardProps) => {
   return (
-    <Link className="w-96 h-96 bg-black border border-white rounded-lg flex flex-col items-center justify-center p-4 shadow-md
+    <Link className="w-96 h-96 border border-white rounded-lg flex flex-col items-center justify-center p-4 shadow-md
                     hover:bg-zinc-700 transition duration-500 hover:cursor-pointer"
            href={href}>
       <div className="w-50 h-50 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">

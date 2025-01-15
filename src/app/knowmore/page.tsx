@@ -1,7 +1,7 @@
 'use client'
 import StarField from "@/components/animations/starfield";
-import Footer from "@/components/ui/Footer";
-import Navbar from "@/components/ui/Navbar";
+import Footer from "@/components/ui/footer";
+import Navbar from "@/components/ui/navbar";
 
 
 export default function KnowMore() {
@@ -81,11 +81,11 @@ export default function KnowMore() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-primary">
+    <div className="min-h-screen flex flex-col">
       <StarField />
       <Navbar />
       <main className="flex-grow container mx-auto p-6">
-        <section className="bg-secondary shadow-md rounded-lg p-8 mb-6">
+        <section className="shadow-md rounded-lg p-8 mb-6">
           <h1 className="text-3xl font-bold text-accent mb-4">
             Lumos: Advanced Liquidity Management Platform for CLMM Pools
           </h1>
@@ -102,7 +102,7 @@ export default function KnowMore() {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-blue-900 shadow-lg rounded-lg p-6 flex flex-col border border-white"
+              className="bg-white text-black shadow-lg rounded-lg p-6 flex flex-col border border-white"
             >
               <h3 className="text-xl font-semibold text-accent-content mb-4">
                 {feature.title}
