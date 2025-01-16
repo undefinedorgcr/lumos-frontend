@@ -11,21 +11,27 @@ import { useAtomValue } from "jotai";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
   const [protocol, setProtocol] = useState("Ekubo");
-  const [positions, setPositions] = useState<Position[] | undefined>([]);
+  const [positions, setPositions] = useState<Position[] | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState(true);
   const wallet = useAtomValue(walletStarknetkitLatestAtom);
 
   useEffect(() => {
     async function getPositions() {
-        try {
-          setPositions(await fetchPosition(wallet?.account?.address));
-        }
-        catch(err) {
-            console.log(err);
-        }
+      setIsLoading(true);
+      try {
+        const data = await fetchPosition(wallet?.account?.address);
+        setPositions(data);
+      } catch(err) {
+        console.log(err);
+        setPositions(undefined);
+      } finally {
+        setIsLoading(false);
+      }
     }
     getPositions();
   }, [wallet?.account?.address]);
@@ -76,7 +82,12 @@ export default function MyPositions() {
             ))}
           </div>
             
-          {positions != undefined ? (
+          {isLoading ? (
+            <div className="border border-gray-500 rounded-2xl p-12 text-center">
+              <LoadingSpinner/>
+              Loading postions...
+            </div>
+          ) : positions ? (
             <div className="border border-gray-500 rounded-2xl overflow-hidden">
               <TooltipProvider>
                 <table className="w-full">

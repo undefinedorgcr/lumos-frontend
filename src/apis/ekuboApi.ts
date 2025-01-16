@@ -18,7 +18,7 @@ export const TOP_TOKENS_SYMBOL = [
   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
   "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI", 
   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
-] as const;
+];
 
 // Utility functions
 const getTokenDecimals = (symbol: string): number => 
@@ -163,7 +163,7 @@ export async function fetchLiquidityInRange(
         return total + Number(BigInt(entry.net_liquidity_delta_diff));
       }
       return total;
-    }, 0) / 10 ** 10;
+    }, 0) / 10 ** 12;
   } catch (error) {
     console.error("Error fetching liquidity data:", error);
     return null;

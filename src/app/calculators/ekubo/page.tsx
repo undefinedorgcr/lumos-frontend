@@ -9,6 +9,7 @@ import { TokenSelectorModal } from "@/components/ui/modals/TokenSelector";
 import { ErrorModal } from "@/components/ui/modals/ErrorModal";
 import Calculator from "@/components/ui/Calculator";
 import { fetchCryptoPrice } from "@/apis/chainLink";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
 
 export default function Calculators() {
 
@@ -26,6 +27,7 @@ export default function Calculators() {
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(0);
     const [poolLiquidity, setPoolLiquidity] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         async function getTokens() {
@@ -61,15 +63,13 @@ export default function Calculators() {
             setErrorDesc("Please select different tokens to continue to IL calculator");
         }
         else {
-            // TODO: implement fetch liquidity by price range
-            // if ( BigInt(token0.l2_token_address) > BigInt(token1.l2_token_address) ) {
-            //     return;
-            // }
+            setIsLoading(true);
             setPoolLiquidity(await fetchTvl(token0, token1));
             setVolume(await fetchLatestPairVolume(token0, token1));
             setMinPrice(await fetchCryptoPrice(token0.symbol))
             setMaxPrice(await fetchCryptoPrice(token0.symbol))
             setShowCalculator(true);
+            setIsLoading(false);
         };
     }
 
@@ -79,7 +79,7 @@ export default function Calculators() {
             {!showCalculator &&
                 <div className="text-white p-8">
                     <div className="max-w-6xl mx-48">
-                        {tokens != undefined &&
+                        {tokens != undefined && !isLoading &&
                             <div className="border border-white rounded-lg font-neue">
                                 <div className="max-w-3xl mx-auto rounded-2xl p-8">
                                     <div className="flex items-center gap-4 mb-8">
@@ -156,10 +156,18 @@ export default function Calculators() {
                                 </div>
                             </div>
                         }
+                        {isLoading &&
+                            <div className= "max-w-6xl mx-48">
+                                <div className="text-center text-gray-400">
+                                    <LoadingSpinner />
+                                    Loading calculator...
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             }
-            {showCalculator && token0 !== undefined && token1 !== undefined &&
+            {showCalculator && token0 !== undefined && token1 !== undefined && !isLoading &&
                 <Calculator token1={token0} token2={token1} feeRate={fee} initialMax={maxPrice} initialMin={minPrice} volume={volume} liquidity={poolLiquidity}></Calculator>
             }
             <TokenSelectorModal
