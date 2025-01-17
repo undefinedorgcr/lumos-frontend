@@ -24,8 +24,7 @@ export default function Calculators() {
     const [token0, setToken1] = useState<Token | undefined>(undefined);
     const [token1, setToken2] = useState<Token | undefined>(undefined);
     const [volume, setVolume] = useState<number | null>(null);
-    const [minPrice, setMinPrice] = useState(0);
-    const [maxPrice, setMaxPrice] = useState(0);
+    const [initialPrice, setInitialPrice] = useState(0);
     const [poolLiquidity, setPoolLiquidity] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -66,8 +65,7 @@ export default function Calculators() {
             setIsLoading(true);
             setPoolLiquidity(await fetchTvl(token0, token1));
             setVolume(await fetchLatestPairVolume(token0, token1));
-            setMinPrice(await fetchCryptoPrice(token0.symbol))
-            setMaxPrice(await fetchCryptoPrice(token0.symbol))
+            setInitialPrice(await fetchCryptoPrice(token0.symbol));
             setShowCalculator(true);
             setIsLoading(false);
         };
@@ -168,7 +166,7 @@ export default function Calculators() {
                 </div>
             }
             {showCalculator && token0 !== undefined && token1 !== undefined && !isLoading &&
-                <Calculator token1={token0} token2={token1} feeRate={fee} initialMax={maxPrice} initialMin={minPrice} volume={volume} liquidity={poolLiquidity}></Calculator>
+                <Calculator token1={token0} token2={token1} feeRate={fee} initialPrice={initialPrice} volume={volume} liquidity={poolLiquidity}></Calculator>
             }
             <TokenSelectorModal
                 isOpen={openTokenSelector}

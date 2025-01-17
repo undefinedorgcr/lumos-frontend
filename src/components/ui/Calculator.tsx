@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
@@ -8,39 +9,25 @@ interface CalculatorProps {
     token1: Token;
     token2: Token;
     feeRate: number;
-    initialMax: number,
-    initialMin: number,
+    initialPrice: number,
     volume: number | null,
     liquidity: number,
 }
 
-const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initialMax, initialMin, volume, liquidity }) => {
+const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initialPrice, volume }) => {
     const [depositAmount, setDepositAmount] = useState(1000);
     const [fee, setFee] = useState<number | undefined>(undefined);
-    const [initialFee, setInitialFee] = useState(0);
-    const [minPrice, setMinPrice] = useState(initialMin);
-    const [maxPrice, setMaxPrice] = useState(initialMax);
+    const [minPrice, setMinPrice] = useState(initialPrice - initialPrice * 0.06);
+    const [maxPrice, setMaxPrice] = useState(initialPrice + initialPrice * 0.06);
     const [t1CurrentPrice, setT1CurrentPrice] = useState(0);
+    const [t2CurrentPrice, setT2CurrentPrice] = useState(0);
+    const [depositAmounts, setDepositAmounts] = useState([0, 0]);
     useEffect(() => {
         async function setupCalculator() {
             try {
                 setT1CurrentPrice(await fetchCryptoPrice(token1.symbol));
-                if (volume !== null) {
-                    const initialMin = t1CurrentPrice - 0.9;
-                    const initialMax = t1CurrentPrice + 0.9;
-                    const rangeWidth = initialMax - initialMin;
-                    const initialDepositAmount = 1000;
-                    const marketRangeWidth = Math.max(initialMax, t1CurrentPrice) - Math.min(initialMin, t1CurrentPrice);
-                    if (marketRangeWidth <= 0) {
-                        setInitialFee(0);
-                        return;
-                    }
-                    const volumeInRange = volume * (marketRangeWidth / rangeWidth);
-                    const liquidityInRange = liquidity * (marketRangeWidth / rangeWidth);
-                    const userLiquidityShare = initialDepositAmount / liquidityInRange;
-                    const totalFeesGenerated = volumeInRange * (feeRate / 100);
-                    setInitialFee(totalFeesGenerated * userLiquidityShare);
-                }
+                setT2CurrentPrice(await fetchCryptoPrice(token2.symbol));
+                handlePricesChange(minPrice, maxPrice, depositAmount);
             }
             catch (err) {
                 console.log(err);
@@ -48,13 +35,29 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
         }
 
         setupCalculator();
-    });
+    }, [depositAmount, handlePricesChange, maxPrice, minPrice, token1.symbol]);
+
+    function calculateTokenAmounts(amount: number, priceCurrent: number, priceLower: number, priceUpper: number) {
+        // Calcular raíces cuadradas de los precios
+        const sqrtPrice = Math.sqrt(priceCurrent);
+        const sqrtPriceLower = Math.sqrt(priceLower);
+        const sqrtPriceUpper = Math.sqrt(priceUpper);
+    
+        const liquidity = amount / ((1 / sqrtPriceLower) - (1 / sqrtPriceUpper));
+    
+        const ethAmount = liquidity * (sqrtPrice - sqrtPriceLower) / (sqrtPrice * sqrtPriceLower);
+        const usdcAmount = liquidity * (sqrtPriceUpper - sqrtPrice) / t1CurrentPrice;
+    
+        setDepositAmounts([ethAmount, usdcAmount]);
+    }    
 
     async function handlePricesChange(min: number, max: number, amount: number) {
         const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max);
+        calculateTokenAmounts(amount, t1CurrentPrice, min, max);
         if (volume !== null && currentLiquidity != null && !isNaN(min) && !isNaN(max)) {
             if (amount <= 0 || t1CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
                 setFee(0);
+                setDepositAmounts([0,0]);
                 return;
             }
 
@@ -65,6 +68,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
 
             if (marketRangeWidth === 0) {
                 setFee(0);
+                setDepositAmounts([0,0]);
                 return;
             }
 
@@ -114,21 +118,21 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                             <div className="bg-[#1E1E1E] rounded-lg p-3">
                                 <div className="text-gray-400 text-sm">Estimated Fees (24h)</div>
                                 <div className="text-2xl text-green-400 my-2">
-                                    {fee === undefined ? '$' + initialFee.toFixed(2).toString() : '$' + fee.toFixed(2).toString()}
+                                    {fee === undefined ? '$0' : '$' + fee.toFixed(2).toString()}
                                 </div>
                                 <div className="space-y-1">
                                     <div className="flex justify-between bg-zinc-800 p-1.5 rounded text-xs">
                                         <span className="text-gray-400">MONTHLY</span>
                                         <div className="flex space-x-2">
                                             <span>
-                                                {fee === undefined ? '$' + (initialFee * 30).toFixed(2).toString() : '$' + (fee * 30).toFixed(2).toString()}
+                                                {fee === undefined ? '$0' : '$' + (fee * 30).toFixed(2).toString()}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="flex justify-between bg-zinc-800 p-1.5 rounded text-xs">
                                         <span className="text-gray-400">YEARLY (APR)</span>
                                         <div className="flex space-x-2">
-                                            {fee === undefined ? '$' + (initialFee * 365).toFixed(2).toString() : '$' + (fee * 365).toFixed(2).toString()}
+                                            {fee === undefined ? '$0' : '$' + (fee * 365).toFixed(2).toString()}
                                         </div>
                                     </div>
                                 </div>
@@ -151,20 +155,28 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                     </div>
                                 </div>
 
-                                {/* <div className="space-y-1">
-                                    {[token1, token2].map((token) => (
-                                        <div key={token.symbol} className="flex items-center justify-between bg-zinc-800 p-2 rounded text-xs">
-                                            <div className="flex items-center gap-1">
-                                                <Image src={token.logo_url} width={16} height={16} alt={token.symbol} className="rounded-full" />
-                                                <span>{token.symbol}</span>
-                                            </div>
-                                            <div className="flex gap-2">
-                                                <span>500.35002</span>
-                                                <span>$500.14</span>
-                                            </div>
+                                <div className="space-y-1">
+                                    <div key={token1.symbol} className="flex items-center justify-between bg-zinc-800 p-2 rounded text-xs">
+                                        <div className="flex items-center gap-1">
+                                            <Image src={token1.logo_url} width={16} height={16} alt={token1.symbol} className="rounded-full" />
+                                            <span>{token1.symbol}</span>
                                         </div>
-                                    ))}
-                                </div> */}
+                                        <div className="flex gap-2">
+                                            <span>{(depositAmounts[0] / t1CurrentPrice).toFixed(2)}</span>
+                                            <span>${depositAmounts[0].toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                    <div key={token2.symbol} className="flex items-center justify-between bg-zinc-800 p-2 rounded text-xs">
+                                        <div className="flex items-center gap-1">
+                                            <Image src={token2.logo_url} width={16} height={16} alt={token2.symbol} className="rounded-full" />
+                                            <span>{token2.symbol}</span>
+                                        </div>
+                                        <div className="flex gap-2">
+                                        <span>{(depositAmounts[1] / t2CurrentPrice).toFixed(2)}</span>
+                                        <span>${(depositAmounts[1]).toFixed(2)}</span>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 <div className="mt-3">
                                     <div className="flex justify-between items-center">
