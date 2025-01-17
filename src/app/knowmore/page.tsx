@@ -14,15 +14,15 @@ interface FeatureCardProps {
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ title, items }) => {
   return (
-    <div className="rounded-lg border border-white p-8">
+    <div className="relative z-10 rounded-lg border border-gray-800 bg-[#111111] p-8">
       <h3 className="text-2xl font-light text-white mb-8">{title}</h3>
       <div className="space-y-6">
         {items.map((item, index) => (
           <div key={index} className="flex gap-4">
-            <div className="w-0.5 bg-white/10 h-auto"></div>
+            <div className="w-0.5 bg-gray-700 h-auto"></div>
             <div>
               <h4 className="text-white font-light mb-2">{item.name}</h4>
-              <p className="text-gray-500 font-light">{item.description}</p>
+              <p className="text-gray-400 font-light">{item.description}</p>
             </div>
           </div>
         ))}
