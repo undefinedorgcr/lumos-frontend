@@ -12,6 +12,7 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { fetchCryptoPrice } from "@/apis/pragma";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
@@ -24,6 +25,7 @@ export default function MyPositions() {
     async function getPositions() {
       setIsLoading(true);
       try {
+        console.log(await fetchCryptoPrice("eth"));
         const data = await fetchPosition(wallet?.account?.address);
         setPositions(data);
       } catch(err) {

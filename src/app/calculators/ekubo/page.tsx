@@ -8,8 +8,8 @@ import Image from 'next/image';
 import { TokenSelectorModal } from "@/components/ui/modals/TokenSelector";
 import { ErrorModal } from "@/components/ui/modals/ErrorModal";
 import Calculator from "@/components/ui/Calculator";
-import { fetchCryptoPrice } from "@/apis/chainLink";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { fetchCryptoPrice } from "@/apis/pragma";
 
 export default function Calculators() {
 

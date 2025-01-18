@@ -2,7 +2,7 @@ import { Token } from "@/types/Tokens";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-const q96 = 2 ** 96;
+export const q96 = 2 ** 96;
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -40,8 +40,10 @@ export function tickToPrice(tick: number) {
   return price;
 }
 
-export function priceToTick(p: number): number {
-  return Math.floor(Math.log(p) / Math.log(1.0001));
+export function priceToTick(price: number): number {
+  const base = 1.0001;
+  const tick = Math.log(price) / Math.log(base);
+  return Math.floor(tick);
 }
 
 export function price_to_sqrtp(price: number) {

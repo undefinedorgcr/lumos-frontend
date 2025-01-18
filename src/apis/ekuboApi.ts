@@ -9,7 +9,7 @@ import { Position } from '@/types/Position';
 import { normalizeHex, price_to_sqrtp, priceToTick, tickToPrice } from '@/lib/utils';
 import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
-import { fetchCryptoPrice } from './chainLink';
+import { fetchCryptoPrice } from './pragma';
 
 const BASE_URL = "https://mainnet-api.ekubo.org";
 const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
