@@ -4,6 +4,7 @@ import { Token } from '@/types/Tokens';
 import Image from 'next/image';
 import { fetchCryptoPrice } from '@/apis/chainLink';
 import { fetchLiquidityInRange } from '@/apis/ekuboApi';
+import { price_to_sqrtp } from '@/lib/utils';
 
 interface CalculatorProps {
     token1: Token;
@@ -16,18 +17,17 @@ interface CalculatorProps {
 
 const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initialPrice, volume }) => {
     const [depositAmount, setDepositAmount] = useState(1000);
-    const [fee, setFee] = useState<number | undefined>(undefined);
-    const [minPrice, setMinPrice] = useState(initialPrice - initialPrice * 0.06);
-    const [maxPrice, setMaxPrice] = useState(initialPrice + initialPrice * 0.06);
+    const [fee, setFee] = useState<number>(0);
+    const [minPrice, setMinPrice] = useState(Number((initialPrice - initialPrice * 0.06).toFixed(6)));
+    const [maxPrice, setMaxPrice] = useState(Number((initialPrice + initialPrice * 0.06).toFixed(6)));
     const [t1CurrentPrice, setT1CurrentPrice] = useState(0);
     const [t2CurrentPrice, setT2CurrentPrice] = useState(0);
-    const [depositAmounts, setDepositAmounts] = useState([0, 0]);
+    const [depositAmounts, setDepositAmounts] = useState([500, 500]);
     useEffect(() => {
         async function setupCalculator() {
             try {
                 setT1CurrentPrice(await fetchCryptoPrice(token1.symbol));
                 setT2CurrentPrice(await fetchCryptoPrice(token2.symbol));
-                handlePricesChange(minPrice, maxPrice, depositAmount);
             }
             catch (err) {
                 console.log(err);
@@ -42,22 +42,24 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
         const sqrtPrice = Math.sqrt(priceCurrent);
         const sqrtPriceLower = Math.sqrt(priceLower);
         const sqrtPriceUpper = Math.sqrt(priceUpper);
-    
+
         const liquidity = amount / ((1 / sqrtPriceLower) - (1 / sqrtPriceUpper));
-    
+
         const ethAmount = liquidity * (sqrtPrice - sqrtPriceLower) / (sqrtPrice * sqrtPriceLower);
         const usdcAmount = liquidity * (sqrtPriceUpper - sqrtPrice) / t1CurrentPrice;
-    
+
         setDepositAmounts([ethAmount, usdcAmount]);
-    }    
+    }
 
     async function handlePricesChange(min: number, max: number, amount: number) {
-        const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max);
+        const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max, t2CurrentPrice);
+        min = min * t2CurrentPrice;
+        max = max * t2CurrentPrice;
         calculateTokenAmounts(amount, t1CurrentPrice, min, max);
         if (volume !== null && currentLiquidity != null && !isNaN(min) && !isNaN(max)) {
             if (amount <= 0 || t1CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
                 setFee(0);
-                setDepositAmounts([0,0]);
+                setDepositAmounts([0, 0]);
                 return;
             }
 
@@ -68,17 +70,28 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
 
             if (marketRangeWidth === 0) {
                 setFee(0);
-                setDepositAmounts([0,0]);
+                setDepositAmounts([0, 0]);
                 return;
             }
 
-            const rangeWidth = max - min;
-            const volumeInRange = volume * (marketRangeWidth / rangeWidth);
-            const tvlInRange = currentLiquidity * (marketRangeWidth / rangeWidth);
-            const userLiquidityShare = tvlInRange > 0 ? (amount / tvlInRange) : 0;
-            const totalFeesGenerated = volumeInRange * (feeRate / 100);
+            const pmin = price_to_sqrtp(min);
+            const pmax = price_to_sqrtp(max);
+            let virtualL = 0;
+            if (token1.decimals == token2.decimals) {
+                virtualL = (amount * 10 ** (token1.decimals)) / (pmax / pmin);
+            }
+            if (token1.decimals > token2.decimals) {
+                virtualL = (amount * 10 ** (token1.decimals - token2.decimals)) / (pmax / pmin);
+            }
+            else if (token2.decimals > token1.decimals) {
+                virtualL = (amount * 10 ** (token2.decimals - token1.decimals)) / (pmax / pmin);
+            }
+            console.log(virtualL);
+            const share = (virtualL / currentLiquidity);
+            console.log(share);
+            const vrange = volume * 0.2;
 
-            setFee(totalFeesGenerated * userLiquidityShare);
+            setFee(vrange * feeRate / 100 * share);
         }
     }
 
@@ -172,8 +185,8 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                             <span>{token2.symbol}</span>
                                         </div>
                                         <div className="flex gap-2">
-                                        <span>{(depositAmounts[1] / t2CurrentPrice).toFixed(2)}</span>
-                                        <span>${(depositAmounts[1]).toFixed(2)}</span>
+                                            <span>{(depositAmounts[1] / t2CurrentPrice).toFixed(2)}</span>
+                                            <span>${(depositAmounts[1]).toFixed(2)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -192,7 +205,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                                 onChange={(e) => onMinChange(Number(e.target.value))}
                                                 className="bg-transparent text-white w-full outline-none text-xl"
                                             />
-                                            <span className="block text-xs text-gray-400 mt-1">{token1.symbol} per {token2.symbol}</span>
+                                            <span className="block text-xs text-gray-400 mt-1">{token2.symbol} per {token1.symbol}</span>
                                         </div>
                                         <div className="bg-zinc-900 p-2 rounded-lg text-center">
                                             <span className="block text-gray-400 text-xs mb-1">Max Price</span>
@@ -202,7 +215,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
                                                 onChange={(e) => onMaxChange(Number(e.target.value))}
                                                 className="bg-transparent text-white w-full outline-none text-xl"
                                             />
-                                            <span className="block text-xs text-gray-400 mt-1">{token1.symbol} per {token2.symbol}</span>
+                                            <span className="block text-xs text-gray-400 mt-1">{token2.symbol} per {token1.symbol}</span>
                                         </div>
                                     </div>
                                     {/* TODO: implement this */}

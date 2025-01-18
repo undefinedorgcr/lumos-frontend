@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Contract, num } from 'starknet';
+import { Contract, num, number } from 'starknet';
 import axios, { AxiosError } from 'axios';
 
 import { Token } from '@/types/Tokens';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { Position } from '@/types/Position';
-import { normalizeHex, tickToPrice } from '@/lib/utils';
+import { normalizeHex, price_to_sqrtp, priceToTick, tickToPrice } from '@/lib/utils';
 import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { fetchCryptoPrice } from './chainLink';
@@ -16,12 +16,12 @@ const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
 
 export const TOP_TOKENS_SYMBOL = [
   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI", 
+  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
 ];
 
 // Utility functions
-const getTokenDecimals = (symbol: string): number => 
+const getTokenDecimals = (symbol: string): number =>
   symbol === "USDC" || symbol === "USDT" ? 6 : 18;
 
 const formatTokenAmount = (amount: number | bigint, symbol: string): number => {
@@ -96,9 +96,9 @@ export async function fetchPool(t1: Token, t2: Token, fee: number): Promise<Pool
     const { data } = await axios.get(
       `${BASE_URL}/pair/${t1.l2_token_address}/${t2.l2_token_address}/pools`
     );
-    
+
     const feeStr = calculateFeeU128(fee);
-    return data.topPools.find((pool: Pool) => 
+    return data.topPools.find((pool: Pool) =>
       pool.fee.toString().slice(0, 16) === feeStr.slice(0, 16)
     ) || null;
   } catch (error) {
@@ -114,7 +114,7 @@ export async function fetchPoolKeyHash(t1: Token, t2: Token, fee: number): Promi
     const t1Address = normalizeHex(t1.l2_token_address).trim();
     const t2Address = normalizeHex(t2.l2_token_address).trim();
 
-    return data.find((poolInfo: PoolState) => 
+    return data.find((poolInfo: PoolState) =>
       poolInfo.token0 === t1Address &&
       poolInfo.token1 === t2Address &&
       num.hexToDecimalString(poolInfo.fee).slice(0, 2) === feeStr.slice(0, 2)
@@ -147,35 +147,61 @@ export async function fetchTvl(t1: Token, t2: Token): Promise<number> {
 }
 
 export async function fetchLiquidityInRange(
-  t1: Token, 
-  t2: Token, 
-  minPrice: number, 
-  maxPrice: number
+  t1: Token,
+  t2: Token,
+  minPrice: number,
+  maxPrice: number,
+  t1price: number
 ): Promise<number | null> {
+  let minTick = Math.floor(Math.log(minPrice) / Math.log(1.0001));
+  let maxTick = Math.floor(Math.log(maxPrice) / Math.log(1.0001));
+
+  let liquidityMap: { [tick: number]: bigint } = {};
+
+  let totalLiquidity = BigInt(0);
   try {
     const { data } = await axios.get(
       `${BASE_URL}/tokens/${t1.l2_token_address}/${t2.l2_token_address}/liquidity`
     );
 
-    return data.data.reduce((total: number, entry: { tick: number; net_liquidity_delta_diff: string }) => {
-      const price = tickToPrice(entry.tick) * 10 ** 12;
-      if (price >= minPrice && price <= maxPrice) {
-        return total + Number(BigInt(entry.net_liquidity_delta_diff));
-      }
-      return total;
-    }, 0) / 10 ** 12;
+    const liquidityData = data.data;
+
+    liquidityData.sort((a: { tick: number; }, b: { tick: number; }) => a.tick - b.tick);
+
+    liquidityData.forEach(({ tick, net_liquidity_delta_diff }: { tick: number, net_liquidity_delta_diff: number }) => {
+      totalLiquidity += BigInt(net_liquidity_delta_diff);
+      liquidityMap[tick] = totalLiquidity;
+    });
+
+    let closestTick = Object.keys(liquidityMap).reduce((closest, tick) => {
+      const tickNum = Number(tick);
+      const diffWithMin = Math.abs(tickNum - minTick);
+      const diffWithMax = Math.abs(tickNum - maxTick);
+      
+      const closestDiff = Math.min(diffWithMin, diffWithMax);
+      const currentDiff = Math.abs(Number(closest) - minTick) + Math.abs(Number(closest) - maxTick);
+
+      return closestDiff < currentDiff ? tick : closest;
+    }, Object.keys(liquidityMap)[0]);
+
+    const closestLiquidity = liquidityMap[Number(closestTick)];
+
+    return Number(closestLiquidity);
+
   } catch (error) {
     console.error("Error fetching liquidity data:", error);
     return null;
   }
 }
 
+
+
 export async function getPrice(address: string): Promise<number> {
   try {
     const { data } = await axios.get(
       `${QUOTER_URL}/prices/0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8`
     );
-    
+
     const priceInfo = data.prices.find((item: { token: string }) => item.token === address);
     return priceInfo?.price ?? 0;
   } catch (error) {
@@ -201,7 +227,7 @@ export async function fetchPosition(address: string): Promise<Position[]> {
 
   try {
     const { data } = await axios.get(`${BASE_URL}/positions/${address}`);
-    
+
     const positions = await Promise.all(data.data.map(async (position: any) => {
       const metadata = await fetchPositionMetadata(position.id);
       const extractedValues = extractPositionMetadata(metadata.name);
@@ -223,7 +249,7 @@ export async function fetchPosition(address: string): Promise<Position[]> {
       };
 
       const positionInfo = await ekuboPositionsContract.get_token_info(position.id, poolKey, bounds);
-      
+
       const [token1Price, token2Price] = await Promise.all([
         fetchCryptoPrice(extractedValues.token1),
         fetchCryptoPrice(extractedValues.token2)
@@ -251,7 +277,7 @@ export async function fetchPosition(address: string): Promise<Position[]> {
           min: extractedValues.price1,
           max: extractedValues.price2,
         },
-        currentPrice: token1Price
+        currentPrice: Number(token1Price)
       };
     }));
 
