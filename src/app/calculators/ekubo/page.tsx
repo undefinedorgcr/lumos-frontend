@@ -62,10 +62,12 @@ export default function Calculators() {
             setErrorDesc("Please select different tokens to continue to IL calculator");
         }
         else {
+            const t0price = Number(await fetchCryptoPrice(token0.symbol));
+            const t1price = Number(await fetchCryptoPrice(token1.symbol));
             setIsLoading(true);
             setPoolLiquidity(await fetchTvl(token0, token1));
             setVolume(await fetchLatestPairVolume(token0, token1));
-            setInitialPrice(await fetchCryptoPrice(token0.symbol));
+            setInitialPrice(t0price / t1price);
             setShowCalculator(true);
             setIsLoading(false);
         };
