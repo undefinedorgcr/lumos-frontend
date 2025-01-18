@@ -1,12 +1,19 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://api.dev.pragma.build/node/v1/data/:path*/usd',
+      },
+    ]
+  },
   /**
    * Enable static exports for the App Router.
    *
    * @see https://nextjs.org/docs/app/building-your-application/deploying/static-exports
    */
-  output: "export",
 
   /**
    * Set base path. This is the slug of your GitHub repository.

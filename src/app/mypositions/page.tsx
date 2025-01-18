@@ -12,6 +12,7 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import { fetchCryptoPrice } from "@/apis/pragma";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];

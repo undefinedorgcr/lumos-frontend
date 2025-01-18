@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
-import { fetchCryptoPrice } from '@/apis/chainLink';
 import { fetchLiquidityInRange } from '@/apis/ekuboApi';
 import { price_to_sqrtp } from '@/lib/utils';
+import { fetchCryptoPrice } from '@/apis/pragma';
 
 interface CalculatorProps {
     token1: Token;
