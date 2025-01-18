@@ -25,7 +25,6 @@ export default function MyPositions() {
     async function getPositions() {
       setIsLoading(true);
       try {
-        console.log(await fetchCryptoPrice("eth"));
         const data = await fetchPosition(wallet?.account?.address);
         setPositions(data);
       } catch(err) {
