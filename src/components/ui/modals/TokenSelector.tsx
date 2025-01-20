@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react';
-import { Search, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
 
@@ -13,16 +13,16 @@ interface TokenSelectorProps {
 }
 
 export const TokenSelectorModal = ({ isOpen, onClose, onSelectToken, tokens, topTokens }: TokenSelectorProps) => {
-    const [searchQuery, setSearchQuery] = useState('');
+    // const [searchQuery, setSearchQuery] = useState('');
     const [filteredTokens, setFilteredTokens] = useState<Token[]>([]);
 
-    function filter(psearchQuery: string) {
-        setSearchQuery(psearchQuery);
-        setFilteredTokens(tokens.filter(token =>
-            token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            token.name.toLowerCase().includes(searchQuery.toLowerCase())
-        ));
-    }
+    // function filter(psearchQuery: string) {
+    //     setSearchQuery(psearchQuery);
+    //     setFilteredTokens(tokens.filter(token =>
+    //         token.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    //         token.name.toLowerCase().includes(searchQuery.toLowerCase())
+    //     ));
+    // }
 
     useEffect(() => {
         setFilteredTokens(tokens.filter(token => topTokens.includes(token.symbol)));

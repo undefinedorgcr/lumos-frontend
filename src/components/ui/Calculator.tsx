@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
@@ -52,7 +51,7 @@ const Calculator: React.FC<CalculatorProps> = ({ token1, token2, feeRate, initia
     }
 
     async function handlePricesChange(min: number, max: number, amount: number) {
-        const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max, t2CurrentPrice);
+        const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max);
         min = min * t2CurrentPrice;
         max = max * t2CurrentPrice;
         calculateTokenAmounts(amount, t1CurrentPrice, min, max);
