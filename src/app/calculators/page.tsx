@@ -7,7 +7,7 @@ export default function Calculators() {
     <div className="min-h-screen p-6">
       <Navbar />
       <div className="text-white p-8">
-        <div className="max-w-6xl mx-48">
+        <div className="max-w-6xl mx-auto">
           <ProtocolCard imageSrc="/images/EkuboLogo.png" title="Ekubo Protocol" href="/calculators/ekubo"></ProtocolCard>
         </div>
       </div>

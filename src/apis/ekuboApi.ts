@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Contract, num, number } from 'starknet';
+import { Contract, num } from 'starknet';
 import axios, { AxiosError } from 'axios';
 
 import { Token } from '@/types/Tokens';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { Position } from '@/types/Position';
-import { normalizeHex, price_to_sqrtp, priceToTick, tickToPrice } from '@/lib/utils';
+import { normalizeHex } from '@/lib/utils';
 import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { fetchCryptoPrice } from './pragma';
@@ -14,10 +14,15 @@ import { fetchCryptoPrice } from './pragma';
 const BASE_URL = "https://mainnet-api.ekubo.org";
 const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
 
+// TODO: implement this tokens
+// export const TOP_TOKENS_SYMBOL = [
+//   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
+//   "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
+//   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+// ];
+
 export const TOP_TOKENS_SYMBOL = [
-  "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
-  "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+  "STRK", "USDC", "ETH"
 ];
 
 // Utility functions
@@ -151,12 +156,11 @@ export async function fetchLiquidityInRange(
   t2: Token,
   minPrice: number,
   maxPrice: number,
-  t1price: number
 ): Promise<number | null> {
-  let minTick = Math.floor(Math.log(minPrice) / Math.log(1.0001));
-  let maxTick = Math.floor(Math.log(maxPrice) / Math.log(1.0001));
+  const minTick = Math.floor(Math.log(minPrice) / Math.log(1.0001));
+  const maxTick = Math.floor(Math.log(maxPrice) / Math.log(1.0001));
 
-  let liquidityMap: { [tick: number]: bigint } = {};
+  const liquidityMap: { [tick: number]: bigint } = {};
 
   let totalLiquidity = BigInt(0);
   try {
@@ -172,8 +176,7 @@ export async function fetchLiquidityInRange(
       totalLiquidity += BigInt(net_liquidity_delta_diff);
       liquidityMap[tick] = totalLiquidity;
     });
-
-    let closestTick = Object.keys(liquidityMap).reduce((closest, tick) => {
+    const closestTick = Object.keys(liquidityMap).reduce((closest, tick) => {
       const tickNum = Number(tick);
       const diffWithMin = Math.abs(tickNum - minTick);
       const diffWithMax = Math.abs(tickNum - maxTick);
