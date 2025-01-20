@@ -38,7 +38,6 @@ export const TokenSelectorModal = ({ isOpen, onClose, onSelectToken, tokens, top
     return (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <div className="bg-zinc-900 rounded-2xl w-full max-w-md">
-                {/* Header */}
                 <div className="p-4 border-b border-zinc-800 flex justify-between items-center">
                     <h2 className="text-xl text-white font-medium">Select a token</h2>
                     <button
@@ -47,10 +46,9 @@ export const TokenSelectorModal = ({ isOpen, onClose, onSelectToken, tokens, top
                     >
                         <X className="w-6 h-6" />
                     </button>
-                </div>
-
-                {/* Search Bar */}
-                <div className="p-4">
+                </div>  
+                {/* TODO: re-enable token search once all tokens are explored */}
+                {/* <div className="p-4">
                     <div className="relative">
                         <input
                             type="text"
@@ -61,9 +59,8 @@ export const TokenSelectorModal = ({ isOpen, onClose, onSelectToken, tokens, top
                         />
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-5 h-5" />
                     </div>
-                </div>
+                </div> */}
 
-                {/* Popular Tokens Section */}
                 <div className="p-4 border-t border-zinc-800">
                     <h3 className="text-zinc-400 text-sm mb-2">Popular tokens</h3>
                     <div className="space-y-2 max-h-64 overflow-y-auto">

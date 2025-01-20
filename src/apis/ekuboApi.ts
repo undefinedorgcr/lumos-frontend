@@ -14,10 +14,15 @@ import { fetchCryptoPrice } from './pragma';
 const BASE_URL = "https://mainnet-api.ekubo.org";
 const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
 
+// TODO: implement this tokens
+// export const TOP_TOKENS_SYMBOL = [
+//   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
+//   "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
+//   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+// ];
+
 export const TOP_TOKENS_SYMBOL = [
-  "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
-  "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+  "STRK", "USDC", "ETH"
 ];
 
 // Utility functions

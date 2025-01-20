@@ -78,10 +78,10 @@ export default function Calculators() {
             <Navbar />
             {!showCalculator &&
                 <div className="text-white p-8">
-                    <div className="max-w-6xl mx-48">
+                    <div className="container mx-auto max-w-3xl">
                         {tokens != undefined && !isLoading &&
                             <div className="border border-white rounded-lg font-neue">
-                                <div className="max-w-3xl mx-auto rounded-2xl p-8">
+                                <div className="p-8">
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">
                                             <Image src={"/images/EkuboLogo.png"} alt={"Ekubo logo"} width={200} height={200} />
@@ -157,11 +157,9 @@ export default function Calculators() {
                             </div>
                         }
                         {isLoading &&
-                            <div className= "max-w-6xl mx-48">
-                                <div className="text-center text-gray-400">
-                                    <LoadingSpinner />
-                                    Loading calculator...
-                                </div>
+                            <div className="text-center text-gray-400">
+                                <LoadingSpinner />
+                                Loading calculator...
                             </div>
                         }
                     </div>
