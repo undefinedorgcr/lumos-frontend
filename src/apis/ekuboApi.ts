@@ -6,7 +6,7 @@ import { Token } from '@/types/Tokens';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { Position } from '@/types/Position';
-import { normalizeHex } from '@/lib/utils';
+import { normalizeHex, tickToPrice } from '@/lib/utils';
 import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { fetchCryptoPrice } from './pragma';
@@ -15,15 +15,15 @@ const BASE_URL = "https://mainnet-api.ekubo.org";
 const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
 
 // TODO: implement this tokens
-// export const TOP_TOKENS_SYMBOL = [
-//   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-//   "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
-//   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
-// ];
-
 export const TOP_TOKENS_SYMBOL = [
-  "STRK", "USDC", "ETH"
+  "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
+  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
+  "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
 ];
+
+// export const TOP_TOKENS_SYMBOL = [
+//   "STRK", "USDC", "ETH"
+// ];
 
 // Utility functions
 const getTokenDecimals = (symbol: string): number =>
@@ -157,8 +157,6 @@ export async function fetchLiquidityInRange(
   minPrice: number,
   maxPrice: number,
 ): Promise<number | null> {
-  const minTick = Math.floor(Math.log(minPrice) / Math.log(1.0001));
-  const maxTick = Math.floor(Math.log(maxPrice) / Math.log(1.0001));
 
   const liquidityMap: { [tick: number]: bigint } = {};
 
@@ -176,20 +174,17 @@ export async function fetchLiquidityInRange(
       totalLiquidity += BigInt(net_liquidity_delta_diff);
       liquidityMap[tick] = totalLiquidity;
     });
-    const closestTick = Object.keys(liquidityMap).reduce((closest, tick) => {
-      const tickNum = Number(tick);
-      const diffWithMin = Math.abs(tickNum - minTick);
-      const diffWithMax = Math.abs(tickNum - maxTick);
-      
-      const closestDiff = Math.min(diffWithMin, diffWithMax);
-      const currentDiff = Math.abs(Number(closest) - minTick) + Math.abs(Number(closest) - maxTick);
 
-      return closestDiff < currentDiff ? tick : closest;
-    }, Object.keys(liquidityMap)[0]);
+    totalLiquidity = BigInt(0);
 
-    const closestLiquidity = liquidityMap[Number(closestTick)];
-
-    return Number(closestLiquidity);
+    for (const tick in liquidityMap) {
+      const liquidity = liquidityMap[tick]; 
+      const price = tickToPrice(Number(tick)) * 10 ** 12;
+      if (price >= minPrice && price <= maxPrice) {
+        totalLiquidity += liquidity;
+      }
+    };
+    return Number(totalLiquidity);
 
   } catch (error) {
     console.error("Error fetching liquidity data:", error);

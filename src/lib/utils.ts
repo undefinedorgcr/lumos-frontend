@@ -39,14 +39,16 @@ export function tickToPrice(tick: number) {
   return price;
 }
 
-export function priceToTick(price: number): number {
+export function priceToTick(price: bigint): bigint {
   const base = 1.0001;
-  const tick = Math.log(price) / Math.log(base);
-  return Math.floor(tick);
+  const tick = Math.log(Number(price)) / Math.log(base);
+  return BigInt(Math.floor(tick));
 }
 
 export function price_to_sqrtp(price: number) {
-  return (Math.sqrt(price) * q96)
+  const sqrtPrice = Math.sqrt(price);
+  const sqrtPriceX96 = BigInt(Math.round(sqrtPrice * (2 ** 96)));
+  return sqrtPriceX96;
 }
 
 export function liquidity0(amount: number, pa: number, pb: number): number {
