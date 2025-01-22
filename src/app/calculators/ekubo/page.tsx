@@ -51,6 +51,7 @@ export default function Calculators() {
     }
 
     async function handleContinue() {
+        setIsLoading(true);
         if (token0 == undefined || token1 == undefined) {
             setOpenError(true);
             setErrorTitle("Tokens not selected");
@@ -64,7 +65,6 @@ export default function Calculators() {
         else {
             const t0price = Number(await fetchCryptoPrice(token0.symbol));
             const t1price = Number(await fetchCryptoPrice(token1.symbol));
-            setIsLoading(true);
             setPoolLiquidity(await fetchTvl(token0, token1));
             setVolume(await fetchLatestPairVolume(token0, token1));
             setInitialPrice(t0price / t1price);
@@ -166,7 +166,14 @@ export default function Calculators() {
                 </div>
             }
             {showCalculator && token0 !== undefined && token1 !== undefined && !isLoading &&
-                <Calculator token1={token0} token2={token1} feeRate={fee} initialPrice={initialPrice} volume={volume} liquidity={poolLiquidity}></Calculator>
+                <Calculator
+                    token1={token0}
+                    token2={token1}
+                    feeRate={fee}
+                    initialPrice={initialPrice}
+                    volume={volume}
+                    liquidity={poolLiquidity}
+                />
             }
             <TokenSelectorModal
                 isOpen={openTokenSelector}
