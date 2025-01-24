@@ -75,16 +75,11 @@ export async function fetchTokens() {
   }
 }
 
-export async function fetchLatestPairVolume(t1: Token, t2: Token): Promise<number> {
+export async function fetchLatestPairVolume(t1: Token, t2: Token, t1price: number, t2price: number): Promise<number> {
   try {
     const { data } = await axios.get(
       `${BASE_URL}/pair/${t1.l2_token_address}/${t2.l2_token_address}/volume`
     );
-
-    const [t1price, t2price] = await Promise.all([
-      fetchCryptoPrice(t1.symbol),
-      fetchCryptoPrice(t2.symbol)
-    ]);
 
     const volume1 = formatTokenAmount(data.volumeByToken_24h[0].volume, t1.symbol) * t1price;
     const volume2 = formatTokenAmount(data.volumeByToken_24h[1].volume, t2.symbol) * t2price;

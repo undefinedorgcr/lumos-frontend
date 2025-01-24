@@ -38,33 +38,3 @@ export function tickToPrice(tick: number) {
   const price = Math.pow(1.000001, tick);
   return price;
 }
-
-export function priceToTick(price: bigint): bigint {
-  const base = 1.0001;
-  const tick = Math.log(Number(price)) / Math.log(base);
-  return BigInt(Math.floor(tick));
-}
-
-export function price_to_sqrtp(price: number) {
-  const sqrtPrice = Math.sqrt(price);
-  const sqrtPriceX96 = BigInt(Math.round(sqrtPrice * (2 ** 96)));
-  return sqrtPriceX96;
-}
-
-export function liquidity0(amount: number, pa: number, pb: number): number {
-  if (pa > pb) {
-    [pa, pb] = [pb, pa];
-  }
-  return (amount * (pa * pb) / q96) / (pb - pa);
-}
-
-export function liquidity1(amount: number, pa: number, pb: number): number {
-  if (pa > pb) {
-    [pa, pb] = [pb, pa];
-  }
-  return (amount * q96) / (pb - pa);
-}
-
-export function getVirtualLiquidity(l1: number, l2: number) {
-  return Math.floor(Math.min(l1, l2));
-}
