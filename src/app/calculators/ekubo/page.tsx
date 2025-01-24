@@ -66,7 +66,7 @@ export default function Calculators() {
             const t0price = Number(await fetchCryptoPrice(token0.symbol));
             const t1price = Number(await fetchCryptoPrice(token1.symbol));
             setPoolLiquidity(await fetchTvl(token0, token1));
-            setVolume(await fetchLatestPairVolume(token0, token1));
+            setVolume(await fetchLatestPairVolume(token0, token1, t0price, t1price));
             setInitialPrice(t0price / t1price);
             setShowCalculator(true);
             setIsLoading(false);

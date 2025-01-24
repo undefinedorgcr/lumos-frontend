@@ -3,7 +3,6 @@ import { Token } from '@/types/Tokens';
 import Image from 'next/image';
 import { fetchLiquidityInRange } from '@/apis/ekuboApi';
 import { fetchCryptoPrice } from '@/apis/pragma';
-import { getVirtualLiquidity, liquidity0, liquidity1, price_to_sqrtp } from '@/lib/utils';
 
 interface CalculatorProps {
     token1: Token;
@@ -49,7 +48,7 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
 
     async function handlePricesChange(min: number, max: number, amount: number) {
         const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max);
-        const currentDepositAmounts = calculateTokenAmounts(amount, t1CurrentPrice, min, max);
+        calculateTokenAmounts(amount, t1CurrentPrice, min, max);
         
         if (volume !== null && currentLiquidity != null) {
             if (amount <= 0 || t1CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
@@ -69,17 +68,12 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
                 return;
             }
 
-            const sqrtp_low = price_to_sqrtp(min);
-            const sqrtp_cur = price_to_sqrtp(t1CurrentPrice);
-            const sqrtp_upp = price_to_sqrtp(max);
-            const amount0 = (currentDepositAmounts[0] / t1CurrentPrice) * 10 ** 15;
-            const amount1 = (currentDepositAmounts[1] / t2CurrentPrice) * 10 ** 15;
-            const liq0 = liquidity0(amount0, Number(sqrtp_cur), Number(sqrtp_upp));
-            const liq1 = liquidity1(amount1, Number(sqrtp_cur), Number(sqrtp_low));
-
-            const virtualL = getVirtualLiquidity(liq0, liq1);
-            const share = (virtualL / currentLiquidity);
-            setFee(share * (volume * (feeRate / 100)));
+            const Pl = min / (10**(token1.decimals - token2.decimals));
+            const P = t1CurrentPrice / (10**(token1.decimals - token2.decimals));
+            const Pu = max / (10**(token1.decimals - token2.decimals));
+            const deltaL = amount / ((Math.sqrt(t1CurrentPrice) - Math.sqrt(Pl)) * t2CurrentPrice + (1 / Math.sqrt(P) - 1 / Math.sqrt(Pu)) * t1CurrentPrice);
+            const fee = (feeRate / 100) * volume * (deltaL / (currentLiquidity + deltaL));
+            setFee(fee);
         }
     }
 
