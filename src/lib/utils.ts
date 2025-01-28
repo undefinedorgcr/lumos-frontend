@@ -7,34 +7,31 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export default function calculateDepositAmounts(
-  liquidity: number,
-  priceMin: number,
-  priceMax: number,
-  currentPrice: number
-): { token0: number; token1: number } {
-  const sqrtPMin = Math.sqrt(priceMin);
-  const sqrtPMax = Math.sqrt(priceMax);
-  const sqrtP = Math.sqrt(currentPrice);
-
-  let token0 = 0;
-  let token1 = 0;
-
-  if (currentPrice <= priceMin) {
-    token0 = liquidity * (1 / sqrtPMin - 1 / sqrtPMax);
-  } else if (currentPrice >= priceMax) {
-    token1 = liquidity * (sqrtPMax - sqrtPMin);
-  } else {
-    token0 = liquidity * (sqrtPMax - sqrtP) / (sqrtP * sqrtPMax);
-    token1 = liquidity * (sqrtP - sqrtPMin);
-  }
-
-  return { token0, token1 };
-}
-
 export const normalizeHex = (hex: string) => hex.replace(/^0x0+/, "0x");
 
 export function tickToPrice(tick: number) {
   const price = Math.pow(1.000001, tick);
   return price;
+}
+
+export function calculateDepositAmounts(
+  depositUSD: number,
+  currentPriceToken0USD: number,
+  currentPriceToken1USD: number,
+  minPriceToken1PerToken0: number,
+  maxPriceToken1PerToken0: number
+) {
+  const P = currentPriceToken0USD / currentPriceToken1USD;
+  const sqrtP = Math.sqrt(P);
+  const sqrtPa = Math.sqrt(minPriceToken1PerToken0);
+  const sqrtPb = Math.sqrt(maxPriceToken1PerToken0);
+  
+  const term0 = (1 / sqrtP - 1 / sqrtPb) * currentPriceToken0USD;
+  const term1 = (sqrtP - sqrtPa) * currentPriceToken1USD;
+  const deltaL = depositUSD / (term0 + term1);
+  
+  const amount0 = deltaL * (1 / sqrtP - 1 / sqrtPb);
+  const amount1 = deltaL * (sqrtP - sqrtPa);
+  
+  return [ amount0 * currentPriceToken0USD, amount1 * currentPriceToken1USD ];
 }
