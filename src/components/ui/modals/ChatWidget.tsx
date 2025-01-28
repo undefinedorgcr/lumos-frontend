@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { HelpCircle, X, Send } from 'lucide-react';
 import { Message } from '@/types/Message';
 
-const ELIZA_API_URL = "http://localhost:3000"
+const ELIZA_API_URL = "http://localhost:3001"
 const AGENT_ID = "2ec979e8-1d05-008f-a3f5-168815f3c660"
 
 const ChatWidget = () => {
