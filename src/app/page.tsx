@@ -8,57 +8,78 @@ import Footer from '@/components/ui/footer';
 
 const LandingPage = () => {
   return (
-    <div className="min-h-screen p-6">
-      <StarField/>
-      <nav className="flex justify-between items-center m-7">
-        <div className="text-xl flex gap-8">
-          {/* <a href="#" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Pools</a> */}
-          <Link href="/calculators" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Calculators</Link>
-          <Link href="mypositions" className="text-gray-300 hover:text-white font-neuethin transition duration-300">My positions</Link>
+    <div className="min-h-screen flex flex-col">
+      <StarField />
+      <nav className="px-6 py-8">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex gap-8 text-xl">
+            <Link
+              href="/calculators"
+              className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+            >
+              Calculators
+            </Link>
+            <Link
+              href="mypositions"
+              className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+            >
+              My positions
+            </Link>
+          </div>
+          <WalletConnector />
         </div>
-        <WalletConnector></WalletConnector>
       </nav>
+      <main className="flex-1 flex items-center px-6">
+        <div className="max-w-7xl mx-auto w-full">
+          <div className="flex flex-col lg:flex-row items-center gap-16">
+            <div className="lg:w-1/2 flex justify-center">
+              <div className="w-[430px] h-[430px] relative animate-float">
+                <Image
+                  src="/images/LumosLogo.png"
+                  width={500}
+                  height={500}
+                  alt="Lumos app logo"
+                  className="object-contain"
+                />
+              </div>
+            </div>
+            <div className="lg:w-1/2 flex flex-col items-start space-y-12">
+              <div className="space-y-6 text-2xl font-neuethin">
+                <p>
+                  Maximize your DeFi profits—smart liquidity, zero hassle.
+                </p>
+                <p>
+                  Take control of your CLMM pools with precision and power.
+                </p>
+                <p>
+                  Simplify liquidity management—earn more, stress less.
+                </p>
+              </div>
 
-      <div className="flex items-center justify-between max-w-6xl mx-auto">
-        <div className="w-1/2 justify-items-center">
-          <div className="w-[430px] h-[430px] mb-6">
-            <Image
-              src="/images/LumosLogo.png"
-              width={500}
-              height={500}
-              alt="Lumos app logo"
-            />
+              <div className="flex gap-6">
+                <Link
+                  href="#"
+                  className="px-8 py-4 rounded-md border border-white/20 bg-white/5 
+                    hover:bg-white hover:text-black transition-all duration-300 
+                    text-lg font-neuethin"
+                >
+                  Get started
+                </Link>
+                <Link
+                  href="/knowmore"
+                  className="px-8 py-4 rounded-md border border-white/20 bg-white/5 
+                    hover:bg-white hover:text-black transition-all duration-300 
+                    text-lg font-neuethin"
+                >
+                  Know more
+                </Link>
+              </div>
+            </div>
           </div>
-          <h1 className="text-4xl font-neue mb-4 self-center">Lumos - CLMM Management</h1>
         </div>
+      </main>
 
-        {/* Right Column */}
-        <div className="w-1/2 space-y-8 justify-items-center">
-          <div className='justify-items-start space-y-8'>
-            <p className="text-2xl font-neuethin">
-              Maximize your DeFi profits—smart liquidity, zero hassle.
-            </p>
-            <p className="text-2xl font-neuethin">
-              Take control of your CLMM pools with precision and power.
-            </p>
-            <p className="text-2xl font-neuethin">
-              Simplify liquidity management—earn more, stress less.
-            </p>
-          </div>
-          <div className="flex gap-4 mt-8 space-x-10">
-            <a href='#' className="text-xl border border-white px-7 py-3 rounded-md font-neuethin 
-                        transition duration-500 hover:text-black hover:bg-white">
-              Get started
-            </a>
-            <a href='/knowmore'
-              className="text-xl border border-white px-7 py-3 rounded-md font-neuethin 
-                        transition duration-500 hover:text-black hover:bg-white">
-              Know more
-            </a>
-          </div>
-        </div>
-      </div>
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 };

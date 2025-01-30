@@ -64,7 +64,6 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
             const liquidityAmount0 = (amounts[0] * 10 ** token1.decimals) * (Math.sqrt(Pu) * Math.sqrt(Pl)) / (Math.sqrt(Pu) - Math.sqrt(Pl));
             const liquidityAmount1 = (amounts[0] * 10 ** token1.decimals) / (Math.sqrt(Pu) - Math.sqrt(Pl));
             const deltaL = Math.min(liquidityAmount0, liquidityAmount1);
-            console.log(deltaL);
             const fee = (feeRate / 100) * volume * (deltaL / (currentLiquidity + deltaL));
             setFee(fee);
         }

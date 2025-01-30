@@ -4,7 +4,7 @@ import Navbar from "@/components/ui/navbar";
 
 export default function Calculators() {
   return (
-    <div className="p-6">
+    <div>
       <div className="absolute" />
       <Navbar />
 
