@@ -15,11 +15,12 @@ export default function Navbar() {
                         width={55}
                         height={55}
                         alt="Lumos app logo"
+                        className="transition duration-500 hover:scale-110 opacity-75 hover:opacity-100"
                     />
                 </Link>
                 <div className="text-xl flex gap-8">
-                    <Link href="/calculators" className="text-gray-300 hover:text-white font-neuethin transition duration-300">Calculators</Link>
-                    <Link href="/mypositions" className="text-gray-300 hover:text-white font-neuethin transition duration-300">My positions</Link>
+                    <Link href="/calculators" className="text-gray-400 hover:text-white font-neuethin transition duration-300">Calculators</Link>
+                    <Link href="/mypositions" className="text-gray-400 hover:text-white font-neuethin transition duration-300">My positions</Link>
                 </div>
             </div>
             <WalletConnector />

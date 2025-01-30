@@ -12,7 +12,6 @@ import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { fetchCryptoPrice } from "@/apis/pragma";
 
 export default function Calculators() {
-
     const [tokens, setTokens] = useState<Token[]>([]);
     const [fee, setFee] = useState(0);
     const [openTokenSelector, setOpenTokenSelector] = useState(false);
@@ -32,23 +31,20 @@ export default function Calculators() {
         async function getTokens() {
             try {
                 setTokens(await fetchTokens());
-            }
-            catch (err) {
+            } catch (err) {
                 console.log(err);
             }
-
         }
         getTokens();
     }, [setTokens]);
 
-    function handleFeePrecisionChange(feePrecisionId: number) {
-        setFee(feePrecisionId);
-    }
-
-    function handleTokenSelection(pTokenSelected: number) {
-        setSelectedToken(pTokenSelected);
-        setOpenTokenSelector(true);
-    }
+    const feeOptions = [
+        { rate: 0.01, precision: 0.02, label: '0.01% fee and 0.02% precision' },
+        { rate: 0.05, precision: 0.1, label: '0.05% fee and 0.1% precision' },
+        { rate: 0.3, precision: 0.6, label: '0.3% fee and 0.6% precision' },
+        { rate: 1, precision: 2, label: '1% fee and 2% precision' },
+        { rate: 5, precision: 10, label: '5% fee and 10% precision' }
+    ];
 
     async function handleContinue() {
         setIsLoading(true);
@@ -56,13 +52,12 @@ export default function Calculators() {
             setOpenError(true);
             setErrorTitle("Tokens not selected");
             setErrorDesc("Please select both tokens to continue to IL calculator");
-        }
-        else if (token0 == token1) {
+        } else if (token0 == token1) {
             setOpenError(true);
             setErrorTitle("Tokens can not be the same");
             setErrorDesc("Please select different tokens to continue to IL calculator");
-        }
-        else {
+        } else {
+            setIsLoading(true);
             const t0price = Number(await fetchCryptoPrice(token0.symbol));
             const t1price = Number(await fetchCryptoPrice(token1.symbol));
             setPoolLiquidity(await fetchTvl(token0, token1));
@@ -70,102 +65,93 @@ export default function Calculators() {
             setInitialPrice(t0price / t1price);
             setShowCalculator(true);
             setIsLoading(false);
-        };
+        }
     }
 
     return (
-        <div className="min-h-screen p-6">
+        <div>
             <Navbar />
-            {!showCalculator &&
-                <div className="text-white p-8">
-                    <div className="container mx-auto max-w-3xl">
-                        {tokens != undefined && !isLoading &&
-                            <div className="border border-white rounded-lg font-neue">
-                                <div className="p-8">
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-14 h-14 rounded-full overflow-hidden flex items-center justify-center bg-gray-800">
-                                            <Image src={"/images/EkuboLogo.png"} alt={"Ekubo logo"} width={200} height={200} />
-                                        </div>
-                                        <h1 className="text-2xl text-white font-light">Ekubo Protocol Calculator</h1>
+            {!showCalculator && (
+                <main className="max-w-4xl mx-auto px-6 py-12">
+                    {tokens != undefined && !isLoading ? (
+                        <div className="bg-white/5 rounded-2xl backdrop-blur-sm">
+                            <div className="p-8 space-y-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-16 h-16 rounded-full bg-white/10 p-3 flex items-center justify-center">
+                                        <Image
+                                            src="/images/EkuboLogo.png"
+                                            alt="Ekubo logo"
+                                            width={200}
+                                            height={200}
+                                            className="object-contain"
+                                        />
                                     </div>
-
-                                    <div className="space-y-6">
-                                        <div className="space-y-2">
-                                            <p className="text-white text-lg">Select Pair</p>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <button className="text-center w-full bg-zinc-800 text-white py-3 px-4 rounded-lg flex items-center justify-between
-                                                               hover:bg-zinc-500 transition duration-500"
-                                                    onClick={() => handleTokenSelection(1)}>
-                                                    {<>{token0 == undefined ? "Select a token" : token0.symbol}</>}
-                                                </button>
-                                                <button className="text-center w-full bg-zinc-800 text-white py-3 px-4 rounded-lg flex items-center justify-between
-                                                               hover:bg-zinc-500 transition duration-500"
-                                                    onClick={() => handleTokenSelection(2)}>
-                                                    {<>{token1 == undefined ? "Select a token" : token1.symbol}</>}
-                                                </button>
-                                            </div>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <p className="text-white text-lg">Select Fee</p>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div className="space-y-3">
-                                                    <button className={`w-full bg-zinc-800 text-white py-3 px-4 rounded-lg text-center
-                                                                   hover:bg-zinc-500 transition duration-500
-                                                                   ${fee == 0.01 ? 'border border-white bg-zinc-500' : ''}`}
-                                                        onClick={() => handleFeePrecisionChange(0.01)}>
-                                                        0.01% fee and 0.02% precision
-                                                    </button>
-                                                    <button className={`w-full bg-zinc-800 text-white py-3 px-4 rounded-lg text-center
-                                                                   hover:bg-zinc-500 transition duration-500
-                                                                   ${fee == 0.3 ? 'border border-white bg-zinc-500' : ''}`}
-                                                        onClick={() => handleFeePrecisionChange(0.3)}>
-                                                        0.3% fee and 0.6% precision
-                                                    </button>
-                                                    <button className={`w-full bg-zinc-800 text-white py-3 px-4 rounded-lg text-center
-                                                                   hover:bg-zinc-500 transition duration-500
-                                                                   ${fee == 5 ? 'border border-white bg-zinc-500' : ''}`}
-                                                        onClick={() => handleFeePrecisionChange(5)}>
-                                                        5% fee and 10% precision
-                                                    </button>
-                                                </div>
-                                                <div className="space-y-3">
-                                                    <button className={`w-full bg-zinc-800 text-white py-3 px-4 rounded-lg text-center
-                                                                   hover:bg-zinc-500 transition duration-500
-                                                                   ${fee == 0.05 ? 'border border-white bg-zinc-500' : ''}`}
-                                                        onClick={() => handleFeePrecisionChange(0.05)}>
-                                                        0.05% fee and 0.1% precision
-                                                    </button>
-                                                    <button className={`w-full bg-zinc-800 text-white py-3 px-4 rounded-lg text-center
-                                                                   hover:bg-zinc-500 transition duration-500
-                                                                   ${fee == 1 ? 'border border-white bg-zinc-500' : ''}`}
-                                                        onClick={() => handleFeePrecisionChange(1)}>
-                                                        1% fee and 2% precision
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex justify-center mt-8">
-                                            <button className="bg-white text-black px-12 py-3 rounded-lg font-medium"
-                                                onClick={() => handleContinue()}>
-                                                Calculate
-                                            </button>
-                                        </div>
+                                    <div className="space-y-1">
+                                        <h1 className="text-2xl font-light">Ekubo Protocol Calculator</h1>
+                                        <p className="text-gray-400">Calculate impermanent loss and returns</p>
                                     </div>
                                 </div>
+
+                                {/* Token Selection */}
+                                <div className="space-y-4">
+                                    <label className="text-lg text-gray-300">Select Pair</label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {[token0, token1].map((token, idx) => (
+                                            <button
+                                                key={idx}
+                                                onClick={() => {
+                                                    setSelectedToken(idx + 1);
+                                                    setOpenTokenSelector(true);
+                                                }}
+                                                className="flex items-center justify-center gap-2 px-6 py-4 rounded-xl
+                                                    bg-white/5 hover:bg-white/10 transition-colors
+                                                    border border-white/10 hover:border-white/20"
+                                            >
+                                                {token ? token.symbol : "Select a token"}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <label className="text-lg text-gray-300">Select Fee</label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        {feeOptions.map((option) => (
+                                            <button
+                                                key={option.rate}
+                                                onClick={() => setFee(option.rate)}
+                                                className={`px-6 py-4 rounded-xl text-center transition-all duration-300
+                                                    ${fee === option.rate
+                                                        ? 'bg-white/10 border-white'
+                                                        : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20'
+                                                    }
+                                                    border text-sm`}
+                                            >
+                                                {option.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="pt-4">
+                                    <button
+                                        onClick={handleContinue}
+                                        className="w-full border border-white px-7 py-3 rounded-md font-neuethin 
+                                                   transition duration-500 hover:text-black hover:bg-white"
+                                    >
+                                        Calculate Returns
+                                    </button>
+                                </div>
                             </div>
-                        }
-                        {isLoading &&
-                            <div className="text-center text-gray-400">
-                                <LoadingSpinner />
-                                Loading calculator...
-                            </div>
-                        }
-                    </div>
-                </div>
-            }
-            {showCalculator && token0 !== undefined && token1 !== undefined && !isLoading &&
+                        </div>
+                    ) : (
+                        <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+                            <LoadingSpinner />
+                            <p className="text-gray-400">Loading calculator...</p>
+                        </div>
+                    )}
+                </main>
+            )}
+
+            {showCalculator && token0 !== undefined && token1 !== undefined && !isLoading && (
                 <Calculator
                     token1={token0}
                     token2={token1}
@@ -174,16 +160,23 @@ export default function Calculators() {
                     volume={volume}
                     liquidity={poolLiquidity}
                 />
-            }
+            )}
+
             <TokenSelectorModal
                 isOpen={openTokenSelector}
                 onClose={setOpenTokenSelector}
                 onSelectToken={selectedToken == 1 ? setToken1 : setToken2}
                 tokens={tokens}
                 topTokens={TOP_TOKENS_SYMBOL}
-            >
-            </TokenSelectorModal>
-            <ErrorModal isOpen={openError} onClose={setOpenError} title={errorTitle} message={errorDesc} ></ErrorModal>
+            />
+
+            <ErrorModal
+                isOpen={openError}
+                onClose={setOpenError}
+                title={errorTitle}
+                message={errorDesc}
+            />
+
             <Footer />
         </div>
     );

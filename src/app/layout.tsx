@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={"bg-[#121212] text-white"}
+        className={"bg-[#181818] text-white"}
       >
         {children}
         <ChatWidget></ChatWidget>
