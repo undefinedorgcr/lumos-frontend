@@ -25,6 +25,12 @@ const LandingPage = () => {
             >
               My positions
             </Link>
+            <Link
+              href="/pools"
+              className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+            >
+              Pools
+            </Link>
           </div>
           <WalletConnector />
         </div>

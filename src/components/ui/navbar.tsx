@@ -21,6 +21,7 @@ export default function Navbar() {
                 <div className="text-xl flex gap-8">
                     <Link href="/calculators" className="text-gray-400 hover:text-white font-neuethin transition duration-300">Calculators</Link>
                     <Link href="/mypositions" className="text-gray-400 hover:text-white font-neuethin transition duration-300">My positions</Link>
+                    <Link href="/pools" className="text-gray-400 hover:text-white font-neuethin transition duration-300">Pools</Link>
                 </div>
             </div>
             <WalletConnector />
