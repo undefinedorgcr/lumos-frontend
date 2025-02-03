@@ -44,35 +44,37 @@ const LandingPage = () => {
               Pools
             </Link>
           </div>
-          {user !== undefined ? (
-            <>
-              {user.pfp && (
-                <Image
-                  src={user.pfp}
-                  alt="User Profile"
-                  width={40}
-                  height={40}
-                  className="rounded-full object-cover"
-                />
-              )}
-              <button
-                className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
-                                            hover:bg-white hover:text-black transition-all duration-500 
-                                            text-lg font-neuethin"
-                onClick={() => handleLogout()}
+          <div className="flex items-center gap-4">
+            {user !== undefined ? (
+              <>
+                {user.pfp && (
+                  <Image
+                    src={user.pfp}
+                    alt="User Profile"
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover"
+                  />
+                )}
+                <button
+                  className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
+                  hover:bg-white hover:text-black transition-all duration-500 
+                  text-lg font-neuethin"
+                  onClick={() => handleLogout()}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
+                  hover:bg-white hover:text-black transition-all duration-500 
+                  text-lg font-neuethin"
+                onClick={() => setOpenLogin(true)}
               >
-                Logout
+                Login
               </button>
-            </>
-          ) : (
-            <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
-                    hover:bg-white hover:text-black transition-all duration-500 
-                    text-lg font-neuethin"
-              onClick={() => setOpenLogin(true)}
-            >
-              Login
-            </button>
-          )}
+            )}
+          </div>
         </div>
       </nav>
       <main className="flex-1 flex items-center px-6">
