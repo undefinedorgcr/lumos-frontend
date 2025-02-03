@@ -45,13 +45,25 @@ const LandingPage = () => {
             </Link>
           </div>
           {user !== undefined ? (
-            <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
-                    hover:bg-white hover:text-black transition-all duration-500 
-                    text-lg font-neuethin"
-              onClick={() => handleLogout()}
-            >
-              Logout
-            </button>
+            <>
+              {user.pfp && (
+                <Image
+                  src={user.pfp}
+                  alt="User Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover"
+                />
+              )}
+              <button
+                className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
+                                            hover:bg-white hover:text-black transition-all duration-500 
+                                            text-lg font-neuethin"
+                onClick={() => handleLogout()}
+              >
+                Logout
+              </button>
+            </>
           ) : (
             <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
                     hover:bg-white hover:text-black transition-all duration-500 
