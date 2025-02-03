@@ -31,7 +31,14 @@ const nextConfig = {
    * @see https://nextjs.org/docs/app/api-reference/components/image#unoptimized
    */
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**',
+        port: '',
+        pathname: '**',
+      },
+    ],
   },
 };
 

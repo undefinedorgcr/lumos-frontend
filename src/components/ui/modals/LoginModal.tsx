@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { auth, provider } from '@/lib/firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, TwitterAuthProvider } from 'firebase/auth';
 import { useState } from 'react';
+import { useSetAtom } from 'jotai';
+import { activeUser } from '@/state/user';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -15,11 +17,12 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const setUser = useSetAtom(activeUser);
 
     const handleLoginGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
-            console.log("Usuario logueado:", result.user);
+            setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -29,7 +32,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     const handleLoginX = async () => {
         try {
             const result = await signInWithPopup(auth, new TwitterAuthProvider());
-            console.log("Usuario logueado:", result.user);
+            setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -40,7 +43,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     const handleLogin = async () => {
         try {
             const result = await signInWithEmailAndPassword(auth, email, password);
-            console.log("Usuario logueado:", result.user);
+            setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '/images/defUserPfp.png' });
             onClose(false);
         } catch (error) {
             const result = await createUserWithEmailAndPassword(auth, email, password);
