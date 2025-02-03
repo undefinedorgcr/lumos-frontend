@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDcvEusFG8eIQGHe0QcNvpBjLJeEaqZK_U",
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
     authDomain: "lumos-9a450.firebaseapp.com",
     projectId: "lumos-9a450",
     storageBucket: "lumos-9a450.firebasestorage.app",
