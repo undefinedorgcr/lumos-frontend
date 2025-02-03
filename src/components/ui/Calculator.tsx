@@ -6,49 +6,49 @@ import { fetchCryptoPrice } from '@/apis/pragma';
 import { calculateDepositAmounts } from '@/lib/utils';
 
 interface CalculatorProps {
+    token0: Token;
     token1: Token;
-    token2: Token;
     feeRate: number;
     initialPrice: number;
     volume: number | null;
     liquidity: number;
 }
 
-const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: CalculatorProps) => {
+const Calculator = ({ token0, token1, feeRate, initialPrice, volume }: CalculatorProps) => {
     const [depositAmount, setDepositAmount] = useState(0);
     const [fee, setFee] = useState<number>(0);
     const [minPrice, setMinPrice] = useState(Number((initialPrice - initialPrice * 0.06).toFixed(6)));
     const [maxPrice, setMaxPrice] = useState(Number((initialPrice + initialPrice * 0.06).toFixed(6)));
-    const [t1CurrentPrice, setT1CurrentPrice] = useState(0);
-    const [t2CurrentPrice, setT2CurrentPrice] = useState(0);
+    const [t0CurrentPrice, sett0CurrentPrice] = useState(0);
+    const [t1CurrentPrice, sett1CurrentPrice] = useState(0);
     const [depositAmounts, setDepositAmounts] = useState([0, 0]);
     const [priceRangePercentage, setPriceRangePercentage] = useState(6);
 
     useEffect(() => {
         async function setupCalculator() {
             try {
-                setT1CurrentPrice(await fetchCryptoPrice(token1.symbol));
-                setT2CurrentPrice(await fetchCryptoPrice(token2.symbol));
+                sett0CurrentPrice(await fetchCryptoPrice(token0.symbol));
+                sett1CurrentPrice(await fetchCryptoPrice(token1.symbol));
             } catch (err) {
                 console.log(err);
             }
         }
         setupCalculator();
-    }, [token1.symbol]);
+    }, [token0.symbol]);
 
     async function handlePricesChange(min: number, max: number, amount: number) {
-        const currentLiquidity = await fetchLiquidityInRange(token1, token2, min, max);
+        const currentLiquidity = await fetchLiquidityInRange(token0, token1, min, max);
 
         if (volume !== null && currentLiquidity != null) {
-            if (amount <= 0 || t1CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
+            if (amount <= 0 || t0CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
                 setFee(0);
                 setDepositAmounts([0, 0]);
                 return;
             }
 
             let marketRangeWidth = 0;
-            if (t1CurrentPrice >= min && t1CurrentPrice <= max) {
-                marketRangeWidth = t1CurrentPrice - min;
+            if (t0CurrentPrice >= min && t0CurrentPrice <= max) {
+                marketRangeWidth = t0CurrentPrice - min;
             }
 
             if (marketRangeWidth === 0) {
@@ -57,12 +57,12 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
                 return;
             }
 
-            const amounts = calculateDepositAmounts(amount, t1CurrentPrice, t2CurrentPrice, min, max);
+            const amounts = calculateDepositAmounts(amount, t0CurrentPrice, t1CurrentPrice, min, max);
             setDepositAmounts(amounts);
-            const Pl = min / (10 ** (token1.decimals - token2.decimals));
-            const Pu = max / (10 ** (token1.decimals - token2.decimals));
-            const liquidityAmount0 = (amounts[0] * 10 ** token1.decimals) * (Math.sqrt(Pu) * Math.sqrt(Pl)) / (Math.sqrt(Pu) - Math.sqrt(Pl));
-            const liquidityAmount1 = (amounts[0] * 10 ** token1.decimals) / (Math.sqrt(Pu) - Math.sqrt(Pl));
+            const Pl = min / (10 ** (token0.decimals - token1.decimals));
+            const Pu = max / (10 ** (token0.decimals - token1.decimals));
+            const liquidityAmount0 = (amounts[0] * 10 ** token0.decimals) * (Math.sqrt(Pu) * Math.sqrt(Pl)) / (Math.sqrt(Pu) - Math.sqrt(Pl));
+            const liquidityAmount1 = (amounts[0] * 10 ** token0.decimals) / (Math.sqrt(Pu) - Math.sqrt(Pl));
             const deltaL = Math.min(liquidityAmount0, liquidityAmount1);
             const fee = (feeRate / 100) * volume * (deltaL / (currentLiquidity + deltaL));
             setFee(fee);
@@ -84,10 +84,10 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
                 <div className="p-4 border-b border-zinc-800">
                     <div className="flex items-center space-x-2">
                         <div className="flex items-center">
-                            <Image src={token1.logo_url} width={24} height={24} alt={token1.symbol} className="rounded-full" />
-                            <Image src={token2.logo_url} width={24} height={24} alt={token2.symbol} className="rounded-full -ml-2" />
+                            <Image src={token0.logo_url} width={24} height={24} alt={token0.symbol} className="rounded-full" />
+                            <Image src={token1.logo_url} width={24} height={24} alt={token1.symbol} className="rounded-full -ml-2" />
                         </div>
-                        <span className="text-lg font-medium">{token1.symbol}/{token2.symbol}</span>
+                        <span className="text-lg font-medium">{token0.symbol}/{token1.symbol}</span>
                         <span className="text-sm text-zinc-400">{feeRate}% Fee</span>
                         <span className="bg-zinc-800 px-2 py-0.5 rounded text-xs text-zinc-400">Starknet</span>
                     </div>
@@ -141,14 +141,14 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
                             </div>
 
                             <div className="space-y-2">
-                                {[token1, token2].map((token, index) => (
+                                {[token0, token1].map((token, index) => (
                                     <div key={token.symbol} className="bg-zinc-900 rounded-lg p-3 flex items-center justify-between">
                                         <div className="flex items-center space-x-2">
                                             <Image src={token.logo_url} width={20} height={20} alt={token.symbol} className="rounded-full" />
                                             <span>{token.symbol}</span>
                                         </div>
                                         <div className="text-right">
-                                            <p>{(depositAmounts[index] / (index === 0 ? t1CurrentPrice : t2CurrentPrice)).toFixed(6)}</p>
+                                            <p>{(depositAmounts[index] / (index === 0 ? t0CurrentPrice : t1CurrentPrice)).toFixed(6)}</p>
                                             <p className="text-sm text-zinc-400">${depositAmounts[index].toFixed(2)}</p>
                                         </div>
                                     </div>
@@ -176,12 +176,12 @@ const Calculator = ({ token1, token2, feeRate, initialPrice, volume }: Calculato
                                 <div className="bg-zinc-800 rounded-lg p-3">
                                     <span className="text-xs text-zinc-400">Min Price</span>
                                     <p className="text-lg font-medium">{minPrice.toFixed(6)}</p>
-                                    <span className="text-xs text-zinc-400">{token2.symbol} per {token1.symbol}</span>
+                                    <span className="text-xs text-zinc-400">{token1.symbol} per {token0.symbol}</span>
                                 </div>
                                 <div className="bg-zinc-800 rounded-lg p-3">
                                     <span className="text-xs text-zinc-400">Max Price</span>
                                     <p className="text-lg font-medium">{maxPrice.toFixed(6)}</p>
-                                    <span className="text-xs text-zinc-400">{token2.symbol} per {token1.symbol}</span>
+                                    <span className="text-xs text-zinc-400">{token1.symbol} per {token0.symbol}</span>
                                 </div>
                             </div>
                         </div>

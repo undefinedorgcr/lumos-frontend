@@ -20,8 +20,8 @@ export default function Calculators() {
     const [errorDesc, setErrorDesc] = useState("");
     const [selectedToken, setSelectedToken] = useState(1);
     const [showCalculator, setShowCalculator] = useState(false);
-    const [token0, setToken1] = useState<Token | undefined>(undefined);
-    const [token1, setToken2] = useState<Token | undefined>(undefined);
+    const [token0, setToken0] = useState<Token | undefined>(undefined);
+    const [token1, setToken1] = useState<Token | undefined>(undefined);
     const [volume, setVolume] = useState<number | null>(null);
     const [initialPrice, setInitialPrice] = useState(0);
     const [poolLiquidity, setPoolLiquidity] = useState(0);
@@ -152,8 +152,8 @@ export default function Calculators() {
 
             {showCalculator && token0 !== undefined && token1 !== undefined && !isLoading && (
                 <Calculator
-                    token1={token0}
-                    token2={token1}
+                    token0={token0}
+                    token1={token1}
                     feeRate={fee}
                     initialPrice={initialPrice}
                     volume={volume}
@@ -164,7 +164,7 @@ export default function Calculators() {
             <TokenSelectorModal
                 isOpen={openTokenSelector}
                 onClose={setOpenTokenSelector}
-                onSelectToken={selectedToken == 1 ? setToken1 : setToken2}
+                onSelectToken={selectedToken == 1 ? setToken0 : setToken1}
                 tokens={tokens}
                 topTokens={TOP_TOKENS_SYMBOL}
             />

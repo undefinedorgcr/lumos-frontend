@@ -132,11 +132,11 @@ export default function MyPositions() {
                         </td>
                         <td className="px-6 py-4">
                           <Link
-                            href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t1}&quoteCurrency=${position.pool.t2}`}
+                            href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t0}&quoteCurrency=${position.pool.t1}`}
                             target="_blank"
                             className="text-indigo-400 hover:text-indigo-300 transition-colors"
                           >
-                            {position.pool.t1}/{position.pool.t2}
+                            {position.pool.t0}/{position.pool.t1}
                           </Link>
                         </td>
                         <td className="px-6 py-4">
