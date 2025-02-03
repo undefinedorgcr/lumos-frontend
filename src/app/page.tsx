@@ -1,12 +1,14 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image'
 import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
-import WalletConnector from '@/components/ui/connectWallet';
 import Footer from '@/components/ui/footer';
+import LoginModal from '@/components/ui/modals/LoginModal';
 
 const LandingPage = () => {
+  const [openLogin, setOpenLogin] = useState<boolean>(false);
+
   return (
     <div className="min-h-screen flex flex-col">
       <StarField />
@@ -32,7 +34,13 @@ const LandingPage = () => {
               Pools
             </Link>
           </div>
-          <WalletConnector />
+          <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
+                    hover:bg-white hover:text-black transition-all duration-500 
+                    text-lg font-neuethin"
+            onClick={() => setOpenLogin(true)}
+          >
+            Login
+          </button>
         </div>
       </nav>
       <main className="flex-1 flex items-center px-6">
@@ -65,16 +73,16 @@ const LandingPage = () => {
               <div className="flex gap-6">
                 <Link
                   href="#"
-                  className="px-8 py-4 rounded-md border border-white/20 bg-white/5 
-                    hover:bg-white hover:text-black transition-all duration-300 
+                  className="px-8 py-3 rounded-md border border-white/20 bg-white/5 
+                    hover:bg-white hover:text-black transition-all duration-500 
                     text-lg font-neuethin"
                 >
                   Get started
                 </Link>
                 <Link
                   href="/knowmore"
-                  className="px-8 py-4 rounded-md border border-white/20 bg-white/5 
-                    hover:bg-white hover:text-black transition-all duration-300 
+                  className="px-8 py-3 rounded-md border border-white/20 bg-white/5 
+                    hover:bg-white hover:text-black transition-all duration-500 
                     text-lg font-neuethin"
                 >
                   Know more
@@ -84,8 +92,8 @@ const LandingPage = () => {
           </div>
         </div>
       </main>
-
       <Footer />
+      <LoginModal isOpen={openLogin} onClose={setOpenLogin}/>
     </div>
   );
 };
