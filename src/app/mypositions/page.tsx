@@ -12,6 +12,7 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import WalletConnector from "@/components/ui/connectWallet";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
@@ -26,7 +27,7 @@ export default function MyPositions() {
       try {
         const data = await fetchPosition(wallet?.account?.address);
         setPositions(data);
-      } catch(err) {
+      } catch (err) {
         console.log(err);
         setPositions(undefined);
       } finally {
@@ -35,10 +36,6 @@ export default function MyPositions() {
     }
     getPositions();
   }, [wallet?.account?.address]);
-
-  function handleProtocolChange(pProtocol: string) {
-    setProtocol(pProtocol)
-  }
 
   const headerTooltips = {
     "Position ID": "Unique identifier for your liquidity position",
@@ -51,58 +48,69 @@ export default function MyPositions() {
   };
 
   return (
-    <div className="min-h-screen p-6">
-      <Navbar></Navbar>
+    <div>
+      <Navbar />
 
-      <div className="text-white p-8">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-2xl mb-6">Select the protocol</h1>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        <div className="space-y-8">
+          <div className="space-y-4">
+            <header className="flex justify-between items-center">
+              <h1 className="text-3xl font-light">My Positions</h1>
+              <WalletConnector />
+            </header>
+            <p className="text-gray-400">Manage your liquidity positions across protocols</p>
+          </div>
 
-          <div className="flex gap-4 mb-12">
+          <div className="flex gap-4">
             {protocols.map((p) => (
-              <button 
+              <button
                 key={p}
-                onClick={() => handleProtocolChange(p)}
-                className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors
-                  ${protocol === p ? 'bg-zinc-800' : 'bg-zinc-900'} 
-                  ${protocol === p ? 'border border-white' : ''} 
-                  hover:bg-zinc-700`}
+                onClick={() => setProtocol(p)}
+                className={`
+                  flex items-center gap-3 px-6 py-3 rounded-full transition-all
+                  ${protocol === p
+                    ? 'bg-white/10 ring-1 ring-white/20 shadow-lg'
+                    : 'bg-white/5 hover:bg-white/10'
+                  }
+                `}
               >
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <Image
-                    src={`/images/${p}Logo.png`}
-                    width={30}
-                    height={30}
-                    alt={`${p} logo`}
-                    className="pointer-events-none"
-                  />
-                </div>
-                <span>{p}</span>
+                <Image
+                  src={`/images/${p}Logo.png`}
+                  width={24}
+                  height={24}
+                  alt={`${p} logo`}
+                  className="pointer-events-none"
+                />
+                <span className="font-light">{p}</span>
               </button>
             ))}
           </div>
-            
+
           {isLoading ? (
-            <div className="border border-gray-500 rounded-2xl p-12 text-center">
-              <LoadingSpinner/>
-              Loading postions...
+            <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+              <LoadingSpinner />
+              <p className="text-gray-400">Loading your positions...</p>
+            </div>
+          ) : !wallet ? (
+            <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+              <p className="text-xl font-light text-gray-400">Please connect your wallet to see your active positions.</p>
             </div>
           ) : positions ? (
-            <div className="border border-gray-500 rounded-2xl overflow-hidden">
+            <div className="bg-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
               <TooltipProvider>
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-500">
+                    <tr className="border-b border-white/10">
                       {Object.entries(headerTooltips).map(([header, tooltip]) => (
-                        <th key={header} className="px-6 py-4 text-left text-sm font-normal">
+                        <th key={header} className="px-6 py-4 text-left">
                           <div className="flex items-center gap-2">
-                            {header}
+                            <span className="text-sm font-normal text-gray-400">{header}</span>
                             <Tooltip>
                               <TooltipTrigger>
-                                <CircleHelp className="w-4 h-4 text-gray-400" />
+                                <CircleHelp className="w-4 h-4 text-gray-500" />
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>{tooltip}</p>
+                                <p className="text-sm">{tooltip}</p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -110,31 +118,41 @@ export default function MyPositions() {
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-white/5">
                     {positions.map((position) => (
-                      <tr key={position.positionId} className="border-b border-gray-700">
+                      <tr key={position.positionId} className="hover:bg-white/5 transition-colors">
                         <td className="px-6 py-4">
-                          <Link 
-                            href="https://app.ekubo.org/positions" 
+                          <Link
+                            href="https://app.ekubo.org/positions"
                             target="_blank"
                             className="text-indigo-400 hover:text-indigo-300 transition-colors"
                           >
-                            {position.positionId}
+                            #{position.positionId}
                           </Link>
                         </td>
                         <td className="px-6 py-4">
-                          <Link 
-                            href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t1}&quoteCurrency=${position.pool.t2}`}
-                            target="_blank" 
+                          <Link
+                            href={`https://app.ekubo.org/positions/new?baseCurrency=${position.pool.t0}&quoteCurrency=${position.pool.t1}`}
+                            target="_blank"
                             className="text-indigo-400 hover:text-indigo-300 transition-colors"
                           >
-                            {position.pool.t1}/{position.pool.t2}
+                            {position.pool.t0}/{position.pool.t1}
                           </Link>
                         </td>
-                        <td className="px-6 py-4">{position.roi.toFixed(2)}%</td>
-                        <td className="px-6 py-4">{position.feeAPY.toFixed(2)}%</td>
+                        <td className="px-6 py-4">
+                          <span className={position.roi >= 0 ? "text-green-400" : "text-red-400"}>
+                            {position.roi.toFixed(2)}%
+                          </span>
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-green-400">{position.feeAPY.toFixed(2)}%</span>
+                        </td>
                         <td className="px-6 py-4">${position.liquidity.toFixed(2)}</td>
-                        <td className="px-6 py-4">${position.priceRange.min.toFixed(2)}-{position.priceRange.max.toFixed(2)}</td>
+                        <td className="px-6 py-4">
+                          <span className="text-gray-400">
+                            ${position.priceRange.min.toFixed(2)} - ${position.priceRange.max.toFixed(2)}
+                          </span>
+                        </td>
                         <td className="px-6 py-4">${position.currentPrice.toFixed(2)}</td>
                       </tr>
                     ))}
@@ -143,14 +161,14 @@ export default function MyPositions() {
               </TooltipProvider>
             </div>
           ) : (
-            <div className="border border-gray-500 rounded-2xl p-12 flex items-center justify-center">
-              <p className="text-xl text-gray-300">You do not have any active positions.</p>
+            <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+              <p className="text-xl font-light text-gray-400">No active positions found</p>
             </div>
           )}
         </div>
-      </div>
+      </main>
 
-      <Footer></Footer>
+      <Footer />
     </div>
   );
 }
