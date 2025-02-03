@@ -1,11 +1,12 @@
 'use client'
-import React from 'react';
+import React, { useState } from 'react';
 import { Star } from 'lucide-react';
 import Image from 'next/image';
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
+import ErrorModal from '@/components/ui/modals/ErrorModal';
 
 export default function PoolOverview() {
     const dummyPools = [{
@@ -30,6 +31,8 @@ export default function PoolOverview() {
         tvl: "$174.55m",
         fees: "$87.49k"
     }];
+
+    const [openError, setOpenError] = useState<boolean>(true);
 
     return (
         <div>
@@ -59,7 +62,6 @@ export default function PoolOverview() {
                             </button>
                         </div>
                     </div>
-                    {/* Protocol Selection */}
                     <div className="flex flex-wrap gap-2">
                         {['Ekubo'].map(protocol => (
                             <button
@@ -94,10 +96,10 @@ export default function PoolOverview() {
                                 <thead>
                                     <tr className="border-b border-white/10">
                                         <th className="px-6 py-4 text-left">&nbsp;</th>
-                                        <th className="px-6 py-4 text-left">POOL</th>
+                                        <th className="px-6 py-4 text-left">Pool</th>
                                         <th className="px-6 py-4 text-left">
                                             <div className="flex items-center gap-2">
-                                                FEE APY
+                                                Fee APY
                                                 <Tooltip>
                                                     <TooltipTrigger>
                                                         <CircleHelp className="w-4 h-4 text-gray-400" />
@@ -108,10 +110,22 @@ export default function PoolOverview() {
                                                 </Tooltip>
                                             </div>
                                         </th>
-                                        <th className="px-6 py-4 text-left">RISK</th>
-                                        <th className="px-6 py-4 text-left">PRICE VOLATILITY 1D</th>
-                                        <th className="px-6 py-4 text-left">TVL</th>
-                                        <th className="px-6 py-4 text-left">1D FEES</th>
+                                        <th className="px-6 py-4 text-left">Risk</th>
+                                        <th className="px-6 py-4 text-left">Price volatility (24h)</th>
+                                        <th className="px-6 py-4 text-left">
+                                            <div className="flex items-center gap-2">
+                                                TVL
+                                                <Tooltip>
+                                                    <TooltipTrigger>
+                                                        <CircleHelp className="w-4 h-4 text-gray-400" />
+                                                    </TooltipTrigger>
+                                                    <TooltipContent>
+                                                        <p>Total Value Locked</p>
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </div>
+                                        </th>
+                                        <th className="px-6 py-4 text-left">Fees (24h)</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -149,8 +163,8 @@ export default function PoolOverview() {
                     </div>
                 </div>
             </main>
-
             <Footer />
+            <ErrorModal isOpen={openError} onClose={setOpenError} title={'Not implemented'} message={'This page is just a preview of how the Pools section might look like, the implementation is coming soon...'}></ErrorModal>
         </div>
     );
 }

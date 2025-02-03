@@ -15,8 +15,7 @@ export const ErrorModal = ({ isOpen, onClose, title, message }: ErrorModalProps)
     return (
         <div className="fixed inset-0 bg-[#111111]/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <StarField></StarField>
-            <div className="bg-[#111111] rounded-lg w-full max-w-md relative border border-white">
-                {/* Close button */}
+            <div className="bg-[#171717] rounded-lg w-full max-w-md relative">
                 <button
                     onClick={() => onClose(false)}
                     className="absolute right-4 top-4 text-gray-500 hover:text-gray-400 transition-colors"

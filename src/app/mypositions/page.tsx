@@ -12,6 +12,7 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import WalletConnector from "@/components/ui/connectWallet";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
@@ -52,10 +53,13 @@ export default function MyPositions() {
 
       <main className="max-w-7xl mx-auto px-6 py-12">
         <div className="space-y-8">
-          <header className="space-y-2">
-            <h1 className="text-3xl font-light">My Positions</h1>
+          <div className="space-y-4">
+            <header className="flex justify-between items-center">
+              <h1 className="text-3xl font-light">My Positions</h1>
+              <WalletConnector />
+            </header>
             <p className="text-gray-400">Manage your liquidity positions across protocols</p>
-          </header>
+          </div>
 
           <div className="flex gap-4">
             {protocols.map((p) => (
@@ -86,6 +90,10 @@ export default function MyPositions() {
             <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
               <LoadingSpinner />
               <p className="text-gray-400">Loading your positions...</p>
+            </div>
+          ) : !wallet ? (
+            <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+              <p className="text-xl font-light text-gray-400">Please connect your wallet to see your active positions.</p>
             </div>
           ) : positions ? (
             <div className="bg-white/5 rounded-2xl overflow-hidden backdrop-blur-sm">
@@ -155,12 +163,6 @@ export default function MyPositions() {
           ) : (
             <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
               <p className="text-xl font-light text-gray-400">No active positions found</p>
-              <Link
-                href="/positions/new"
-                className="inline-block px-6 py-3 bg-indigo-500 hover:bg-indigo-600 rounded-full transition-colors"
-              >
-                Create New Position
-              </Link>
             </div>
           )}
         </div>

@@ -47,7 +47,6 @@ export default function Calculators() {
     ];
 
     async function handleContinue() {
-        setIsLoading(true);
         if (token0 == undefined || token1 == undefined) {
             setOpenError(true);
             setErrorTitle("Tokens not selected");
