@@ -5,9 +5,19 @@ import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
 import Footer from '@/components/ui/footer';
 import LoginModal from '@/components/ui/modals/LoginModal';
+import { activeUser } from '@/state/user';
+import { useAtom } from 'jotai';
+import { signOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 const LandingPage = () => {
   const [openLogin, setOpenLogin] = useState<boolean>(false);
+  const [user, setUser] = useAtom(activeUser);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setUser(undefined);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -34,13 +44,23 @@ const LandingPage = () => {
               Pools
             </Link>
           </div>
-          <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
+          {user !== undefined ? (
+            <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
                     hover:bg-white hover:text-black transition-all duration-500 
                     text-lg font-neuethin"
-            onClick={() => setOpenLogin(true)}
-          >
-            Login
-          </button>
+              onClick={() => handleLogout()}
+            >
+              Logout
+            </button>
+          ) : (
+            <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
+                    hover:bg-white hover:text-black transition-all duration-500 
+                    text-lg font-neuethin"
+              onClick={() => setOpenLogin(true)}
+            >
+              Login
+            </button>
+          )}
         </div>
       </nav>
       <main className="flex-1 flex items-center px-6">
@@ -93,7 +113,7 @@ const LandingPage = () => {
         </div>
       </main>
       <Footer />
-      <LoginModal isOpen={openLogin} onClose={setOpenLogin}/>
+      <LoginModal isOpen={openLogin} onClose={setOpenLogin} />
     </div>
   );
 };
