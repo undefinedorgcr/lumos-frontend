@@ -1,8 +1,8 @@
 export interface Position {
     positionId: number;
     pool: {
-      t1: string,
-      t2: string
+      t0: string,
+      t1: string
     };
     roi: number;
     feeAPY: number;

@@ -147,13 +147,17 @@ export default function KnowMore() {
       </div>
       <div className="flex justify-center gap-6 max-w-6xl mx-auto mt-12">
   <Link
-    className="w-[200px] px-12 py-5 text-lg rounded-lg border border-white bg-transparent text-white font-light hover:bg-white/5 transition-colors text-center"
+    className="px-8 py-3 rounded-md border border-white/20 bg-white/5 
+    hover:bg-white hover:text-black transition-all duration-500 
+    text-lg font-neuethin"
     href="/calculators"
   >
     Get started
   </Link>
   <Link
-    className="w-[200px] px-15 py-5 text-lg rounded-lg border border-white bg-transparent text-white font-light hover:bg-white/5 transition-colors text-center"
+    className="px-8 py-3 rounded-md border border-white/20 bg-white/5 
+    hover:bg-white hover:text-black transition-all duration-500 
+    text-lg font-neuethin"
     href="/"
   >
     See documentation

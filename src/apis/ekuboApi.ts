@@ -15,15 +15,15 @@ const BASE_URL = "https://mainnet-api.ekubo.org";
 const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
 
 // TODO: implement this tokens
-export const TOP_TOKENS_SYMBOL = [
-  "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
-  "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
-];
-
 // export const TOP_TOKENS_SYMBOL = [
-//   "STRK", "USDC", "ETH"
+//   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
+//   "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
+//   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
 // ];
+
+export const TOP_TOKENS_SYMBOL = [
+  "STRK", "USDC", "ETH"
+];
 
 // Utility functions
 const getTokenDecimals = (symbol: string): number =>
@@ -40,8 +40,8 @@ const calculateFeeU128 = (fee: number): string => {
 };
 
 interface TokenMetadata {
+  token0: string;
   token1: string;
-  token2: string;
   price1: number;
   price2: number;
   percentage1: number;
@@ -50,13 +50,13 @@ interface TokenMetadata {
 
 const extractPositionMetadata = (input: string): TokenMetadata => {
   const [pair, prices, percentages] = input.split(' : ');
-  const [token2, token1] = pair.split(' / ');
+  const [token1, token0] = pair.split(' / ');
   const [price1, price2] = prices.split(' <> ');
   const [percentage1, percentage2] = percentages.split(' / ');
 
   return {
+    token0,
     token1,
-    token2,
     price1: parseFloat(price1),
     price2: parseFloat(price2),
     percentage1: parseFloat(percentage1.replace('%', '')),
@@ -75,14 +75,14 @@ export async function fetchTokens() {
   }
 }
 
-export async function fetchLatestPairVolume(t1: Token, t2: Token, t1price: number, t2price: number): Promise<number> {
+export async function fetchLatestPairVolume(t0: Token, t1: Token, t0price: number, t1price: number): Promise<number> {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/pair/${t1.l2_token_address}/${t2.l2_token_address}/volume`
+      `${BASE_URL}/pair/${t0.l2_token_address}/${t1.l2_token_address}/volume`
     );
 
-    const volume1 = formatTokenAmount(data.volumeByToken_24h[0].volume, t1.symbol) * t1price;
-    const volume2 = formatTokenAmount(data.volumeByToken_24h[1].volume, t2.symbol) * t2price;
+    const volume1 = formatTokenAmount(data.volumeByToken_24h[0].volume, t0.symbol) * t0price;
+    const volume2 = formatTokenAmount(data.volumeByToken_24h[1].volume, t1.symbol) * t1price;
 
     return volume1 + volume2;
   } catch (error) {
@@ -91,10 +91,10 @@ export async function fetchLatestPairVolume(t1: Token, t2: Token, t1price: numbe
   }
 }
 
-export async function fetchPool(t1: Token, t2: Token, fee: number): Promise<Pool | null> {
+export async function fetchPool(t0: Token, t1: Token, fee: number): Promise<Pool | null> {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/pair/${t1.l2_token_address}/${t2.l2_token_address}/pools`
+      `${BASE_URL}/pair/${t0.l2_token_address}/${t1.l2_token_address}/pools`
     );
 
     const feeStr = calculateFeeU128(fee);
@@ -107,16 +107,16 @@ export async function fetchPool(t1: Token, t2: Token, fee: number): Promise<Pool
   }
 }
 
-export async function fetchPoolKeyHash(t1: Token, t2: Token, fee: number): Promise<PoolState | undefined> {
+export async function fetchPoolKeyHash(t0: Token, t1: Token, fee: number): Promise<PoolState | undefined> {
   try {
     const { data } = await axios.get(`${BASE_URL}/pools`);
     const feeStr = calculateFeeU128(fee);
+    const t0Address = normalizeHex(t0.l2_token_address).trim();
     const t1Address = normalizeHex(t1.l2_token_address).trim();
-    const t2Address = normalizeHex(t2.l2_token_address).trim();
 
     return data.find((poolInfo: PoolState) =>
+      poolInfo.token0 === t0Address &&
       poolInfo.token0 === t1Address &&
-      poolInfo.token1 === t2Address &&
       num.hexToDecimalString(poolInfo.fee).slice(0, 2) === feeStr.slice(0, 2)
     );
   } catch (error) {
@@ -125,19 +125,19 @@ export async function fetchPoolKeyHash(t1: Token, t2: Token, fee: number): Promi
   }
 }
 
-export async function fetchTvl(t1: Token, t2: Token): Promise<number> {
+export async function fetchTvl(t0: Token, t1: Token): Promise<number> {
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/pair/${t1.l2_token_address}/${t2.l2_token_address}/tvl`
+      `${BASE_URL}/pair/${t0.l2_token_address}/${t1.l2_token_address}/tvl`
     );
 
-    const [t1price, t2price] = await Promise.all([
-      fetchCryptoPrice(t1.symbol),
-      fetchCryptoPrice(t2.symbol)
+    const [t0price, t1price] = await Promise.all([
+      fetchCryptoPrice(t0.symbol),
+      fetchCryptoPrice(t1.symbol)
     ]);
 
-    const val1 = formatTokenAmount(data.tvlByToken[0].balance, t1.symbol) * t1price;
-    const val2 = formatTokenAmount(data.tvlByToken[1].balance, t2.symbol) * t2price;
+    const val1 = formatTokenAmount(data.tvlByToken[0].balance, t0.symbol) * t0price;
+    const val2 = formatTokenAmount(data.tvlByToken[1].balance, t1.symbol) * t1price;
 
     return val1 + val2;
   } catch (error) {
@@ -147,8 +147,8 @@ export async function fetchTvl(t1: Token, t2: Token): Promise<number> {
 }
 
 export async function fetchLiquidityInRange(
+  t0: Token,
   t1: Token,
-  t2: Token,
   minPrice: number,
   maxPrice: number,
 ): Promise<number | null> {
@@ -158,7 +158,7 @@ export async function fetchLiquidityInRange(
   let totalLiquidity = BigInt(0);
   try {
     const { data } = await axios.get(
-      `${BASE_URL}/tokens/${t1.l2_token_address}/${t2.l2_token_address}/liquidity`
+      `${BASE_URL}/tokens/${t0.l2_token_address}/${t1.l2_token_address}/liquidity`
     );
 
     const liquidityData = data.data;
@@ -174,7 +174,7 @@ export async function fetchLiquidityInRange(
 
     for (const tick in liquidityMap) {
       const liquidity = liquidityMap[tick]; 
-      const price = tickToPrice(Number(tick)) * 10 ** 12;
+      const price = tickToPrice(Number(tick)) * (10 ** (t0.decimals - t1.decimals));
       if (price >= minPrice && price <= maxPrice) {
         totalLiquidity += liquidity;
       }
@@ -243,25 +243,25 @@ export async function fetchPosition(address: string): Promise<Position[]> {
 
       const positionInfo = await ekuboPositionsContract.get_token_info(position.id, poolKey, bounds);
 
-      const [token1Price, token2Price] = await Promise.all([
-        fetchCryptoPrice(extractedValues.token1),
-        fetchCryptoPrice(extractedValues.token2)
+      const [token0Price, token1Price] = await Promise.all([
+        fetchCryptoPrice(extractedValues.token0),
+        fetchCryptoPrice(extractedValues.token1)
       ]);
 
-      const fee1 = formatTokenAmount(positionInfo.fees0, extractedValues.token1) * token1Price;
-      const fee2 = formatTokenAmount(positionInfo.fees1, extractedValues.token2) * token2Price;
-      const amount1 = formatTokenAmount(positionInfo.amount0, extractedValues.token1) * token1Price;
-      const amount2 = formatTokenAmount(positionInfo.amount1, extractedValues.token2) * token2Price;
+      const fee1 = formatTokenAmount(positionInfo.fees0, extractedValues.token0) * token0Price;
+      const fee2 = formatTokenAmount(positionInfo.fees1, extractedValues.token1) * token1Price;
+      const amount0 = formatTokenAmount(positionInfo.amount0, extractedValues.token0) * token0Price;
+      const amount1 = formatTokenAmount(positionInfo.amount1, extractedValues.token1) * token1Price;
 
-      const liquidity = amount1 + amount2;
+      const liquidity = amount0 + amount1;
       const roi = ((fee1 + fee2) / liquidity) * 100;
       const apy = ((1 + (roi / 365)) * 365) - 1;
 
       return {
         positionId: position.id,
         pool: {
+          t0: extractedValues.token0,
           t1: extractedValues.token1,
-          t2: extractedValues.token2,
         },
         roi,
         feeAPY: apy,
@@ -270,7 +270,7 @@ export async function fetchPosition(address: string): Promise<Position[]> {
           min: extractedValues.price1,
           max: extractedValues.price2,
         },
-        currentPrice: Number(token1Price)
+        currentPrice: Number(token0Price)
       };
     }));
 
