@@ -57,12 +57,12 @@ const Calculator = ({ token0, token1, feeRate, initialPrice, volume }: Calculato
                 return;
             }
 
-            const amounts = calculateDepositAmounts(amount, t0CurrentPrice, t1CurrentPrice, min, max);
+            const amounts = calculateDepositAmounts(min, max, t0CurrentPrice/t1CurrentPrice, amount);
             setDepositAmounts(amounts);
             const Pl = min / (10 ** (token0.decimals - token1.decimals));
             const Pu = max / (10 ** (token0.decimals - token1.decimals));
             const liquidityAmount0 = (amounts[0] * 10 ** token0.decimals) * (Math.sqrt(Pu) * Math.sqrt(Pl)) / (Math.sqrt(Pu) - Math.sqrt(Pl));
-            const liquidityAmount1 = (amounts[0] * 10 ** token0.decimals) / (Math.sqrt(Pu) - Math.sqrt(Pl));
+            const liquidityAmount1 = (amounts[1] * 10 ** token0.decimals) / (Math.sqrt(Pu) - Math.sqrt(Pl));
             const deltaL = Math.min(liquidityAmount0, liquidityAmount1);
             const fee = (feeRate / 100) * volume * (deltaL / (currentLiquidity + deltaL));
             setFee(fee);

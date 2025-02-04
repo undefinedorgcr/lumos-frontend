@@ -4,8 +4,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
+        source: '/pragma/:path*',
         destination: 'https://api.dev.pragma.build/node/v1/data/:path*/usd',
+      },
+      {
+        source: "/eliza/:path*",
+        destination: process.env.NEXT_PUBLIC_LUMOS_AI_AGENT_URL + "/:path*",
       },
     ]
   },
@@ -31,14 +35,7 @@ const nextConfig = {
    * @see https://nextjs.org/docs/app/api-reference/components/image#unoptimized
    */
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-        port: '',
-        pathname: '**',
-      },
-    ],
+    unoptimized: true,
   },
 };
 
