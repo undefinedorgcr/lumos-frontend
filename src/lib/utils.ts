@@ -15,23 +15,19 @@ export function tickToPrice(tick: number) {
 }
 
 export function calculateDepositAmounts(
-  depositUSD: number,
-  currentPriceToken0USD: number,
-  currentPriceToken1USD: number,
-  minPriceToken1PerToken0: number,
-  maxPriceToken1PerToken0: number
+  Pmin: number,
+  Pmax: number,
+  Pcurrent: number,
+  depositUSD: number
 ) {
-  const P = currentPriceToken0USD / currentPriceToken1USD;
-  const sqrtP = Math.sqrt(P);
-  const sqrtPa = Math.sqrt(minPriceToken1PerToken0);
-  const sqrtPb = Math.sqrt(maxPriceToken1PerToken0);
-  
-  const term0 = (1 / sqrtP - 1 / sqrtPb) * currentPriceToken0USD;
-  const term1 = (sqrtP - sqrtPa) * currentPriceToken1USD;
-  const deltaL = depositUSD / (term0 + term1);
-  
-  const amount0 = deltaL * (1 / sqrtP - 1 / sqrtPb);
-  const amount1 = deltaL * (sqrtP - sqrtPa);
-  
-  return [ amount0 * currentPriceToken0USD, amount1 * currentPriceToken1USD ];
+  const sqrtPmin = Math.sqrt(Pmin);
+  const sqrtPmax = Math.sqrt(Pmax);
+  const sqrtPcurrent = Math.sqrt(Pcurrent);
+  const numerator = sqrtPcurrent - sqrtPmin;
+  const denominator = 1 / sqrtPcurrent - 1 / sqrtPmax;
+  const R = numerator / denominator;
+  const deltaX = depositUSD / (Pcurrent + R);
+  const deltaY = R * deltaX;
+
+  return [deltaX * Pcurrent, deltaY];
 }
