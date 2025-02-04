@@ -7,6 +7,10 @@ const nextConfig = {
         source: '/pragma/:path*',
         destination: 'https://api.dev.pragma.build/node/v1/data/:path*/usd',
       },
+      {
+        source: "/eliza/:path*",
+        destination: process.env.NEXT_PUBLIC_LUMOS_AI_AGENT_URL + "/:path*",
+      },
     ]
   },
   /**
