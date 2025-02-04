@@ -3,7 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { HelpCircle, X, Send } from 'lucide-react';
 import { Message } from '@/types/Message';
 
-const ELIZA_API_URL = "http://localhost:3001"
 const AGENT_ID = "2ec979e8-1d05-008f-a3f5-168815f3c660"
 
 const ChatWidget = () => {
@@ -18,7 +17,6 @@ const ChatWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Scroll to bottom when messages change
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -35,7 +33,7 @@ const ChatWidget = () => {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!message.trim() || isLoading) return;
 
     const userMessage: Message = {
@@ -50,9 +48,12 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${ELIZA_API_URL}/${AGENT_ID}/message`, {
+      const response = await fetch(`/eliza/${AGENT_ID}/message`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*"
+        },
         body: JSON.stringify({
           text: userMessage.content,
           userId: "1",
@@ -144,11 +145,10 @@ const ChatWidget = () => {
                 className={`flex flex-col ${msg.isUser ? 'items-end' : 'items-start'} mb-4`}
               >
                 <div
-                  className={`max-w-[80%] p-3 rounded-lg ${
-                    msg.isUser
+                  className={`max-w-[80%] p-3 rounded-lg ${msg.isUser
                       ? 'bg-black text-white rounded-br-none'
                       : 'bg-[#4C55FF] text-white rounded-bl-none'
-                  }`}
+                    }`}
                 >
                   {msg.content}
                 </div>
@@ -164,8 +164,8 @@ const ChatWidget = () => {
             )}
             <div ref={messagesEndRef} /> {/* Scroll anchor */}
           </div>
-          <form 
-            onSubmit={handleSendMessage} 
+          <form
+            onSubmit={handleSendMessage}
             className="p-4 border-t border-gray-200 flex gap-2"
           >
             <input
