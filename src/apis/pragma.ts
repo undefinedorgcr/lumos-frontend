@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export const fetchCryptoPrice = async (token: string): Promise<number> => {
-    const url = `/api/${token.toLowerCase()}`;
+    const url = `/pragma/${token.toLowerCase()}`;
     const response = await axios.get(url, {
         headers: {
             'x-api-key': process.env.NEXT_PUBLIC_PRAGMA_API_KEY,

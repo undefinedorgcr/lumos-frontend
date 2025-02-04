@@ -4,7 +4,7 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
+        source: '/pragma/:path*',
         destination: 'https://api.dev.pragma.build/node/v1/data/:path*/usd',
       },
     ]
@@ -31,14 +31,7 @@ const nextConfig = {
    * @see https://nextjs.org/docs/app/api-reference/components/image#unoptimized
    */
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-        port: '',
-        pathname: '**',
-      },
-    ],
+    unoptimized: true,
   },
 };
 
