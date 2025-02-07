@@ -9,11 +9,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { fetchTopPools } from '@/apis/ekuboApi';
+import ErrorModal from '@/components/ui/modals/ErrorModal';
 
 export default function PoolOverview() {
     const [pools, setPools] = useState<any[]>([]);
     const [selectedFee, setSelectedFee] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [openError, setOpenError] = useState(false);
 
     useEffect(() => {
         async function getPools() {
@@ -86,7 +88,7 @@ export default function PoolOverview() {
                             <tr className="border-b border-white/10">
                                 <th className="px-6 py-4 text-left">&nbsp;</th>
                                 <th className="px-6 py-4 text-left">Pool</th>
-                                <th className="px-6 py-4 text-left">
+                                {/* <th className="px-6 py-4 text-left">
                                     <div className="flex items-center gap-2">
                                         Fee APY
                                         <Tooltip>
@@ -98,9 +100,9 @@ export default function PoolOverview() {
                                             </TooltipContent>
                                         </Tooltip>
                                     </div>
-                                </th>
-                                <th className="px-6 py-4 text-left">Risk</th>
-                                <th className="px-6 py-4 text-left">Price volatility (24h)</th>
+                                </th> */}
+                                {/* <th className="px-6 py-4 text-left">Risk</th> */}
+                                {/* <th className="px-6 py-4 text-left">Price volatility (24h)</th> */}
                                 <th className="px-6 py-4 text-left">
                                     <div className="flex items-center gap-2">
                                         TVL (24h)
@@ -121,7 +123,7 @@ export default function PoolOverview() {
                             {filteredPools.map((item, index) => (
                                 <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4">
-                                        <button className="text-gray-400 hover:text-white transition-colors">
+                                        <button onClick={()=> {setOpenError(true)}} className="text-gray-400 hover:text-white transition-colors">
                                             <Star className="w-5 h-5" />
                                         </button>
                                     </td>
@@ -168,15 +170,15 @@ export default function PoolOverview() {
                                             </span>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 text-green-400">
+                                    {/* <td className="px-6 py-4 text-green-400">
                                         N/A
-                                    </td>
-                                    <td className="px-6 py-4">
+                                    </td> */}
+                                    {/* <td className="px-6 py-4">
                                         <span className="px-3 py-1 bg-green-400/10 text-green-400 rounded-full text-sm">
                                             SAFE
                                         </span>
-                                    </td>
-                                    <td className="px-6 py-4">N/A</td>
+                                    </td> */}
+                                    {/* <td className="px-6 py-4">N/A</td> */}
                                     <td className="px-6 py-4">${item.totalTvl.toFixed(2)}</td>
                                     <td className="px-6 py-4">${item.totalFees.toFixed(2)}</td>
                                 </tr>
@@ -250,6 +252,7 @@ export default function PoolOverview() {
                 </div>
             </main>
             <Footer />
+            <ErrorModal isOpen={openError} onClose={setOpenError} title={'Oops!'} message={'This feature will be implemented in the future'}/>
         </div>
     );
 }
