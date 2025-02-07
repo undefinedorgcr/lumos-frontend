@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Contract, num } from 'starknet';
 import axios, { AxiosError } from 'axios';
-
+import pLimit from 'p-limit';
 import { Token } from '@/types/Tokens';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
@@ -10,9 +10,12 @@ import { normalizeHex, tickToPrice } from '@/lib/utils';
 import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { fetchCryptoPrice } from './pragma';
+import { TokenPriceCache } from '@/lib/cache/tokenPriceCache';
 
 const BASE_URL = "https://mainnet-api.ekubo.org";
 const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
+
+const tokenPriceCache = new TokenPriceCache(60000);
 
 // TODO: implement this tokens
 // export const TOP_TOKENS_SYMBOL = [
@@ -23,6 +26,31 @@ const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
 
 export const TOP_TOKENS_SYMBOL = [
   "STRK", "USDC", "ETH"
+];
+
+
+const TOP_PAIRS = [
+  { "token0": "ETH", "token1": "USDC" },
+  { "token0": "STRK", "token1": "USDC" },
+  { "token0": "xSTRK", "token1": "STRK" },
+  { "token0": "LORDS", "token1": "ETH" },
+  { "token0": "USDC", "token1": "USDT" },
+  { "token0": "STRK", "token1": "ETH" },
+  { "token0": "STRK", "token1": "EKUBO" },
+  { "token0": "USDC", "token1": "EKUBO" },
+  { "token0": "WBTC", "token1": "ETH" },
+  { "token0": "LORDS", "token1": "STRK" },
+  // { "token0": "STAM", "token1": "STRK" },
+  { "token0": "USDC", "token1": "DAI" },
+  // { "token0": "CASH", "token1": "ETH" },
+  { "token0": "ETH", "token1": "EKUBO" },
+  // { "token0": "NSTR", "token1": "STRK" },
+  // { "token0": "DAIv0", "token1": "ETH" },
+  // { "token0": "DAIv0", "token1": "USDC" },
+  { "token0": "wstETH", "token1": "ETH" },
+  // { "token0": "CASH", "token1": "USDC" },
+  { "token0": "ETH", "token1": "USDT" },
+  { "token0": "WBTC", "token1": "USDC" }
 ];
 
 // Utility functions
@@ -107,6 +135,84 @@ export async function fetchPool(t0: Token, t1: Token, fee: number): Promise<Pool
   }
 }
 
+export async function fetchPoolByAddress(t0symbol: string, t1symbol: string): Promise<Pool | null> {
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/pair/${t0symbol}/${t1symbol}/pools`
+    );
+    return data.topPools;
+  } catch (error) {
+    console.log('Error fetching pool by address:', error);
+    return null;
+  }
+}
+
+const sortPoolsByFees = (pools: any) => {
+  return pools.sort((a: any, b: any) => {
+    const sumA = BigInt(a.pool.fees0_24h) + BigInt(a.pool.fees1_24h);
+    const sumB = BigInt(b.pool.fees0_24h) + BigInt(b.pool.fees1_24h);
+
+    // Orden descendente: mayores sumas primero
+    if (sumB > sumA) return 1;
+    if (sumB < sumA) return -1;
+    return 0;
+  });
+};
+
+const limit = pLimit(5);
+
+export async function fetchTopPools() {
+  try {
+    const pools: Array<any> = [];
+    const tokens = await fetchTokens();
+
+    await Promise.all(
+      TOP_PAIRS.map(async (pair) => {
+        const { data } = await axios.get(
+          `${BASE_URL}/pair/${pair.token0}/${pair.token1}/pools`
+        );
+        data.topPools.forEach((pool: Pool) => {
+          const t0 = tokens.find((token: Token) => token.symbol.toLowerCase() === pair.token0.toLowerCase());
+          const t1 = tokens.find((token: Token) => token.symbol.toLowerCase() === pair.token1.toLowerCase());
+          pools.push({
+            token0: t0,
+            token1: t1,
+            pool: pool,
+            totalFees: 0,
+            totalTvl: 0,
+          });
+        });
+      })
+    );
+    const sortedPools = sortPoolsByFees(pools).slice(0, 20);
+
+    const updatedPools = await Promise.all(
+      sortedPools.map((pool: any) =>
+        limit(async () => {
+          pool.totalFees = (await valToUsd(
+            pool.token0,
+            pool.token1,
+            pool.pool.fees0_24h,
+            pool.pool.fees1_24h
+          ));
+          pool.totalTvl = (await valToUsd(
+            pool.token0,
+            pool.token1,
+            pool.pool.tvl0_total,
+            pool.pool.tvl1_total
+          ));
+          return pool;
+        })
+      )
+    );
+
+    return sortPoolsByFees(updatedPools).slice(0, 20);
+  } catch (error) {
+    console.error('Error fetching top pairs:', error);
+    throw error;
+  }
+}
+
 export async function fetchPoolKeyHash(t0: Token, t1: Token, fee: number): Promise<PoolState | undefined> {
   try {
     const { data } = await axios.get(`${BASE_URL}/pools`);
@@ -125,23 +231,27 @@ export async function fetchPoolKeyHash(t0: Token, t1: Token, fee: number): Promi
   }
 }
 
-export async function fetchTvl(t0: Token, t1: Token): Promise<number> {
+export async function valToUsd(t0: Token, t1: Token, amount0: number, amount1: number): Promise<number> {
   try {
-    const { data } = await axios.get(
-      `${BASE_URL}/pair/${t0.l2_token_address}/${t1.l2_token_address}/tvl`
-    );
+    let t0price = tokenPriceCache.get(t0.symbol);
+    let t1price = tokenPriceCache.get(t1.symbol);
+    console.log("Cached t0Price: ", t0.symbol, t0price);
+    console.log("Cached t1Price: ", t1.symbol, t1price);
+    if (t0price == null) {
+      t0price = await fetchCryptoPrice(t0.symbol);
+      tokenPriceCache.set(t0.symbol, t0price);
+    }
+    if (t1price == null) {
+      t1price = await fetchCryptoPrice(t1.symbol);
+      tokenPriceCache.set(t1.symbol, t1price);
+    }
 
-    const [t0price, t1price] = await Promise.all([
-      fetchCryptoPrice(t0.symbol),
-      fetchCryptoPrice(t1.symbol)
-    ]);
-
-    const val1 = formatTokenAmount(data.tvlByToken[0].balance, t0.symbol) * t0price;
-    const val2 = formatTokenAmount(data.tvlByToken[1].balance, t1.symbol) * t1price;
+    const val1 = formatTokenAmount(amount0, t0.symbol) * t0price;
+    const val2 = formatTokenAmount(amount1, t1.symbol) * t1price;
 
     return val1 + val2;
   } catch (error) {
-    console.error('Error fetching TVL:', error);
+    console.error('Error fetching USD price:', error);
     throw error;
   }
 }
@@ -173,7 +283,7 @@ export async function fetchLiquidityInRange(
     totalLiquidity = BigInt(0);
 
     for (const tick in liquidityMap) {
-      const liquidity = liquidityMap[tick]; 
+      const liquidity = liquidityMap[tick];
       const price = tickToPrice(Number(tick)) * (10 ** (t0.decimals - t1.decimals));
       if (price >= minPrice && price <= maxPrice) {
         totalLiquidity += liquidity;
