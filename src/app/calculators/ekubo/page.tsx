@@ -1,5 +1,5 @@
 'use client'
-import { fetchLatestPairVolume, fetchTokens, fetchTvl, TOP_TOKENS_SYMBOL } from "@/apis/ekuboApi";
+import { fetchLatestPairVolume, fetchTokens, TOP_TOKENS_SYMBOL } from "@/apis/ekuboApi";
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
 import { Token } from "@/types/Tokens";
@@ -24,7 +24,6 @@ export default function Calculators() {
     const [token1, setToken1] = useState<Token | undefined>(undefined);
     const [volume, setVolume] = useState<number | null>(null);
     const [initialPrice, setInitialPrice] = useState(0);
-    const [poolLiquidity, setPoolLiquidity] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -59,7 +58,6 @@ export default function Calculators() {
             setIsLoading(true);
             const t0price = Number(await fetchCryptoPrice(token0.symbol));
             const t1price = Number(await fetchCryptoPrice(token1.symbol));
-            setPoolLiquidity(await fetchTvl(token0, token1));
             setVolume(await fetchLatestPairVolume(token0, token1, t0price, t1price));
             setInitialPrice(t0price / t1price);
             setShowCalculator(true);
@@ -157,7 +155,7 @@ export default function Calculators() {
                     feeRate={fee}
                     initialPrice={initialPrice}
                     volume={volume}
-                    liquidity={poolLiquidity}
+                    liquidity={1}
                 />
             )}
 
