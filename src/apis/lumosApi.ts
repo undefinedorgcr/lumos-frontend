@@ -1,14 +1,8 @@
+import { User } from '@/types/User';
 import axios from 'axios';
 
 const API_URL = `${process.env.NEXT_PUBLIC_LUMOS_BACKEND_URL}/users`;
 
-type User = {
-  email: string;
-  uId: string;
-  fav_pools?: string[];
-  user_type?: string;
-  remaining_requests?: number;
-};
 
 /**
  * Sends a POST request to create a new user.
