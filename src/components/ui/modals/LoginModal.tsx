@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { activeUser } from '@/state/user';
 import ErrorModal from './ErrorModal';
-import { saveUser } from '@/apis/usersApi';
+import { saveUser } from '@/apis/lumosApi';
 
 interface LoginModalProps {
     isOpen: boolean;
