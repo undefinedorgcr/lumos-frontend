@@ -47,7 +47,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         try {
             const result = await signInWithPopup(auth, new TwitterAuthProvider());
             setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
-            await saveUser({ email: result.user.reloadUserInfo.screenName ?? '', uId: result.user.uid, user_type: 'free', remaining_requests:1000 });
+            await saveUser({ email: result.user.email ?? '', uId: result.user.uid, user_type: 'free', remaining_requests:1000 });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);

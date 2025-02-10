@@ -9,6 +9,7 @@ import { activeUser } from '@/state/user';
 import { useAtom } from 'jotai';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
+import Navbar from '@/components/ui/navbar';
 
 const LandingPage = () => {
   const [openLogin, setOpenLogin] = useState<boolean>(false);
@@ -22,61 +23,7 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <StarField />
-      <nav className="px-6 py-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex gap-8 text-xl">
-            <Link
-              href="/calculators"
-              className="text-gray-400 hover:text-white font-neuethin transition duration-300"
-            >
-              Calculators
-            </Link>
-            <Link
-              href="mypositions"
-              className="text-gray-400 hover:text-white font-neuethin transition duration-300"
-            >
-              My positions
-            </Link>
-            <Link
-              href="/pools"
-              className="text-gray-400 hover:text-white font-neuethin transition duration-300"
-            >
-              Pools
-            </Link>
-          </div>
-          <div className="flex items-center gap-4">
-            {user !== undefined ? (
-              <>
-                {user.pfp && (
-                  <Image
-                    src={user.pfp}
-                    alt="User Profile"
-                    width={40}
-                    height={40}
-                    className="rounded-full object-cover"
-                  />
-                )}
-                <button
-                  className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
-                  hover:bg-white hover:text-black transition-all duration-500 
-                  text-lg font-neuethin"
-                  onClick={() => handleLogout()}
-                >
-                  Logout
-                </button>
-              </>
-            ) : (
-              <button className="px-8 py-2 rounded-md border border-white/20 bg-white/5 
-                  hover:bg-white hover:text-black transition-all duration-500 
-                  text-lg font-neuethin"
-                onClick={() => setOpenLogin(true)}
-              >
-                Login
-              </button>
-            )}
-          </div>
-        </div>
-      </nav>
+      <Navbar></Navbar>
       <main className="flex-1 flex items-center px-6">
         <div className="max-w-7xl mx-auto w-full">
           <div className="flex flex-col lg:flex-row items-center gap-16">

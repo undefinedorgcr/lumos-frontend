@@ -14,7 +14,6 @@ export async function saveUser(user: User): Promise<{ success: boolean; data?: a
         const response = await axios.post(API_URL, user, {
             headers: { 'Content-Type': 'application/json' }
         });
-        console.log(response);
 
         return { success: true, data: response.data };
     } catch (error: any) {
