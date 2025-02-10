@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { activeUser } from '@/state/user';
 import ErrorModal from './ErrorModal';
+import { saveUser } from '@/apis/lumosApi';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -35,6 +36,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         try {
             const result = await signInWithPopup(auth, provider);
             setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
+            await saveUser({ email: result.user.email ?? '', uId: result.user.uid, user_type: 'free', remaining_requests:1000 });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -45,6 +47,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         try {
             const result = await signInWithPopup(auth, new TwitterAuthProvider());
             setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
+            await saveUser({ email: result.user.reloadUserInfo.screenName ?? '', uId: result.user.uid, user_type: 'free', remaining_requests:1000 });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -119,6 +122,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 displayName: result.user.displayName ?? '',
                 pfp: result.user.photoURL ?? '/images/defUserPfp.png'
             });
+            await saveUser({ email: result.user.email ?? '', uId: result.user.uid, user_type: 'free', remaining_requests:1000 });
             setEmail('');
             setPassword('');
             setRepeatPassword('');
