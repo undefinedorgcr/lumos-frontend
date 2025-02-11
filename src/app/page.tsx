@@ -54,17 +54,13 @@ const LandingPage = () => {
               <div className="flex gap-6">
                 <Link
                   href="#"
-                  className="px-8 py-3 rounded-md border border-white/20 bg-white/5 
-                    hover:bg-white hover:text-black transition-all duration-500 
-                    text-lg font-neuethin"
+                  className="custom-button"
                 >
                   Get started
                 </Link>
                 <Link
                   href="/knowmore"
-                  className="px-8 py-3 rounded-md border border-white/20 bg-white/5 
-                    hover:bg-white hover:text-black transition-all duration-500 
-                    text-lg font-neuethin"
+                  className="custom-button"
                 >
                   Know more
                 </Link>

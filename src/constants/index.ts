@@ -9,7 +9,7 @@ export const CHAIN_ID =
     ? constants.NetworkName.SN_MAIN
     : constants.NetworkName.SN_SEPOLIA
 
-const NODE_URL = "https://starknet-mainnet.g.alchemy.com/starknet/version/rpc/v0_7/0pG_54sTivt8faMuQTfrp4MCO5DjHbLW";
+const NODE_URL = process.env.NEXT_PUBLIC_RPC;
 
 export const provider = new RpcProvider({
   nodeUrl: NODE_URL,
