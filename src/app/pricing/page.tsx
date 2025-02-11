@@ -1,0 +1,155 @@
+'use client'
+
+import Footer from "@/components/ui/footer";
+import Navbar from "@/components/ui/navbar";
+import { Check } from "lucide-react";
+import WalletConnector from "@/components/ui/connectWallet";
+import { useAtomValue } from "jotai";
+import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
+import { activeUser } from "@/state/user";
+import { useEffect, useState } from "react";
+import ErrorModal from "@/components/ui/modals/ErrorModal";
+import { getUserByUId } from "@/apis/lumosApi";
+import { useRouter } from 'next/navigation';
+
+export default function Pricing() {
+    const router = useRouter();
+    const [openError, setOpenError] = useState<boolean>(false);
+    const [userDetails, setUserDetails] = useState<any>(undefined)
+    const [openInfo, setOpenInfo] = useState<boolean>(false);
+    const wallet = useAtomValue(walletStarknetkitLatestAtom);
+    const user = useAtomValue(activeUser);
+    const plans = [
+        {
+            name: "Free",
+            price: "0",
+            description: "Perfect for getting started with DeFi analytics",
+            features: [
+                "Basic position tracking",
+                "Standard APY calculator",
+                "Public pools overview",
+                "Basic portfolio analytics",
+                "24h price alerts"
+            ]
+        },
+        {
+            name: "Pro",
+            price: "20",
+            description: "Advanced tools for serious DeFi traders",
+            features: [
+                "Everything in Free",
+                "Advanced position analytics",
+                "Custom price alerts",
+                "Impermanent loss calculator",
+                "Historical performance data",
+                "Position performance forecasting",
+                "Email notifications",
+                "Priority support"
+            ]
+        },
+        {
+            name: "Degen",
+            price: "50",
+            description: "Ultimate toolkit for DeFi power users",
+            features: [
+                "Everything in Pro",
+                "Real-time position alerts",
+                "Advanced arbitrage opportunities",
+                "Multi-wallet tracking",
+                "API access",
+                "Custom analytics dashboard",
+                "Strategy backtesting",
+                "1-on-1 strategy consultation",
+                "Early access to new features"
+            ]
+        }
+    ];
+
+    useEffect(() => {
+        async function getUserDetails() {
+            try {
+                if (user !== undefined) {
+                    setUserDetails(((await getUserByUId(user.uid)).data));
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        getUserDetails();
+    });
+
+    function handleSubscribe(plan: string) {
+        if (!user) {
+            setOpenError(true);
+            return;
+        }
+        router.push(`/pricing/checkout?plan=${plan.toLowerCase()}`);
+    }
+
+    return (
+        <div>
+            <Navbar />
+            <main className="max-w-7xl mx-auto px-6 py-12">
+                <div className="space-y-8">
+                    <div className="space-y-4">
+                        <header className="flex justify-between items-center">
+                            <h1 className="text-3xl font-light">Pricing Plans</h1>
+                            <WalletConnector />
+                        </header>
+                        <p className="text-gray-400">Choose the plan that best fits your trading style</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {plans.map((plan) => (
+                            <div
+                                key={plan.name}
+                                className="bg-white/5 rounded-2xl p-6 backdrop-blur-sm ring-1 ring-white/20 space-y-6 hover:bg-white/10 transition-all duration-300"
+                            >
+                                <div className="space-y-2">
+                                    <h2 className="text-2xl font-light">{plan.name}</h2>
+                                    <div className="flex items-baseline gap-1">
+                                        <span className="text-4xl font-light">${plan.price}</span>
+                                        <span className="text-gray-400">/month</span>
+                                    </div>
+                                    <p className="text-gray-400">{plan.description}</p>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {plan.features.map((feature) => (
+                                        <div key={feature} className="flex items-center gap-2">
+                                            <Check className="w-5 h-5 text-indigo-400 flex-shrink-0" />
+                                            <span className="text-sm text-gray-300">{feature}</span>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <button
+                                    className={(userDetails?.user_type == plan.name.toLowerCase()) ? 'px-8 py-3 rounded-md border border-white bg-white hover:cursor-not-allowed text-black w-full' :
+                                        wallet ? `custom-button w-full` :
+                                            'px-8 py-3 rounded-md border border-white/5 bg-white/5 hover:cursor-not-allowed w-full'}
+                                    disabled={!wallet || userDetails?.user_type == plan.name.toLowerCase()}
+                                    onClick={() => handleSubscribe(plan.name)}
+                                >
+                                    {userDetails?.user_type == plan.name.toLowerCase() ? `Active` : `Get ${plan.name}`}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+
+                    {!wallet && (
+                        <p className="text-center text-gray-400">
+                            Connect your wallet to subscribe to a plan
+                        </p>
+                    )}
+                </div>
+            </main>
+            <Footer />
+            <ErrorModal
+                isOpen={openError}
+                onClose={() => setOpenError(false)}
+                message={"You need to login/register to subscribe to a plan."}
+                title={'Error'}
+            />
+        </div>
+    );
+}

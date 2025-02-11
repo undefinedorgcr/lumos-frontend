@@ -30,12 +30,12 @@ export default function Navbar() {
             )}
             <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="fixed top-7 left-7 z-50 p-2 rounded-md border border-white/20 bg-black hover:bg-white/5 transition-colors duration-300"
+                className="fixed top-6 left-6 z-50 p-2 rounded-sm bg-white/5 hover:bg-white/10 transition-all ring-1 ring-white/20"
             >
-                {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <div className={`fixed top-0 left-0 h-full w-64 bg-black border-r border-white/20 transform transition-transform duration-300 ease-in-out z-40 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex flex-col h-full p-7">
+            <div className={`fixed top-0 left-0 h-full w-64 bg-black/90 backdrop-blur-sm border-r border-white/20 transform transition-transform duration-300 ease-in-out z-40 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                <div className="flex flex-col h-full p-6">
                     <div className="mt-14 mb-8">
                         <Link href="/" onClick={() => setIsMenuOpen(false)}>
                             <Image
@@ -47,31 +47,31 @@ export default function Navbar() {
                             />
                         </Link>
                     </div>
-                    <div className="flex flex-col gap-6">
+                    <div className="flex flex-col gap-4">
                         <Link 
                             href="/calculators" 
-                            className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+                            className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Calculators
                         </Link>
                         <Link 
                             href="/mypositions" 
-                            className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+                            className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             My positions
                         </Link>
                         <Link 
                             href="/pools" 
-                            className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+                            className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Pools
                         </Link>
                         <Link 
-                            href="#" 
-                            className="text-gray-400 hover:text-white font-neuethin transition duration-300"
+                            href="/pricing" 
+                            className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Pricing
@@ -79,20 +79,19 @@ export default function Navbar() {
                     </div>
                     <div className="mt-auto">
                         {user !== undefined ? (
-                            <div className="flex flex-col gap-4 hover:cursor-pointer">
+                            <div className="flex flex-col gap-4">
                                 {user.pfp && (
                                     <Image 
                                         src={user.pfp} 
                                         alt="User Profile" 
                                         width={40} 
                                         height={40} 
-                                        className="rounded-full object-cover"
+                                        className="rounded-full object-cover ring-1 ring-white/20"
                                     />
                                 )}
                                 <button 
-                                    className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/5 
-                                    hover:bg-white hover:text-black transition-all duration-500 
-                                    text-base font-neuethin"
+                                    className="w-full px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 
+                                    transition-all duration-300 text-base font-light ring-1 ring-white/20"
                                     onClick={() => handleLogout()}
                                 >
                                     Logout
@@ -100,9 +99,8 @@ export default function Navbar() {
                             </div>
                         ) : (
                             <button 
-                                className="w-full px-4 py-2 rounded-md border border-white/20 bg-white/5 
-                                hover:bg-white hover:text-black transition-all duration-500 
-                                text-base font-neuethin"
+                                className="w-full px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 
+                                transition-all duration-300 text-base font-light ring-1 ring-white/20"
                                 onClick={() => {
                                     setIsMenuOpen(false);
                                     setOpenLogin(true);
