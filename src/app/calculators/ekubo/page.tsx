@@ -31,7 +31,7 @@ export default function Calculators() {
             try {
                 setTokens(await fetchTokens());
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         }
         getTokens();

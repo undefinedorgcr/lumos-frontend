@@ -28,7 +28,7 @@ export default function MyPositions() {
         const data = await fetchPosition(wallet?.account?.address);
         setPositions(data);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         setPositions(undefined);
       } finally {
         setIsLoading(false);

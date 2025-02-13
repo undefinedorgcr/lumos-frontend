@@ -2,12 +2,11 @@
 import axios from 'axios';
 import { NextResponse } from 'next/server';
 
-const API_URL = `${process.env.NEXT_PUBLIC_LUMOS_BACKEND_URL}/users`;
+const API_URL = `${process.env.LUMOS_BACKEND_URL}/users`;
 
 export async function POST(req: Request) {
     try {
         const { email, uId, fav_pools, user_type, remaining_requests } = await req.json();
-        console.debug(process.env.LUMOS_API_SECRET_TOKEN);
         const response = await axios.post(API_URL, { email, uId, fav_pools, user_type, remaining_requests }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -22,11 +21,13 @@ export async function POST(req: Request) {
 
 export async function GET(req: Request) {
     try {
-        const { uId } = await req.json();
+        const { searchParams } = new URL(req.url);
+        const uId = searchParams.get("uId");
+        console.log(process.env.LUMOS_API_SECRET_TOKEN);
         const response = await axios.get(`${API_URL}?uId=${uId}`, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer' + process.env.LUMOS_API_SECRET_TOKEN,
+                'Authorization': 'Bearer ' + process.env.LUMOS_API_SECRET_TOKEN,
             }
         });
 
@@ -36,6 +37,6 @@ export async function GET(req: Request) {
             return NextResponse.json({ data: 'User not found' }, { status: 404 });
         }
     } catch (error: any) {
-        return { success: false, error: error.response?.data?.message || 'Error fetching user' };
+        return NextResponse.json({ error: error }, { status: 500 });
     }
 }

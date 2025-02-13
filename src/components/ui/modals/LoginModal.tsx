@@ -42,7 +42,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 'user_type': 'free',
                 'remaining_requests': 1000
             }));
-        console.log(data);
+        return data;
     }
 
     const handleLoginGoogle = async () => {
