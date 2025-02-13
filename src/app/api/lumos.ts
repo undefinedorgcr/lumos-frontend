@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from '@/types/User';
 import axios from 'axios';
 
@@ -11,8 +12,12 @@ const API_URL = `${process.env.NEXT_PUBLIC_LUMOS_BACKEND_URL}/users`;
  */
 export async function saveUser(user: User): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
+        console.debug(process.env.LUMOS_API_SECRET_TOKEN);
         const response = await axios.post(API_URL, user, {
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + process.env.LUMOS_API_SECRET_TOKEN,
+            }
         });
 
         return { success: true, data: response.data };
@@ -29,7 +34,10 @@ export async function saveUser(user: User): Promise<{ success: boolean; data?: a
 export async function getUserByUId(uId: string): Promise<{ success: boolean; data?: User; error?: string }> {
     try {
         const response = await axios.get(`${API_URL}?uId=${uId}`, {
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer' + process.env.LUMOS_API_SECRET_TOKEN,
+            }
         });
 
         if (response.data.users?.length > 0) {

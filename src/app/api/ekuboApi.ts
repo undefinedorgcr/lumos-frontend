@@ -6,10 +6,9 @@ import { Token } from '@/types/Tokens';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { Position } from '@/types/Position';
-import { normalizeHex, tickToPrice } from '@/lib/utils';
+import { fetchCryptoPrice, normalizeHex, tickToPrice } from '@/lib/utils';
 import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
-import { fetchCryptoPrice } from './pragma';
 import { TokenPriceCache } from '@/lib/cache/tokenPriceCache';
 
 const BASE_URL = "https://mainnet-api.ekubo.org";
@@ -235,8 +234,6 @@ export async function valToUsd(t0: Token, t1: Token, amount0: number, amount1: n
   try {
     let t0price = tokenPriceCache.get(t0.symbol);
     let t1price = tokenPriceCache.get(t1.symbol);
-    console.log("Cached t0Price: ", t0.symbol, t0price);
-    console.log("Cached t1Price: ", t1.symbol, t1price);
     if (t0price == null) {
       t0price = await fetchCryptoPrice(t0.symbol);
       tokenPriceCache.set(t0.symbol, t0price);

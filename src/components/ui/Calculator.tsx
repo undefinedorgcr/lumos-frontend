@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
-import { fetchLiquidityInRange } from '@/apis/ekuboApi';
-import { fetchCryptoPrice } from '@/apis/pragma';
-import { calculateDepositAmounts } from '@/lib/utils';
+import { fetchLiquidityInRange } from '@/app/api/ekuboApi';
+import { calculateDepositAmounts, fetchCryptoPrice } from '@/lib/utils';
 
 interface CalculatorProps {
     token0: Token;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import Footer from "@/components/ui/footer";
@@ -9,14 +10,13 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { activeUser } from "@/state/user";
 import { useEffect, useState } from "react";
 import ErrorModal from "@/components/ui/modals/ErrorModal";
-import { getUserByUId } from "@/apis/lumosApi";
+import { getUserByUId } from "@/app/api/lumos";
 import { useRouter } from 'next/navigation';
 
 export default function Pricing() {
     const router = useRouter();
     const [openError, setOpenError] = useState<boolean>(false);
     const [userDetails, setUserDetails] = useState<any>(undefined)
-    const [openInfo, setOpenInfo] = useState<boolean>(false);
     const wallet = useAtomValue(walletStarknetkitLatestAtom);
     const user = useAtomValue(activeUser);
     const plans = [
