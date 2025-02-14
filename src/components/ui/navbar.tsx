@@ -23,7 +23,7 @@ export default function Navbar() {
     return (
         <>
             {isMenuOpen && (
-                <div 
+                <div
                     className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
                     onClick={() => setIsMenuOpen(false)}
                 />
@@ -48,48 +48,54 @@ export default function Navbar() {
                         </Link>
                     </div>
                     <div className="flex flex-col gap-4">
-                        <Link 
-                            href="/calculators" 
+                        <Link
+                            href="/calculators"
                             className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Calculators
                         </Link>
-                        <Link 
-                            href="/mypositions" 
+                        <Link
+                            href="/mypositions"
                             className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             My positions
                         </Link>
-                        <Link 
-                            href="/pools" 
+                        <Link
+                            href="/pools"
                             className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Pools
                         </Link>
-                        <Link 
+                        {/* <Link 
                             href="/pricing" 
                             className="text-gray-400 hover:text-white font-light transition-colors duration-300"
                             onClick={() => setIsMenuOpen(false)}
                         >
                             Pricing
-                        </Link>
+                        </Link> */}
                     </div>
                     <div className="mt-auto">
                         {user !== undefined ? (
                             <div className="flex flex-col gap-4">
                                 {user.pfp && (
-                                    <Image 
-                                        src={user.pfp} 
-                                        alt="User Profile" 
-                                        width={40} 
-                                        height={40} 
-                                        className="rounded-full object-cover ring-1 ring-white/20"
-                                    />
+                                    <Link
+                                        href="/profile"
+                                        className="text-gray-400 hover:text-white font-light transition-colors duration-300"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <Image
+                                            src={user.pfp}
+                                            alt="User Profile"
+                                            width={40}
+                                            height={40}
+                                            className="rounded-full object-cover ring-1 ring-white/20"
+                                        />
+                                    </Link>
                                 )}
-                                <button 
+                                <button
                                     className="w-full px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 
                                     transition-all duration-300 text-base font-light ring-1 ring-white/20"
                                     onClick={() => handleLogout()}
@@ -98,7 +104,7 @@ export default function Navbar() {
                                 </button>
                             </div>
                         ) : (
-                            <button 
+                            <button
                                 className="w-full px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 
                                 transition-all duration-300 text-base font-light ring-1 ring-white/20"
                                 onClick={() => {

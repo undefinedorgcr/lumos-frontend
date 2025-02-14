@@ -1,24 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image'
 import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
 import Footer from '@/components/ui/footer';
 import LoginModal from '@/components/ui/modals/LoginModal';
 import { activeUser } from '@/state/user';
-import { useAtom } from 'jotai';
-import { signOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { useAtomValue } from 'jotai';
 import Navbar from '@/components/ui/navbar';
+import axios from 'axios';
 
 const LandingPage = () => {
   const [openLogin, setOpenLogin] = useState<boolean>(false);
-  const [user, setUser] = useAtom(activeUser);
+  const [userDetails, setUserDetails] = useState<any>(undefined)
+  const user = useAtomValue(activeUser);
 
-  const handleLogout = async () => {
-    await signOut(auth);
-    setUser(undefined);
-  };
+  useEffect(() => {
+    async function getUserDetails() {
+      try {
+        if (user !== undefined) {
+          const { data } = (await axios.get(`/api/lumos/users`,
+            { params: { "uId": user.uid } }
+          ));
+          setUserDetails(data.data);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    getUserDetails();
+  }, [user]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -52,12 +64,30 @@ const LandingPage = () => {
               </div>
 
               <div className="flex gap-6">
-                <Link
-                  href="#"
-                  className="custom-button"
-                >
-                  Get started
-                </Link>
+                {user === undefined &&
+                  <Link
+                    href="/calculators"
+                    className="custom-button"
+                  >
+                    Get started
+                  </Link>
+                }
+                {user !== undefined && userDetails?.user_type === "FREE" &&
+                  <Link
+                    href="/calculators"
+                    className="custom-button"
+                  >
+                    Get started
+                  </Link>
+                }
+                {user !== undefined && userDetails?.user_type !== "FREE" &&
+                  <Link
+                    href="/calculators"
+                    className="custom-button"
+                  >
+                    Get started
+                  </Link>
+                }
                 <Link
                   href="/knowmore"
                   className="custom-button"

@@ -15,7 +15,7 @@ export async function POST(req: Request) {
         });
         return NextResponse.json({ data: response.data }, { status: 200 });
     } catch (error: any) {
-        return NextResponse.json({ message: error }, { status: 500 });
+        return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
     }
 }
 
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const uId = searchParams.get("uId");
-        console.log(process.env.LUMOS_API_SECRET_TOKEN);
+
         const response = await axios.get(`${API_URL}?uId=${uId}`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -37,6 +37,22 @@ export async function GET(req: Request) {
             return NextResponse.json({ data: 'User not found' }, { status: 404 });
         }
     } catch (error: any) {
-        return NextResponse.json({ error: error }, { status: 500 });
+        return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
+    }
+}
+
+export async function PUT(req: Request) {
+    try {
+        const body = await req.json();
+        const response = await axios.put(`${API_URL}`, body, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + process.env.LUMOS_API_SECRET_TOKEN,
+            }
+        });
+
+        return NextResponse.json({ data: response.data }, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
     }
 }
