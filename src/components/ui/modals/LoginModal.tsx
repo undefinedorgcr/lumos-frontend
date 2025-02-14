@@ -8,6 +8,8 @@ import { useState } from 'react';
 import { useSetAtom } from 'jotai';
 import { activeUser } from '@/state/user';
 import ErrorModal from './ErrorModal';
+import axios from 'axios';
+import { User } from '@/types/User';
 
 interface LoginModalProps {
     isOpen: boolean;
@@ -31,10 +33,21 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         return emailRegex.test(email);
     };
 
+    const saveUser = async (user: User) => {
+        const { data } = (await axios.post(`/api/lumos/users`,
+            {
+                'uId': user.uId,
+                'email': user.email,
+                'user_type': 'FREE',
+            }));
+        return data;
+    }
+
     const handleLoginGoogle = async () => {
         try {
             const result = await signInWithPopup(auth, provider);
             setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
+            await saveUser({ uId: result.user.uid, email: result.user.email ?? '' });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -45,6 +58,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         try {
             const result = await signInWithPopup(auth, new TwitterAuthProvider());
             setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
+            await saveUser({ uId: result.user.uid, email: result.user.email ?? '' });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -119,6 +133,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 displayName: result.user.displayName ?? '',
                 pfp: result.user.photoURL ?? '/images/defUserPfp.png'
             });
+            await saveUser({ uId: result.user.uid, email: result.user.email ?? '' });
             setEmail('');
             setPassword('');
             setRepeatPassword('');

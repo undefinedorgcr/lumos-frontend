@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Token } from '@/types/Tokens';
 import Image from 'next/image';
-import { fetchLiquidityInRange } from '@/apis/ekuboApi';
-import { fetchCryptoPrice } from '@/apis/pragma';
-import { calculateDepositAmounts } from '@/lib/utils';
+import { fetchLiquidityInRange } from '@/app/api/ekuboApi';
+import { calculateDepositAmounts, fetchCryptoPrice } from '@/lib/utils';
 
 interface CalculatorProps {
     token0: Token;
@@ -23,6 +22,7 @@ const Calculator = ({ token0, token1, feeRate, initialPrice, volume }: Calculato
     const [t1CurrentPrice, sett1CurrentPrice] = useState(0);
     const [depositAmounts, setDepositAmounts] = useState([0, 0]);
     const [priceRangePercentage, setPriceRangePercentage] = useState(6);
+    const [liquidity, setLiquidity] = useState<number | null>(0);
 
     useEffect(() => {
         async function setupCalculator() {
@@ -38,26 +38,14 @@ const Calculator = ({ token0, token1, feeRate, initialPrice, volume }: Calculato
 
     async function handlePricesChange(min: number, max: number, amount: number) {
         const currentLiquidity = await fetchLiquidityInRange(token0, token1, min, max);
-
+        setLiquidity(currentLiquidity);
         if (volume !== null && currentLiquidity != null) {
             if (amount <= 0 || t0CurrentPrice <= 0 || volume <= 0 || min >= max || currentLiquidity <= 0) {
                 setFee(0);
                 setDepositAmounts([0, 0]);
                 return;
             }
-
-            let marketRangeWidth = 0;
-            if (t0CurrentPrice >= min && t0CurrentPrice <= max) {
-                marketRangeWidth = t0CurrentPrice - min;
-            }
-
-            if (marketRangeWidth === 0) {
-                setFee(0);
-                setDepositAmounts([0, 0]);
-                return;
-            }
-
-            const amounts = calculateDepositAmounts(min, max, t0CurrentPrice/t1CurrentPrice, amount);
+            const amounts = calculateDepositAmounts(min, max, t0CurrentPrice / t1CurrentPrice, amount);
             setDepositAmounts(amounts);
             const Pl = min / (10 ** (token0.decimals - token1.decimals));
             const Pu = max / (10 ** (token0.decimals - token1.decimals));
@@ -121,6 +109,9 @@ const Calculator = ({ token0, token1, feeRate, initialPrice, volume }: Calculato
                                     </p>
                                 </div>
                             </div>
+                            {liquidity === null || liquidity == 0 && depositAmount > 0
+                                ? <p className='text-red-700 rounded-sm p-2 bg-red-400 text-center'>Not enough liquidity in the selected range.</p>
+                                : <p className='rounded-sm p-2 text-center hover:cursor-pointer'>Calculate Impermanent Loss</p>}
                         </div>
 
                         <div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
