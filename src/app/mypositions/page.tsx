@@ -6,7 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link';
 import { useEffect, useState } from "react";
 import { Position } from "@/types/Position";
-import { fetchPosition } from "@/apis/ekuboApi";
+import { fetchPosition } from "@/app/api/ekuboApi";
 import { useAtomValue } from "jotai";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -28,7 +28,7 @@ export default function MyPositions() {
         const data = await fetchPosition(wallet?.account?.address);
         setPositions(data);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         setPositions(undefined);
       } finally {
         setIsLoading(false);

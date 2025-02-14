@@ -1,5 +1,5 @@
 'use client'
-import { fetchLatestPairVolume, fetchTokens, TOP_TOKENS_SYMBOL } from "@/apis/ekuboApi";
+import { fetchLatestPairVolume, fetchTokens, TOP_TOKENS_SYMBOL } from "@/app/api/ekuboApi";
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
 import { Token } from "@/types/Tokens";
@@ -9,7 +9,7 @@ import { TokenSelectorModal } from "@/components/ui/modals/TokenSelector";
 import { ErrorModal } from "@/components/ui/modals/ErrorModal";
 import Calculator from "@/components/ui/Calculator";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { fetchCryptoPrice } from "@/apis/pragma";
+import { fetchCryptoPrice } from "@/lib/utils";
 
 export default function Calculators() {
     const [tokens, setTokens] = useState<Token[]>([]);
@@ -31,7 +31,7 @@ export default function Calculators() {
             try {
                 setTokens(await fetchTokens());
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         }
         getTokens();

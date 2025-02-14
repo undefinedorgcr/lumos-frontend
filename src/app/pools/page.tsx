@@ -8,7 +8,7 @@ import Navbar from "@/components/ui/navbar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import { fetchTopPools } from '@/apis/ekuboApi';
+import { fetchTopPools } from '@/app/api/ekuboApi';
 import ErrorModal from '@/components/ui/modals/ErrorModal';
 
 export default function PoolOverview() {

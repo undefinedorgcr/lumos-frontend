@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import Footer from "@/components/ui/footer";
@@ -9,14 +10,13 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { activeUser } from "@/state/user";
 import { useEffect, useState } from "react";
 import ErrorModal from "@/components/ui/modals/ErrorModal";
-import { getUserByUId } from "@/apis/lumosApi";
 import { useRouter } from 'next/navigation';
+import axios from "axios";
 
 export default function Pricing() {
     const router = useRouter();
     const [openError, setOpenError] = useState<boolean>(false);
     const [userDetails, setUserDetails] = useState<any>(undefined)
-    const [openInfo, setOpenInfo] = useState<boolean>(false);
     const wallet = useAtomValue(walletStarknetkitLatestAtom);
     const user = useAtomValue(activeUser);
     const plans = [
@@ -69,14 +69,17 @@ export default function Pricing() {
         async function getUserDetails() {
             try {
                 if (user !== undefined) {
-                    setUserDetails(((await getUserByUId(user.uid)).data));
+                    const { data } = (await axios.get(`/api/lumos/users`,
+                        { params: { "uId": user.uid } }
+                    ));
+                    setUserDetails(data.data);
                 }
             } catch (err) {
-                console.log(err);
+                console.error(err);
             }
         }
         getUserDetails();
-    });
+    }, [user]);
 
     function handleSubscribe(plan: string) {
         if (!user) {

@@ -1,3 +1,4 @@
+import axios from "axios";
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -30,4 +31,9 @@ export function calculateDepositAmounts(
   const deltaY = R * deltaX;
 
   return [deltaX * Pcurrent, deltaY];
+}
+
+export async function fetchCryptoPrice(symbol: string): Promise<number> {
+  const { data: price } = (await axios.post(`/api/pragma`, { 'endpoint': symbol })).data;
+  return price !== null ? price : 0;
 }
