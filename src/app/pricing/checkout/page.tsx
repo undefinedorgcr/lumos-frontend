@@ -3,7 +3,7 @@
 
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +19,7 @@ import InfoModal from "@/components/ui/modals/InfoModal";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import ErrorModal from "@/components/ui/modals/ErrorModal";
 
-export default function Checkout() {
+const Checkout = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const user = useAtomValue(activeUser);
@@ -96,7 +96,7 @@ export default function Checkout() {
                         if (res.status == 200) {
                             setOpenInfo(true);
                         }
-                        else{
+                        else {
                             setOpenError(true);
                         }
                     } else {
@@ -152,7 +152,6 @@ export default function Checkout() {
     return (
         <div>
             <Navbar />
-
             <main className="max-w-7xl mx-auto px-6 py-12">
                 <div className="space-y-8">
                     <div className="space-y-4">
@@ -278,9 +277,19 @@ export default function Checkout() {
                     </div>
                 </div>
             </main>
-            <InfoModal isOpen={openInfo} onClose={() => {handleSuccessClose()}} title={"Success!"} message={`You have subscribed to ${plan.name}, you can now use your new features!`}></InfoModal>
-            <ErrorModal isOpen={openError} onClose={() => {setOpenError(false)}} title={"Oops!"} message={"Something went wrong, if the issue persists please contact lumosapplication@gmail.com."}></ErrorModal>
+            <InfoModal isOpen={openInfo} onClose={() => { handleSuccessClose() }} title={"Success!"} message={`You have subscribed to ${plan.name}, you can now use your new features!`}></InfoModal>
+            <ErrorModal isOpen={openError} onClose={() => { setOpenError(false) }} title={"Oops!"} message={"Something went wrong, if the issue persists please contact lumosapplication@gmail.com."}></ErrorModal>
             <Footer />
         </div>
     );
 }
+
+const Page = () => {
+    return (
+        <Suspense>
+            <Checkout />
+        </Suspense>
+    )
+}
+
+export default Page
