@@ -3,7 +3,7 @@
 
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
@@ -96,7 +96,7 @@ export default function Checkout() {
                         if (res.status == 200) {
                             setOpenInfo(true);
                         }
-                        else{
+                        else {
                             setOpenError(true);
                         }
                     } else {
@@ -116,22 +116,24 @@ export default function Checkout() {
 
     if (!plan) {
         return (
-            <div>
-                <Navbar />
-                <main className="max-w-7xl mx-auto px-6 py-12">
-                    <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-                        <p className="text-xl font-light text-gray-400">Invalid plan selected</p>
-                        <Link
-                            href="/pricing"
-                            className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                            Return to pricing
-                        </Link>
-                    </div>
-                </main>
-                <Footer />
-            </div>
+            <Suspense>
+                <div>
+                    <Navbar />
+                    <main className="max-w-7xl mx-auto px-6 py-12">
+                        <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+                            <p className="text-xl font-light text-gray-400">Invalid plan selected</p>
+                            <Link
+                                href="/pricing"
+                                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
+                                Return to pricing
+                            </Link>
+                        </div>
+                    </main>
+                    <Footer />
+                </div>
+            </Suspense>
         );
     }
 
@@ -278,8 +280,8 @@ export default function Checkout() {
                     </div>
                 </div>
             </main>
-            <InfoModal isOpen={openInfo} onClose={() => {handleSuccessClose()}} title={"Success!"} message={`You have subscribed to ${plan.name}, you can now use your new features!`}></InfoModal>
-            <ErrorModal isOpen={openError} onClose={() => {setOpenError(false)}} title={"Oops!"} message={"Something went wrong, if the issue persists please contact lumosapplication@gmail.com."}></ErrorModal>
+            <InfoModal isOpen={openInfo} onClose={() => { handleSuccessClose() }} title={"Success!"} message={`You have subscribed to ${plan.name}, you can now use your new features!`}></InfoModal>
+            <ErrorModal isOpen={openError} onClose={() => { setOpenError(false) }} title={"Oops!"} message={"Something went wrong, if the issue persists please contact lumosapplication@gmail.com."}></ErrorModal>
             <Footer />
         </div>
     );
