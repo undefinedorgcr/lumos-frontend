@@ -199,7 +199,7 @@ export default function PoolOverview() {
                     <h1 className="text-2xl font-light">Pool Overview</h1>
                 </div>
 
-                {/* Favorite Pools */}
+                {/* Favorite Pools
                 <div className="bg-white/5 rounded-2xl p-6 mb-8">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl">Favorite Pools</h2>
@@ -208,7 +208,7 @@ export default function PoolOverview() {
                     <p className="text-gray-400">
                         You don't have any favorite pools yet. Add your favorite pool collections by clicking the star icon.
                     </p>
-                </div>
+                </div> */}
 
                 <div className="space-y-6">
                     <div className="flex justify-between items-center">
@@ -234,7 +234,7 @@ export default function PoolOverview() {
                         ))}
                     </div>
                     <div className="flex gap-2">
-                        {['0.01%', '0.05%', '0.25%', '0.30%', '1.00%'].map(fee => (
+                        {['0.01%', '0.05%', '0.30%', '1.00%'].map(fee => (
                             <button
                                 key={fee}
                                 className={`px-4 py-2 rounded-lg transition-colors border ${selectedFee === fee
@@ -247,7 +247,6 @@ export default function PoolOverview() {
                             </button>
                         ))}
                     </div>
-
                     {renderPoolsContent()}
                 </div>
             </main>

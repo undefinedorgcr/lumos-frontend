@@ -4,7 +4,7 @@
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
 import { useEffect, useState } from "react";
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Info } from "lucide-react";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -12,30 +12,40 @@ import WalletConnector from "@/components/ui/connectWallet";
 import { useAtomValue } from "jotai";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { cairo, CallData } from "starknet";
-import { provider } from "@/constants";
+import { provider, USDC_CONTRACT_ADDRESS } from "@/constants";
+import { activeUser } from "@/state/user";
+import axios from "axios";
+import InfoModal from "@/components/ui/modals/InfoModal";
+import LoadingSpinner from "@/components/ui/LoadingSpinner";
+import ErrorModal from "@/components/ui/modals/ErrorModal";
 
 export default function Checkout() {
+    const router = useRouter();
     const searchParams = useSearchParams();
+    const user = useAtomValue(activeUser);
     const wallet = useAtomValue(walletStarknetkitLatestAtom);
     const [plan, setPlan] = useState<{
         name: string;
         price: number;
         description: string;
     } | null>(null);
+    const [openInfo, setOpenInfo] = useState<boolean>(false);
+    const [openError, setOpenError] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const plans = {
         free: {
-            name: "Free",
+            name: "FREE",
             price: 0,
             description: "Perfect for getting started with DeFi analytics"
         },
         pro: {
-            name: "Pro",
+            name: "PRO",
             price: 20,
             description: "Advanced tools for serious DeFi traders"
         },
         degen: {
-            name: "Degen",
+            name: "DEGEN",
             price: 50,
             description: "Ultimate toolkit for DeFi power users"
         }
@@ -65,28 +75,43 @@ export default function Checkout() {
             if (plan !== null) {
                 const tx = await wallet?.account.execute([
                     {
-                        contractAddress: process.env.NEXT_PUBLIC_USDC_ADDR,
+                        contractAddress: USDC_CONTRACT_ADDRESS,
                         entrypoint: 'transfer',
                         calldata: CallData.compile({
                             recipient: process.env.NEXT_PUBLIC_RECEIVER_ADDR || '',
-                            amount: cairo.uint256(plan?.price * 10 ** 6)
+                            amount: cairo.uint256(plan.price * 10 ** 6)
                         }),
                     }
                 ]);
 
                 if (tx) {
+                    setLoading(true);
                     const isConfirmed = await waitForTransaction(tx.transaction_hash);
-
+                    setLoading(false);
                     if (isConfirmed) {
-                        console.log("success");
+                        const res = await axios.put('/api/lumos/users', {
+                            uId: user?.uid,
+                            newUserType: plan?.name
+                        });
+                        if (res.status == 200) {
+                            setOpenInfo(true);
+                        }
+                        else{
+                            setOpenError(true);
+                        }
                     } else {
-                        console.log("Error");
+                        setOpenError(true);
                     }
                 }
             }
         } catch (error: any) {
             console.log(error);
         };
+    }
+
+    function handleSuccessClose() {
+        setOpenInfo(false);
+        router.push("/");
     }
 
     if (!plan) {
@@ -243,7 +268,7 @@ export default function Checkout() {
                                 className="custom-button w-full"
                                 onClick={handlePayment}
                             >
-                                Complete Purchase
+                                {loading ? <><LoadingSpinner></LoadingSpinner></> : <p>Complete Purchase</p>}
                             </button>
 
                             <p className="text-sm text-gray-400 text-center">
@@ -253,7 +278,8 @@ export default function Checkout() {
                     </div>
                 </div>
             </main>
-
+            <InfoModal isOpen={openInfo} onClose={() => {handleSuccessClose()}} title={"Success!"} message={`You have subscribed to ${plan.name}, you can now use your new features!`}></InfoModal>
+            <ErrorModal isOpen={openError} onClose={() => {setOpenError(false)}} title={"Oops!"} message={"Something went wrong, if the issue persists please contact lumosapplication@gmail.com."}></ErrorModal>
             <Footer />
         </div>
     );

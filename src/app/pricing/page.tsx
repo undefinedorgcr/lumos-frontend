@@ -25,11 +25,11 @@ export default function Pricing() {
             price: "0",
             description: "Perfect for getting started with DeFi analytics",
             features: [
-                "Basic position tracking",
-                "Standard APY calculator",
-                "Public pools overview",
-                "Basic portfolio analytics",
-                "24h price alerts"
+                "Track your positions",
+                "Favorite pools",
+                "Limited access to Lumos Agent",
+                "10 requests/day",
+                "Basic support assistance"
             ]
         },
         {
@@ -37,14 +37,11 @@ export default function Pricing() {
             price: "20",
             description: "Advanced tools for serious DeFi traders",
             features: [
-                "Everything in Free",
-                "Advanced position analytics",
-                "Custom price alerts",
-                "Impermanent loss calculator",
-                "Historical performance data",
-                "Position performance forecasting",
-                "Email notifications",
-                "Priority support"
+                "Track your positions",
+                "Favorite pools",
+                "Limited access to Lumos Agent",
+                "50 requests/day",
+                "Personalized support assistance"
             ]
         },
         {
@@ -52,15 +49,11 @@ export default function Pricing() {
             price: "50",
             description: "Ultimate toolkit for DeFi power users",
             features: [
-                "Everything in Pro",
-                "Real-time position alerts",
-                "Advanced arbitrage opportunities",
-                "Multi-wallet tracking",
-                "API access",
-                "Custom analytics dashboard",
-                "Strategy backtesting",
-                "1-on-1 strategy consultation",
-                "Early access to new features"
+                "Track your positions",
+                "Favorite pools",
+                "Unlimited access to Lumos Agent",
+                "Unlimited requests/day",
+                "Support assistance 24/7",
             ]
         }
     ];
@@ -127,13 +120,13 @@ export default function Pricing() {
                                 </div>
 
                                 <button
-                                    className={(userDetails?.user_type == plan.name.toLowerCase()) ? 'px-8 py-3 rounded-md border border-white bg-white hover:cursor-not-allowed text-black w-full' :
+                                    className={(userDetails?.user_type.toLowerCase() == plan.name.toLowerCase()) ? 'px-8 py-3 rounded-md border border-white bg-white hover:cursor-not-allowed text-black w-full' :
                                         wallet ? `custom-button w-full` :
                                             'px-8 py-3 rounded-md border border-white/5 bg-white/5 hover:cursor-not-allowed w-full'}
-                                    disabled={!wallet || userDetails?.user_type == plan.name.toLowerCase()}
+                                    disabled={!wallet || userDetails?.user_type.toLowerCase() == plan.name.toLowerCase()}
                                     onClick={() => handleSubscribe(plan.name)}
                                 >
-                                    {userDetails?.user_type == plan.name.toLowerCase() ? `Active` : `Get ${plan.name}`}
+                                    {userDetails?.user_type.toLowerCase() == plan.name.toLowerCase() ? `Active` : `Get ${plan.name}`}
                                 </button>
                             </div>
                         ))}

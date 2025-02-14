@@ -11,8 +11,8 @@ import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { TokenPriceCache } from '@/lib/cache/tokenPriceCache';
 
-const BASE_URL = "https://mainnet-api.ekubo.org";
-const QUOTER_URL = "https://quoter-mainnet-api.ekubo.org";
+const net = process.env.NEXT_PUBLIC_CHAIN_ID;
+const BASE_URL = net == "SN_SEPOLIA" ? "https://sepolia-api.ekubo.org" : "https://mainnet-api.ekubo.org";
 
 const tokenPriceCache = new TokenPriceCache(60000);
 
@@ -52,7 +52,6 @@ const TOP_PAIRS = [
   { "token0": "WBTC", "token1": "USDC" }
 ];
 
-// Utility functions
 const getTokenDecimals = (symbol: string): number =>
   symbol === "USDC" || symbol === "USDT" ? 6 : 18;
 
@@ -291,22 +290,6 @@ export async function fetchLiquidityInRange(
   } catch (error) {
     console.error("Error fetching liquidity data:", error);
     return null;
-  }
-}
-
-
-
-export async function getPrice(address: string): Promise<number> {
-  try {
-    const { data } = await axios.get(
-      `${QUOTER_URL}/prices/0x53c91253bc9682c04929ca02ed00b3e423f6710d2ee7e0d5ebb06f3ecf368a8`
-    );
-
-    const priceInfo = data.prices.find((item: { token: string }) => item.token === address);
-    return priceInfo?.price ?? 0;
-  } catch (error) {
-    console.error('Error fetching price:', error);
-    throw error;
   }
 }
 
