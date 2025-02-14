@@ -36,11 +36,9 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     const saveUser = async (user: User) => {
         const { data } = (await axios.post(`/api/lumos/users`,
             {
-                'email': user.email,
                 'uId': user.uId,
-                'fav_pools': [],
-                'user_type': 'free',
-                'remaining_requests': 1000
+                'email': user.email,
+                'user_type': 'FREE',
             }));
         return data;
     }
@@ -49,7 +47,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         try {
             const result = await signInWithPopup(auth, provider);
             setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
-            await saveUser({ email: result.user.email ?? '', uId: result.user.uid, user_type: 'free', remaining_requests: 1000 });
+            await saveUser({ uId: result.user.uid, email: result.user.email ?? '' });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -59,8 +57,8 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
     const handleLoginX = async () => {
         try {
             const result = await signInWithPopup(auth, new TwitterAuthProvider());
-            setUser({ email: result.user.email ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
-            await saveUser({ email: result.user.email ?? '', uId: result.user.uid, user_type: 'free', remaining_requests: 1000 });
+            setUser({ email: result.user.reloadUserInfo.screenName ?? '', uid: result.user.uid, displayName: result.user.displayName ?? '', pfp: result.user.photoURL ?? '' });
+            await saveUser({ uId: result.user.uid, email: result.user.reloadUserInfo.screenName ?? '' });
             onClose(false);
         } catch (error) {
             console.error("Error al iniciar sesión:", error);
@@ -135,7 +133,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
                 displayName: result.user.displayName ?? '',
                 pfp: result.user.photoURL ?? '/images/defUserPfp.png'
             });
-            await saveUser({ email: result.user.email ?? '', uId: result.user.uid, user_type: 'free', remaining_requests: 1000 });
+            await saveUser({ uId: result.user.uid, email: result.user.email ?? '' });
             setEmail('');
             setPassword('');
             setRepeatPassword('');
