@@ -19,7 +19,7 @@ import InfoModal from "@/components/ui/modals/InfoModal";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import ErrorModal from "@/components/ui/modals/ErrorModal";
 
-export default function Checkout() {
+const Checkout = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const user = useAtomValue(activeUser);
@@ -116,24 +116,22 @@ export default function Checkout() {
 
     if (!plan) {
         return (
-            <Suspense>
-                <div>
-                    <Navbar />
-                    <main className="max-w-7xl mx-auto px-6 py-12">
-                        <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-                            <p className="text-xl font-light text-gray-400">Invalid plan selected</p>
-                            <Link
-                                href="/pricing"
-                                className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors"
-                            >
-                                <ArrowLeft className="w-4 h-4" />
-                                Return to pricing
-                            </Link>
-                        </div>
-                    </main>
-                    <Footer />
-                </div>
-            </Suspense>
+            <div>
+                <Navbar />
+                <main className="max-w-7xl mx-auto px-6 py-12">
+                    <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+                        <p className="text-xl font-light text-gray-400">Invalid plan selected</p>
+                        <Link
+                            href="/pricing"
+                            className="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 transition-colors"
+                        >
+                            <ArrowLeft className="w-4 h-4" />
+                            Return to pricing
+                        </Link>
+                    </div>
+                </main>
+                <Footer />
+            </div>
         );
     }
 
@@ -154,7 +152,6 @@ export default function Checkout() {
     return (
         <div>
             <Navbar />
-
             <main className="max-w-7xl mx-auto px-6 py-12">
                 <div className="space-y-8">
                     <div className="space-y-4">
@@ -286,3 +283,13 @@ export default function Checkout() {
         </div>
     );
 }
+
+const Page = () => {
+    return (
+        <Suspense>
+            <Checkout />
+        </Suspense>
+    )
+}
+
+export default Page
