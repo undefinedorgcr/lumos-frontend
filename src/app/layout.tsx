@@ -1,6 +1,8 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import ChatWidget from "@/components/ui/modals/ChatWidget";
+import TestNetworkBanner from "@/components/ui/TestNetworkBanner";
 
 export const metadata: Metadata = {
   title: "Lumos",
@@ -14,11 +16,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={"bg-[#101010] text-white p-6"}
-      >
-        {children}
-        <ChatWidget></ChatWidget>
+      <body className="bg-[#101010] text-white">
+          <TestNetworkBanner>
+            <div className="p-6">
+              {children}
+              <ChatWidget />
+            </div>
+          </TestNetworkBanner>
       </body>
     </html>
   );
