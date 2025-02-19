@@ -8,6 +8,7 @@ import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import { useAtom } from "jotai";
 import { Menu, X } from "lucide-react";
+import WalletConnector from "./connectWallet";
 
 export default function Navbar() {
     const [openLogin, setOpenLogin] = useState<boolean>(false);
@@ -115,6 +116,9 @@ export default function Navbar() {
                                 Login
                             </button>
                         )}
+                    </div>
+                    <div className="flex justify-center mt-4">
+                        <WalletConnector />
                     </div>
                 </div>
             </div>

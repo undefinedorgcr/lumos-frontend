@@ -12,7 +12,6 @@ import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
-import WalletConnector from "@/components/ui/connectWallet";
 
 export default function MyPositions() {
   const protocols = ["Ekubo"];
@@ -56,7 +55,6 @@ export default function MyPositions() {
           <div className="space-y-4">
             <header className="flex justify-between items-center">
               <h1 className="text-3xl font-light">My Positions</h1>
-              <WalletConnector />
             </header>
             <p className="text-gray-400">Manage your liquidity positions across protocols</p>
           </div>

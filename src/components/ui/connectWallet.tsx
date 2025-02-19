@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { ARGENT_WEBWALLET_URL, CHAIN_ID, provider } from "@/constants";
+import { ARGENT_WEBWALLET_URL, getProvider, getChainId, getNodeUrl } from "@/constants";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { useAtom } from "jotai";
 import { connect, disconnect } from "starknetkit";
@@ -10,18 +10,21 @@ export default function WalletConnector() {
 
   const handleConnect = async () => {
     try {
-      const { wallet } = await connect({
+      const chainId = getChainId();
+      const nodeUrl = getNodeUrl();
+      const provider = getProvider(nodeUrl !== undefined ? nodeUrl : "");
+      const { wallet: connectedWallet } = await connect({
         provider,
         modalMode: "alwaysAsk",
         webWalletUrl: ARGENT_WEBWALLET_URL,
         argentMobileOptions: {
-          dappName: "Starknetkit example dapp",
+          dappName: "Lumos",
           url: window.location.hostname,
-          chainId: CHAIN_ID,
+          chainId,
           icons: [],
         },
       });
-      setWallet(wallet);
+      setWallet(connectedWallet);
     } catch (e) {
       console.error(e);
       alert((e as any).message);

@@ -7,13 +7,15 @@ import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { Position } from '@/types/Position';
 import { fetchCryptoPrice, normalizeHex, tickToPrice } from '@/lib/utils';
-import { EKUBO_POSITIONS_MAINNET_ADDRESS, provider } from '@/constants';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { TokenPriceCache } from '@/lib/cache/tokenPriceCache';
+import { getAddresses, getNodeUrl, getProvider } from '@/constants';
 
-const net = process.env.NEXT_PUBLIC_CHAIN_ID;
-const BASE_URL = net == "SN_SEPOLIA" ? "https://sepolia-api.ekubo.org" : "https://mainnet-api.ekubo.org";
-
+const walletString = localStorage.getItem("walletStarknetkitLatest");
+const wallet = walletString ? JSON.parse(walletString) : "";
+const chainId = wallet?.chainId;
+const BASE_URL = chainId == "SN_SEPOLIA" ? "https://sepolia-api.ekubo.org" : "https://mainnet-api.ekubo.org";
+const NODE_URL = getNodeUrl(chainId);
 const tokenPriceCache = new TokenPriceCache(60000);
 
 // TODO: implement this tokens
@@ -306,7 +308,7 @@ async function fetchPositionMetadata(positionId: string) {
 export async function fetchPosition(address: string): Promise<Position[]> {
   if (!address) return [];
 
-  const ekuboPositionsContract = new Contract(EKUBO_POSITIONS, EKUBO_POSITIONS_MAINNET_ADDRESS, provider);
+  const ekuboPositionsContract = new Contract(EKUBO_POSITIONS, getAddresses(chainId).EKUBO_POSITIONS, getProvider(NODE_URL !== undefined ? NODE_URL : ""));
 
   try {
     const { data } = await axios.get(`${BASE_URL}/positions/${address}`);
