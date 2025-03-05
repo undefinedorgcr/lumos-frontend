@@ -10,12 +10,40 @@ import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { fetchTopPools } from '@/app/api/ekuboApi';
 import ErrorModal from '@/components/ui/modals/ErrorModal';
+import { useAtomValue } from 'jotai';
+import { activeUser } from '@/state/user';
+import axios from 'axios';
 
 export default function PoolOverview() {
     const [pools, setPools] = useState<any[]>([]);
     const [selectedFee, setSelectedFee] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [openError, setOpenError] = useState(false);
+    const user = useAtomValue(activeUser);
+
+    const handleSaveEkuboFavPool = async ( newEkuboFavPool: { token0: { symbol: any; }; token1: { symbol: any; }; totalFees: any; totalTvl: any; } ) => {
+       try{
+        const res = await axios.put('/api/lumos/users', {
+            uId: user?.uid,
+            protocol: 'EKUBO',
+            newFavPool: {
+                token0: newEkuboFavPool.token0.symbol,
+                token1: newEkuboFavPool.token1.symbol,
+                fee : newEkuboFavPool.totalFees,
+                tickSpacing:newEkuboFavPool.totalTvl
+            }
+        });
+        if (res.status == 200) {
+           console.log('Save ekubo fav pool');
+        }
+        else {
+            setOpenError(true)
+        }
+        } catch (error: any) {
+            console.log(error);
+            setOpenError(true)
+        };
+    }
 
     useEffect(() => {
         async function getPools() {
@@ -123,7 +151,7 @@ export default function PoolOverview() {
                             {filteredPools.map((item, index) => (
                                 <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4">
-                                        <button onClick={()=> {setOpenError(true)}} className="text-gray-400 hover:text-white transition-colors">
+                                        <button onClick={() => { handleSaveEkuboFavPool(item)} } className="text-gray-400 hover:text-white transition-colors">
                                             <Star className="w-5 h-5" />
                                         </button>
                                     </td>
@@ -251,7 +279,7 @@ export default function PoolOverview() {
                 </div>
             </main>
             <Footer />
-            <ErrorModal isOpen={openError} onClose={setOpenError} title={'Oops!'} message={'This feature will be implemented in the future'}/>
+            <ErrorModal isOpen={openError} onClose={setOpenError} title={'Oops!'} message={'Error adding that pool to favorites!'}/>
         </div>
     );
 }
