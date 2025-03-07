@@ -6,10 +6,12 @@ import { Token } from '@/types/Tokens';
 import { Pool } from '@/types/Pool';
 import { PoolState } from '@/types/PoolState';
 import { Position } from '@/types/Position';
-import { fetchCryptoPrice, normalizeHex, tickToPrice } from '@/lib/utils';
+import { fetchCryptoPrice, findActiveTick, getTicksInRange, normalizeHex, tickToPrice } from '@/lib/utils';
 import { EKUBO_POSITIONS } from '@/abis/EkuboPositions';
 import { TokenPriceCache } from '@/lib/cache/tokenPriceCache';
 import { getAddresses, getNodeUrl, getProvider } from '@/constants';
+import { EKUBO_CORE } from '@/abis/EkuboCore';
+import { LiquidityData } from '@/types/LiquidityData';
 
 const walletString = localStorage.getItem("walletStarknetkitLatest");
 const wallet = walletString ? JSON.parse(walletString) : "";
@@ -62,9 +64,19 @@ const formatTokenAmount = (amount: number | bigint, symbol: string): number => {
   return Number(amount) / 10 ** decimals;
 };
 
-const calculateFeeU128 = (fee: number): string => {
-  const feeU128 = (fee * 2 ** 128) / 10 ** 37;
-  return feeU128.toString().replace(".", "");
+const getFeeTickSpacing = (fee: string) => {
+  switch (fee) {
+    case "0.05":
+      return {fee: BigInt("170141183460469235273462165868118016"), tickSpacing: 1000}
+    case "0.01":
+      return {fee: BigInt("34028236692093847977029636859101184"), tickSpacing: 200}
+    case "0.3":
+      return {fee: BigInt("1020847100762815411640772995208708096"), tickSpacing: 5982}
+    case "1":
+      return {fee: BigInt("3402823669209384634633746074317682114"), tickSpacing: 19802}
+    case "5":
+      return {fee: BigInt("17014118346046923173168730371588410572"), tickSpacing: 95310}
+  }
 };
 
 interface TokenMetadata {
@@ -125,9 +137,9 @@ export async function fetchPool(t0: Token, t1: Token, fee: number): Promise<Pool
       `${BASE_URL}/pair/${t0.l2_token_address}/${t1.l2_token_address}/pools`
     );
 
-    const feeStr = calculateFeeU128(fee);
+    const feeStr = getFeeTickSpacing(fee.toString())?.fee.toString();
     return data.topPools.find((pool: Pool) =>
-      pool.fee.toString().slice(0, 16) === feeStr.slice(0, 16)
+      pool.fee.toString().slice(0, 16) === feeStr?.slice(0, 16)
     ) || null;
   } catch (error) {
     console.error('Error fetching pool:', error);
@@ -142,7 +154,7 @@ export async function fetchPoolByAddress(t0symbol: string, t1symbol: string): Pr
     );
     return data.topPools;
   } catch (error) {
-    console.log('Error fetching pool by address:', error);
+    console.error('Error fetching pool by address:', error);
     return null;
   }
 }
@@ -216,14 +228,14 @@ export async function fetchTopPools() {
 export async function fetchPoolKeyHash(t0: Token, t1: Token, fee: number): Promise<PoolState | undefined> {
   try {
     const { data } = await axios.get(`${BASE_URL}/pools`);
-    const feeStr = calculateFeeU128(fee);
+    const feeStr = getFeeTickSpacing(fee.toString())?.fee.toString();
     const t0Address = normalizeHex(t0.l2_token_address).trim();
     const t1Address = normalizeHex(t1.l2_token_address).trim();
 
     return data.find((poolInfo: PoolState) =>
       poolInfo.token0 === t0Address &&
       poolInfo.token0 === t1Address &&
-      num.hexToDecimalString(poolInfo.fee).slice(0, 2) === feeStr.slice(0, 2)
+      num.hexToDecimalString(poolInfo.fee).slice(0, 2) === feeStr?.slice(0, 2)
     );
   } catch (error) {
     console.error('Error fetching pool key hash:', error);
@@ -255,44 +267,19 @@ export async function valToUsd(t0: Token, t1: Token, amount0: number, amount1: n
 }
 
 export async function fetchLiquidityInRange(
-  t0: Token,
-  t1: Token,
   minPrice: number,
   maxPrice: number,
+  liquidityData: LiquidityData[],
+
 ): Promise<number | null> {
-
-  const liquidityMap: { [tick: number]: bigint } = {};
-
-  let totalLiquidity = BigInt(0);
-  try {
-    const { data } = await axios.get(
-      `${BASE_URL}/tokens/${t0.l2_token_address}/${t1.l2_token_address}/liquidity`
-    );
-
-    const liquidityData = data.data;
-
-    liquidityData.sort((a: { tick: number; }, b: { tick: number; }) => a.tick - b.tick);
-
-    liquidityData.forEach(({ tick, net_liquidity_delta_diff }: { tick: number, net_liquidity_delta_diff: number }) => {
-      totalLiquidity += BigInt(net_liquidity_delta_diff);
-      liquidityMap[tick] = totalLiquidity;
-    });
-
-    totalLiquidity = BigInt(0);
-
-    for (const tick in liquidityMap) {
-      const liquidity = liquidityMap[tick];
-      const price = tickToPrice(Number(tick)) * (10 ** (t0.decimals - t1.decimals));
-      if (price >= minPrice && price <= maxPrice) {
-        totalLiquidity += liquidity;
-      }
-    };
-    return Number(totalLiquidity);
-
-  } catch (error) {
-    console.error("Error fetching liquidity data:", error);
-    return null;
-  }
+  
+  let liquidity = 0;
+  liquidityData.forEach(({ tick, liquidity_net }) => {
+    if (minPrice <= Number(tick) && Number(tick) <= maxPrice) {
+      liquidity += Number(liquidity_net);
+    }
+  });
+  return Number(liquidity);
 }
 
 async function fetchPositionMetadata(positionId: string) {
@@ -370,5 +357,72 @@ export async function fetchPosition(address: string): Promise<Position[]> {
   } catch (error) {
     console.error('Error fetching positions:', error instanceof AxiosError ? error.message : error);
     return [];
+  }
+}
+
+export async function fetchLiquidityData(
+  t0: Token,
+  t1: Token,
+  minPrice: number,
+  maxPrice: number,
+  fee: number,
+): Promise<LiquidityData[] | null> {
+  const feeTickSpacing = getFeeTickSpacing(fee.toString());
+  if (feeTickSpacing == null) return null;
+
+  try {
+    const { data } = await axios.get(
+      `${BASE_URL}/tokens/${t0.l2_token_address}/${t1.l2_token_address}/liquidity`
+    );
+    const minTick = findActiveTick(minPrice - minPrice * 0.18, data.data, t0, t1);
+    const maxTick = findActiveTick(maxPrice + maxPrice * 0.18, data.data, t0, t1);
+    const ticks: number[] = getTicksInRange(minTick, maxTick, data.data, feeTickSpacing.tickSpacing);
+    const pool = {
+      token0: t0.l2_token_address,
+      token1: t1.l2_token_address,
+      fee: feeTickSpacing.fee,
+      tick_spacing: feeTickSpacing.tickSpacing,
+      extension: 0,
+    };
+    const ekuboCoreContract = new Contract(
+      EKUBO_CORE,
+      getAddresses(chainId).EKUBO_CORE,
+      getProvider(NODE_URL !== undefined ? NODE_URL : "")
+    );
+    const batchSize = 125;
+    const delayMs = 1000;
+    const limit = pLimit(125);
+    const liquidityData: LiquidityData[] = [];
+    for (let i = 0; i < ticks.length; i += batchSize) {
+      const batchTicks = ticks.slice(i, i + batchSize);
+      const batchResults = await Promise.all(
+        batchTicks.map((tick: number) =>
+          limit(async () => {
+            const index = {
+              mag: Math.abs(tick),
+              sign: tick > 0 ? false : true,
+            };
+            const liquidity = await ekuboCoreContract.get_pool_tick_liquidity_net(pool, index);
+            const price = tickToPrice(tick) * (10 ** (t0.decimals - t1.decimals));
+            if (liquidity > 0) {
+              return {
+                tick: price > 999 ? price.toFixed(2) : price.toFixed(6),
+                liquidity_net: liquidity.toString(),
+              };
+            }
+            return null;
+          })
+        )
+      );
+      liquidityData.push(...batchResults.filter((d): d is LiquidityData => d !== null));
+      if (i + batchSize < ticks.length) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+
+    return liquidityData;
+  } catch (error) {
+    console.error("Error fetching liquidity data:", error);
+    return null;
   }
 }
