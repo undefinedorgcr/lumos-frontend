@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useEffect, useState } from 'react';
-import { Star } from 'lucide-react';
+import { Star} from 'lucide-react';
 import Image from 'next/image';
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
@@ -31,7 +31,6 @@ export default function PoolOverview() {
             setIsLoading(true);
             try {
                 const data = await fetchTopPools();
-                console.log(data);
                 setPools(data);
             } catch (err) {
                 console.error(err);
@@ -47,10 +46,15 @@ export default function PoolOverview() {
         async function getFavPools() {
             setIsLoadingFavPools(true);
             try {
-                const res = await axios.get(`/api/lumos/users?uId=${user?.uid}`);
-                if (res.status == 200) {
-                    setFavPools(res.data.data.ekubo_fav_pools);
+                if(user){
+                    const res = await axios.get(`/api/lumos/users?uId=${user?.uid}`);
+                    if (res.status == 200) {
+                        setFavPools(res.data.data.ekubo_fav_pools);
+                    }
+                }else{
+                    setFavPools([]);
                 }
+
             } catch (err) {
                 console.error(err);
                 setFavPools([]);
@@ -61,33 +65,74 @@ export default function PoolOverview() {
         getFavPools();
     }, []);
 
-    const handleSaveEkuboFavPool = async ( newEkuboFavPool: { pool: any; token0: { symbol: any; logo_url:string }; token1: { symbol: any; logo_url:string}; totalFees: any; totalTvl: any; } ) => {
-        try{
-         const res = await axios.put('/api/lumos/users', {
-             uId: user?.uid,
-             protocol: 'EKUBO',
-             newFavPool: {
-                 token0: newEkuboFavPool.token0.symbol,
-                 token1: newEkuboFavPool.token1.symbol,
-                 fee : newEkuboFavPool.pool.fee,
-                 tickSpacing:newEkuboFavPool.pool.tick_spacing,
-                 token0LogoUrl: newEkuboFavPool.token0.logo_url,
-                 token1LogoUrl: newEkuboFavPool.token1.logo_url,
-                 totalFees : newEkuboFavPool.totalFees,
-                 totalTvl: newEkuboFavPool.totalTvl,
-             }
-         });
-         if (res.status == 200) {
-            console.log('Save ekubo fav pool');
-         }
-         else {
-             setOpenError(true)
-         }
-         } catch (error: any) {
-             console.log(error);
-             setOpenError(true)
-         };
-     }
+    // Check if a pool is in favorites
+    const isPoolInFavorites = (pool: any) => {
+        if (!favPools || favPools.length === 0) return false;
+        
+        return favPools.some(favPool => 
+            favPool.token0 === pool.token0.symbol && 
+            favPool.token1 === pool.token1.symbol && 
+            favPool.fee === pool.pool.fee
+        );
+    };
+
+    const handleToggleFavorite = async (poolItem: any) => {
+        try {
+            const isAlreadyFavorite = isPoolInFavorites(poolItem);
+
+            if (isAlreadyFavorite) {
+                const resp = await axios.delete('/api/lumos/users', {
+                    data: {
+                        uId: user?.uid,
+                        protocol: 'EKUBO',
+                        pool: {
+                            token0: poolItem.token0.symbol,
+                            token1: poolItem.token1.symbol,
+                            fee: poolItem.pool.fee,
+                            tickSpacing: poolItem.pool.tick_spacing,
+                        }
+                    }
+                });
+                if(resp.status === 200){
+                    setFavPools(prevFavs => 
+                        prevFavs.filter(favPool => 
+                            !(favPool.token0 === poolItem.token0.symbol && 
+                              favPool.token1 === poolItem.token1.symbol && 
+                              favPool.fee === poolItem.pool.fee)
+                        )
+                    );
+                }else{
+                    setOpenError(true);
+                }
+            } else {
+                const newEkuboFavPool = {
+                    token0: poolItem.token0.symbol,
+                    token1: poolItem.token1.symbol,
+                    fee: poolItem.pool.fee,
+                    tickSpacing: poolItem.pool.tick_spacing,
+                    token0LogoUrl: poolItem.token0.logo_url,
+                    token1LogoUrl: poolItem.token1.logo_url,
+                    totalFees: poolItem.totalFees,
+                    totalTvl: poolItem.totalTvl,
+                };
+                
+                const res = await axios.put('/api/lumos/users', {
+                    uId: user?.uid,
+                    protocol: 'EKUBO',
+                    newFavPool: newEkuboFavPool
+                });
+                
+                if (res.status === 200) {
+                    setFavPools(prevFavs => [...prevFavs, newEkuboFavPool]);
+                } else {
+                    setOpenError(true);
+                }
+            }
+        } catch (error: any) {
+            console.log(error);
+            setOpenError(true);
+        }
+    };
 
     function getTickSpacing(fee: number, tickSpacing: number) {
         const feeStr = (Number(fee) / Number(2 ** 128) * 100).toString();
@@ -117,6 +162,7 @@ export default function PoolOverview() {
         : pools;
 
     const renderPoolsContent = () => {
+
         if (isLoading) {
             return (
                 <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
@@ -144,21 +190,6 @@ export default function PoolOverview() {
                             <tr className="border-b border-white/10">
                                 <th className="px-6 py-4 text-left">&nbsp;</th>
                                 <th className="px-6 py-4 text-left">Pool</th>
-                                {/* <th className="px-6 py-4 text-left">
-                                    <div className="flex items-center gap-2">
-                                        Fee APY
-                                        <Tooltip>
-                                            <TooltipTrigger>
-                                                <CircleHelp className="w-4 h-4 text-gray-400" />
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Annual Percentage Yield from trading fees</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </div>
-                                </th> */}
-                                {/* <th className="px-6 py-4 text-left">Risk</th> */}
-                                {/* <th className="px-6 py-4 text-left">Price volatility (24h)</th> */}
                                 <th className="px-6 py-4 text-left">
                                     <div className="flex items-center gap-2">
                                         TVL (24h)
@@ -179,8 +210,15 @@ export default function PoolOverview() {
                             {filteredPools.map((item, index) => (
                                 <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                     <td className="px-6 py-4">
-                                        <button onClick={() => { handleSaveEkuboFavPool(item)} } className="text-gray-400 hover:text-white transition-colors">
-                                            <Star className="w-5 h-5" />
+                                        <button 
+                                            onClick={() => handleToggleFavorite(item)} 
+                                            className="transition-colors"
+                                        >
+                                        {isPoolInFavorites(item) ? (
+                                        <Star className="w-5 h-5 text-white fill-white" />
+                                        ) : (
+                                        <Star className="w-5 h-5 text-gray-400 hover:text-white" />
+                                        )}
                                         </button>
                                     </td>
                                     <td className="px-6 py-4">
@@ -226,15 +264,6 @@ export default function PoolOverview() {
                                             </span>
                                         </div>
                                     </td>
-                                    {/* <td className="px-6 py-4 text-green-400">
-                                        N/A
-                                    </td> */}
-                                    {/* <td className="px-6 py-4">
-                                        <span className="px-3 py-1 bg-green-400/10 text-green-400 rounded-full text-sm">
-                                            SAFE
-                                        </span>
-                                    </td> */}
-                                    {/* <td className="px-6 py-4">N/A</td> */}
                                     <td className="px-6 py-4">${item.totalTvl.toFixed(2)}</td>
                                     <td className="px-6 py-4">${item.totalFees.toFixed(2)}</td>
                                 </tr>
@@ -247,11 +276,21 @@ export default function PoolOverview() {
     };
 
     const renderFavPoolsContent = () => {
+        if (!user) {
+            return (
+                <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+                    <p className="text-xl font-light text-gray-400">
+                        Your favorite pools are waiting! Log in to see them.
+                    </p>
+                </div>
+            );
+        }
+
         if (isLoadingFavPools) {
             return (
                 <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
                     <LoadingSpinner />
-                    <p className="text-gray-400">Loading fav pools...</p>
+                    <p className="text-gray-400">Loading favorite pools...</p>
                 </div>
             );
         }
@@ -295,8 +334,20 @@ export default function PoolOverview() {
                                 {favPools.map((item, index) => (
                                     <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                         <td className="px-6 py-4">
-                                            <button onClick={() => { handleSaveEkuboFavPool(item)} } className="text-gray-400 hover:text-white transition-colors">
-                                                <Star className="w-5 h-5" />
+                                            <button 
+                                                onClick={() => {
+                                                    const poolStructure = {
+                                                        token0: { symbol: item.token0, logo_url: item.token0LogoUrl },
+                                                        token1: { symbol: item.token1, logo_url: item.token1LogoUrl },
+                                                        pool: { fee: item.fee, tick_spacing: item.tickSpacing },
+                                                        totalFees: item.totalFees,
+                                                        totalTvl: item.totalTvl
+                                                    };
+                                                    handleToggleFavorite(poolStructure);
+                                                }} 
+                                                className="transition-colors"
+                                            >
+                                            <Star className="w-5 h-5 text-white fill-white" />
                                             </button>
                                         </td>
                                         <td className="px-6 py-4">
@@ -429,7 +480,7 @@ export default function PoolOverview() {
                 </div>
             </main>
             <Footer />
-            <ErrorModal isOpen={openError} onClose={setOpenError} title={'Oops!'} message={'Error adding that pool to favorites!'}/>
+            <ErrorModal isOpen={openError} onClose={setOpenError} title={'Oops!'} message={'Error updating favorite pools!'} />
         </div>
     );
 }
