@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 import React, { useEffect, useState } from 'react';
 import { Star} from 'lucide-react';
@@ -41,7 +40,7 @@ export default function PoolOverview() {
         }
         getPools();
     }, []);
-    
+
     useEffect(() => {
         async function getFavPools() {
             setIsLoadingFavPools(true);
@@ -65,7 +64,6 @@ export default function PoolOverview() {
         getFavPools();
     }, []);
 
-    // Check if a pool is in favorites
     const isPoolInFavorites = (pool: any) => {
         if (!favPools || favPools.length === 0) return false;
         
@@ -73,6 +71,15 @@ export default function PoolOverview() {
             favPool.token0 === pool.token0.symbol && 
             favPool.token1 === pool.token1.symbol && 
             favPool.fee === pool.pool.fee
+        );
+    };
+
+    const findPoolData = (favPool: any) => {
+        return pools.find(pool => 
+            pool.token0.symbol === favPool.token0 &&
+            pool.token1.symbol === favPool.token1 &&
+            pool.pool.fee === favPool.fee &&
+            pool.pool.tick_spacing == favPool.tickSpacing
         );
     };
 
@@ -110,8 +117,6 @@ export default function PoolOverview() {
                     token1: poolItem.token1.symbol,
                     fee: poolItem.pool.fee,
                     tickSpacing: poolItem.pool.tick_spacing,
-                    token0LogoUrl: poolItem.token0.logo_url,
-                    token1LogoUrl: poolItem.token1.logo_url,
                     totalFees: poolItem.totalFees,
                     totalTvl: poolItem.totalTvl,
                 };
@@ -214,11 +219,11 @@ export default function PoolOverview() {
                                             onClick={() => handleToggleFavorite(item)} 
                                             className="transition-colors"
                                         >
-                                        {isPoolInFavorites(item) ? (
-                                        <Star className="w-5 h-5 text-white fill-white" />
-                                        ) : (
-                                        <Star className="w-5 h-5 text-gray-400 hover:text-white" />
-                                        )}
+                                            {isPoolInFavorites(item) ? (
+                                                <Star className="w-5 h-5 text-white fill-white" />
+                                            ) : (
+                                                <Star className="w-5 h-5 text-gray-400 hover:text-white" />
+                                            )}
                                         </button>
                                     </td>
                                     <td className="px-6 py-4">
@@ -331,50 +336,55 @@ export default function PoolOverview() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {favPools.map((item, index) => (
+                                {favPools.map((favItem, index) => {
+                                    // Find complete pool data from our pools array
+                                    const poolData = findPoolData(favItem);
+                                    
+                                    return (
                                     <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                         <td className="px-6 py-4">
                                             <button 
                                                 onClick={() => {
-                                                    const poolStructure = {
-                                                        token0: { symbol: item.token0, logo_url: item.token0LogoUrl },
-                                                        token1: { symbol: item.token1, logo_url: item.token1LogoUrl },
-                                                        pool: { fee: item.fee, tick_spacing: item.tickSpacing },
-                                                        totalFees: item.totalFees,
-                                                        totalTvl: item.totalTvl
+                                                    // Either use the found pool data or create a structure from the favorite item
+                                                    const poolStructure = poolData || {
+                                                        token0: { symbol: favItem.token0 },
+                                                        token1: { symbol: favItem.token1 },
+                                                        pool: { fee: favItem.fee, tick_spacing: favItem.tickSpacing },
+                                                        totalFees: favItem.totalFees,
+                                                        totalTvl: favItem.totalTvl
                                                     };
                                                     handleToggleFavorite(poolStructure);
                                                 }} 
                                                 className="transition-colors"
                                             >
-                                            <Star className="w-5 h-5 text-white fill-white" />
+                                                <Star className="w-5 h-5 text-white fill-white" />
                                             </button>
                                         </td>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-2">
                                                 <div className="flex -space-x-2">
                                                     <Image
-                                                        src={item.token0LogoUrl || "/images/EkuboLogo.png"}
+                                                        src={(poolData ? poolData.token0.logo_url : null) || "/images/EkuboLogo.png"}
                                                         width={24}
                                                         height={24}
-                                                        alt={item.token0}
+                                                        alt={favItem.token0}
                                                         className="rounded-full"
                                                     /> 
                                                     <Image
-                                                        src={item.token1LogoUrl || "/images/EkuboLogo.png"}
+                                                        src={(poolData ? poolData.token1.logo_url : null) || "/images/EkuboLogo.png"}
                                                         width={24}
                                                         height={24}
-                                                        alt={item.token1}
+                                                        alt={favItem.token1}
                                                         className="rounded-full"
                                                     />
                                                 </div>
                                                 <span className="font-medium">
-                                                    {item.token0}/{item.token1}
+                                                    {favItem.token0}/{favItem.token1}
                                                 </span>
                                                 <span className="text-blue-400 text-sm">
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                        {getPoolFeePercentage(item.fee)}
+                                                        {getPoolFeePercentage(favItem.fee)}
                                                         </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Pool fee</p>
@@ -384,7 +394,7 @@ export default function PoolOverview() {
                                                 <span className="text-blue-400 text-sm">
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                        {getTickSpacing(item.fee, item.tickSpacing)}
+                                                        {getTickSpacing(favItem.fee, favItem.tickSpacing)}
                                                         </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Pool tick spacing</p>
@@ -393,10 +403,10 @@ export default function PoolOverview() {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">${item.totalTvl.toFixed(2)}</td>
-                                        <td className="px-6 py-4">${item.totalFees.toFixed(2)}</td>
+                                        <td className="px-6 py-4">${favItem.totalTvl.toFixed(2)}</td>
+                                        <td className="px-6 py-4">${favItem.totalFees.toFixed(2)}</td>
                                     </tr>
-                                ))}
+                                )})}
                             </tbody>
                         </table>
                     </div>
