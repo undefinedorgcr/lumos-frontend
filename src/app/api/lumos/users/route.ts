@@ -59,8 +59,8 @@ export async function PUT(req: Request) {
 
 export async function DELETE(req: Request) {
     try {
-        const body = await req.text(); // Leer como texto
-        const { uId, protocol, pool } = JSON.parse(body); // Parsear manualmente
+        const body = await req.text();
+        const { uId, protocol, pool } = JSON.parse(body);
 
         const response = await axios.delete(`${API_URL}`, {
             data: { uId, protocol, pool },

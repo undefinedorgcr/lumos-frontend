@@ -1,7 +1,7 @@
 // constants.ts
 import { RpcProvider, constants } from "starknet"
 
-export const getAddresses = (chainId: string) => ({
+export const getAddresses = (chainId: string | undefined) => ({
   EKUBO_CORE: "0x00000005dd3D2F4429AF886cD1a3b08289DBcEa99A294197E9eB43b0e0325b4b",
   EKUBO_POSITIONS: chainId === "SN_SEPOLIA"
     ? "0x06a2aee84bb0ed5dded4384ddd0e40e9c1372b818668375ab8e3ec08807417e5"
@@ -33,7 +33,7 @@ export const getNodeUrl = (chainId?: string) =>
     ? process.env.NEXT_PUBLIC_SEPOLIA_RPC
     : process.env.NEXT_PUBLIC_MAINNET_RPC
 
-export const getProvider = (nodeUrl: string) =>
+export const getProvider = (nodeUrl: string | undefined) =>
     new RpcProvider({ nodeUrl })
 
 export const getChainId = (chainId?: string) =>

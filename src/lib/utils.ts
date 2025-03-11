@@ -84,3 +84,26 @@ export function getTickFromPrice(price: number, t0: Token, t1: Token, liquidityD
   });
   return returnTick;
 }
+
+export const getPoolFeePercentage = (fee: number): string => {
+  return (Number(fee) / Number(2 ** 128) * 100).toFixed(2) + '%';
+};
+
+export const getTickSpacing = (fee: number, tickSpacing: number) => {
+  const feeStr = (Number(fee) / Number(2 ** 128) * 100).toString();
+  if (tickSpacing == 354892) {
+      return "DCA-Enabled"
+  }
+  switch (feeStr) {
+      case "0.01":
+          return "0.02%"
+      case "0.05":
+          return "0.1%"
+      case "0.3":
+          return "0.6%"
+      case "1":
+          return "2%"
+      case "5":
+          return "10%"
+  }
+}
