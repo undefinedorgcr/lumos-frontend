@@ -14,7 +14,10 @@ import { EKUBO_CORE } from '@/abis/EkuboCore';
 import { LiquidityData } from '@/types/LiquidityData';
 import { EkuboPoolsDisplay } from '@/types/EkuboPoolsDisplay';
 
-const walletString = localStorage.getItem("walletStarknetkitLatest");
+let walletString : string | null = ""
+if (typeof window !== "undefined") {
+  walletString = window?.localStorage.getItem("walletStarknetkitLatest");
+}
 const wallet = walletString ? JSON.parse(walletString) : "";
 const chainId = wallet?.chainId;
 const BASE_URL = chainId == "SN_SEPOLIA" ? "https://sepolia-api.ekubo.org" : "https://mainnet-api.ekubo.org";
