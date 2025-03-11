@@ -4,165 +4,66 @@ import { Star } from 'lucide-react';
 import Image from 'next/image';
 import axios from 'axios';
 import { useAtomValue } from 'jotai';
-
-// Components
 import Footer from "@/components/ui/footer";
 import Navbar from "@/components/ui/navbar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CircleHelp } from "lucide-react";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import ErrorModal from '@/components/ui/modals/ErrorModal';
-
-// API and State
-import { fetchTopPools, valToUsd } from '@/app/api/ekuboApi';
+import { fetchTopPools, fetchUserFavPools } from '@/app/api/ekuboApi';
 import { activeUser } from '@/state/user';
-
-
-// Utility Functions
-const getPoolFeePercentage = (fee: number): string => {
-    return (Number(fee) / Number(2 ** 128) * 100).toFixed(2) + '%';
-};
-
-const getTickSpacing = (fee: number, tickSpacing: number) => {
-    const feeStr = (Number(fee) / Number(2 ** 128) * 100).toString();
-    if (tickSpacing == 354892) {
-        return "DCA-Enabled"
-    }
-    switch (feeStr) {
-        case "0.01":
-            return "0.02%"
-        case "0.05":
-            return "0.1%"
-        case "0.3":
-            return "0.6%"
-        case "1":
-            return "2%"
-        case "5":
-            return "10%"
-    }
-}
+import { getPoolFeePercentage, getTickSpacing } from '@/lib/utils';
+import { EkuboPoolsDisplay } from '@/types/EkuboPoolsDisplay';
 
 export default function PoolOverview() {
-
-    // State Management
-    const [selectedFee, setSelectedFee] = useState(null);
+    const [selectedFee, setSelectedFee] = useState<null | string>(null);
     const [openError, setOpenError] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [pools, setPools] = useState([]);
+    const [pools, setPools] = useState<EkuboPoolsDisplay[]>([]);
     const [isLoadingFavPools, setIsLoadingFavPools] = useState(true);
-    const [favPools, setFavPools] = useState([]);
-    const [processedFavPools, setProcessedFavPools] = useState([]);
-
-    // User Data
+    const [processedFavPools, setProcessedFavPools] = useState<EkuboPoolsDisplay[]>([]);
     const user = useAtomValue(activeUser);
 
-    // Data Fetching
     useEffect(() => {
         async function getPools() {
             setIsLoading(true);
+            setIsLoadingFavPools(true);
             try {
                 const data = await fetchTopPools();
                 setPools(data);
-            } catch (err) {
-                console.error(err);
-                setPools([]);
-            } finally {
                 setIsLoading(false);
-            }
-        }
-        getPools();
-    }, []);
-
-    useEffect(() => {
-        async function getFavPools() {
-            setIsLoadingFavPools(true);
-            try {
                 if(user){
                     const res = await axios.get(`/api/lumos/users?uId=${user?.uid}`);
                     if (res.status == 200) {
-                        setFavPools(res.data.data.ekubo_fav_pools);
+                        const userFavPoolsData = res.data.data.ekubo_fav_pools;
+                        const favPools = await fetchUserFavPools(userFavPoolsData)
+                        setProcessedFavPools(favPools);
                     }
                 }else{
-                    setFavPools([]);
+                    setProcessedFavPools([]);
                 }
-
             } catch (err) {
                 console.error(err);
-                setFavPools([]);
+                setProcessedFavPools([]);
             } finally {
+                setIsLoading(false);
                 setIsLoadingFavPools(false);
             }
         }
-        getFavPools();
-    }, []);
+        getPools();
+    }, [user]);
 
-    useEffect(() => {
-        async function processFavoritePools() {
-            if (!favPools.length || !pools.length) {
-                setProcessedFavPools([]);
-                return;
-            }
-
-            try {
-                const processed : any = await Promise.all(
-                    favPools.map(async (favItem : any) => {
-                        const poolFound : any = pools.find(( pool: any ) => 
-                            pool.token0.symbol === favItem.token0 &&
-                            pool.token1.symbol === favItem.token1 &&
-                            pool.pool.fee === favItem.fee &&
-                            pool.pool.tick_spacing == favItem.tickSpacing
-                        );
-
-                        let poolData = favItem;
-                        
-                        if (poolFound) {
-                            const totalFees = await valToUsd(
-                                poolFound.token0, 
-                                poolFound.token1, 
-                                poolFound.pool.fees0_24h, 
-                                poolFound.pool.fees1_24h
-                            );
-                            
-                            const totalTvl = await valToUsd(
-                                poolFound.token0, 
-                                poolFound.token1, 
-                                poolFound.pool.tvl0_total,
-                                poolFound.pool.tvl1_total
-                            );
-
-                            poolData = {
-                                ...favItem,
-                                poolFound,
-                                totalFees,
-                                totalTvl
-                            };
-                        }
-
-                        return poolData;
-                    })
-                );
-                setProcessedFavPools(processed);
-            } catch (error) {
-                console.error("Error processing favorite pools:", error);
-                setProcessedFavPools([]);
-            }
-        }
-
-        processFavoritePools();
-    }, [favPools, pools]);
-
-    // Pool Management Functions
-    const isPoolInFavorites = (pool: { token0: { symbol: string; }; token1: { symbol: string; }; pool: { fee: number; }; }) => {
-        if (!favPools || favPools.length === 0) return false;
+    const isPoolInFavorites = (pool: EkuboPoolsDisplay) => {
+        if (!processedFavPools || processedFavPools.length === 0) return false;
         
-        return favPools.some((favPool : any) => 
-            favPool.token0 === pool.token0.symbol && 
-            favPool.token1 === pool.token1.symbol && 
-            favPool.fee === pool.pool.fee
+        return processedFavPools.some((favPool : EkuboPoolsDisplay) => 
+            favPool.token0.symbol === pool.token0.symbol && 
+            favPool.token1.symbol === pool.token1.symbol && 
+            favPool.pool.fee === pool.pool.fee
         );
     };
 
-    const handleToggleFavorite = async (poolItem: any) => {
+    const handleToggleFavorite = async (poolItem: EkuboPoolsDisplay) => {
         try {
             const isAlreadyFavorite = isPoolInFavorites(poolItem);
 
@@ -180,11 +81,11 @@ export default function PoolOverview() {
                     }
                 });
                 if(resp.status === 200){
-                    setFavPools(prevFavs => 
+                    setProcessedFavPools(prevFavs => 
                         prevFavs.filter(favPool => 
-                            !(favPool.token0 === poolItem.token0.symbol && 
-                              favPool.token1 === poolItem.token1.symbol && 
-                              favPool.fee === poolItem.pool.fee)
+                            !(favPool.token0.symbol === poolItem.token0.symbol && 
+                              favPool.token1.symbol === poolItem.token1.symbol && 
+                              favPool.pool.fee === poolItem.pool.fee)
                         )
                     );
                 }else{
@@ -203,9 +104,9 @@ export default function PoolOverview() {
                     protocol: 'EKUBO',
                     newFavPool: newEkuboFavPool
                 });
-                
+                console.log(res);
                 if (res.status === 200) {
-                    setFavPools(prevFavs => [...prevFavs, newEkuboFavPool]);
+                    setProcessedFavPools(prevFavs => [...prevFavs, poolItem]);
                 } else {
                     setOpenError(true);
                 }
@@ -215,13 +116,10 @@ export default function PoolOverview() {
             setOpenError(true);
         }
     };
-
-    // Filtered Pools
     const filteredPools = selectedFee
         ? pools.filter(pool => getPoolFeePercentage(pool.pool.fee) === selectedFee)
         : pools;
 
-    // UI Components - Pool Table Row
     const renderPoolsContent = () => {
         if (isLoading) {
             return (
@@ -335,7 +233,6 @@ export default function PoolOverview() {
         );
     };
 
-    // Render Functions
     const renderFavPoolsContent = () => {
         if (!user) {
             return (
@@ -356,7 +253,7 @@ export default function PoolOverview() {
             );
         }
     
-        if (favPools.length === 0) {
+        if (processedFavPools.length === 0 || processedFavPools === undefined) {
             return (
                 <div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
                     <p className="text-xl font-light text-gray-400">
@@ -392,18 +289,13 @@ export default function PoolOverview() {
                                 </tr>
                             </thead>
                             <tbody> 
-                                {processedFavPools.map((favItem: any, index:number) => {                                    
+                                {processedFavPools.map((favItem: EkuboPoolsDisplay, index:number) => {                                    
                                     return (
                                     <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                                         <td className="px-6 py-4">
                                             <button 
                                                 onClick={() => {
-                                                    const poolStructure = favItem.poolFound || {
-                                                        token0: { symbol: favItem.token0 },
-                                                        token1: { symbol: favItem.token1 },
-                                                        pool: { fee: favItem.fee, tick_spacing: favItem.tickSpacing }
-                                                    };
-                                                    handleToggleFavorite(poolStructure);
+                                                    handleToggleFavorite(favItem);
                                                 }} 
                                                 className="transition-colors"
                                             >
@@ -414,27 +306,27 @@ export default function PoolOverview() {
                                             <div className="flex items-center gap-2">
                                                 <div className="flex -space-x-2">
                                                     <Image
-                                                        src={(favItem.poolFound ? favItem.poolFound.token0.logo_url : null) || "/images/EkuboLogo.png"}
+                                                        src={favItem?.token0.logo_url || "/images/EkuboLogo.png"}
                                                         width={24}
                                                         height={24}
-                                                        alt={favItem.token0}
+                                                        alt={favItem.token0.symbol}
                                                         className="rounded-full"
                                                     /> 
                                                     <Image
-                                                        src={(favItem.poolFound ? favItem.poolFound.token1.logo_url : null) || "/images/EkuboLogo.png"}
+                                                        src={favItem?.token1.logo_url || "/images/EkuboLogo.png"}
                                                         width={24}
                                                         height={24}
-                                                        alt={favItem.token1}
+                                                        alt={favItem.token1.symbol}
                                                         className="rounded-full"
                                                     />
                                                 </div>
                                                 <span className="font-medium">
-                                                    {favItem.token0}/{favItem.token1}
+                                                    {favItem.token0.symbol}/{favItem.token1.symbol}
                                                 </span>
                                                 <span className="text-blue-400 text-sm">
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                        {getPoolFeePercentage(favItem.fee)}
+                                                        {getPoolFeePercentage(favItem.pool.fee)}
                                                         </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Pool fee</p>
@@ -444,7 +336,7 @@ export default function PoolOverview() {
                                                 <span className="text-blue-400 text-sm">
                                                     <Tooltip>
                                                         <TooltipTrigger>
-                                                        {getTickSpacing(favItem.fee, favItem.tickSpacing)}
+                                                        {getTickSpacing(favItem.pool.fee, favItem.pool.tick_spacing)}
                                                         </TooltipTrigger>
                                                         <TooltipContent>
                                                             <p>Pool tick spacing</p>
@@ -478,7 +370,7 @@ export default function PoolOverview() {
                     <div className="flex justify-between items-center">
                         <h2 className="text-xl">Favorite Pools</h2>
                         <div className="flex items-center gap-4">
-                            <span className="text-gray-400">Total: {favPools.length} pool(s)</span>
+                            <span className="text-gray-400">Total: {processedFavPools.length} pool(s)</span>
                         </div>
                     </div>
                     <div className="flex flex-wrap gap-2">

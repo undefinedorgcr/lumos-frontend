@@ -12,12 +12,12 @@ import WalletConnector from "@/components/ui/connectWallet";
 import { useAtomValue } from "jotai";
 import { walletStarknetkitLatestAtom } from "@/state/connectedWallet";
 import { cairo, CallData } from "starknet";
-import { provider, USDC_CONTRACT_ADDRESS } from "@/constants";
 import { activeUser } from "@/state/user";
 import axios from "axios";
 import InfoModal from "@/components/ui/modals/InfoModal";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import ErrorModal from "@/components/ui/modals/ErrorModal";
+import { getAddresses, getNodeUrl, getProvider } from "@/constants";
 
 const Checkout = () => {
     const router = useRouter();
@@ -32,7 +32,10 @@ const Checkout = () => {
     const [openInfo, setOpenInfo] = useState<boolean>(false);
     const [openError, setOpenError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-
+    const chainId = wallet?.chainId;
+    const USDC_CONTRACT_ADDRESS = getAddresses(chainId)
+    const NODE_URL = getNodeUrl(chainId);
+    const provider = getProvider(NODE_URL);
     const plans = {
         free: {
             name: "FREE",
@@ -55,7 +58,6 @@ const Checkout = () => {
         const planType = searchParams.get('plan')?.toLowerCase();
         if (planType && planType in plans) {
             setPlan(plans[planType as keyof typeof plans]);
-            console.log(plan);
         }
     }, [searchParams]);
 

@@ -12,6 +12,7 @@ import { TokenPriceCache } from '@/lib/cache/tokenPriceCache';
 import { getAddresses, getNodeUrl, getProvider } from '@/constants';
 import { EKUBO_CORE } from '@/abis/EkuboCore';
 import { LiquidityData } from '@/types/LiquidityData';
+import { EkuboPoolsDisplay } from '@/types/EkuboPoolsDisplay';
 
 const walletString = localStorage.getItem("walletStarknetkitLatest");
 const wallet = walletString ? JSON.parse(walletString) : "";
@@ -67,15 +68,15 @@ const formatTokenAmount = (amount: number | bigint, symbol: string): number => {
 const getFeeTickSpacing = (fee: string) => {
   switch (fee) {
     case "0.05":
-      return {fee: BigInt("170141183460469235273462165868118016"), tickSpacing: 1000}
+      return { fee: BigInt("170141183460469235273462165868118016"), tickSpacing: 1000 }
     case "0.01":
-      return {fee: BigInt("34028236692093847977029636859101184"), tickSpacing: 200}
+      return { fee: BigInt("34028236692093847977029636859101184"), tickSpacing: 200 }
     case "0.3":
-      return {fee: BigInt("1020847100762815411640772995208708096"), tickSpacing: 5982}
+      return { fee: BigInt("1020847100762815411640772995208708096"), tickSpacing: 5982 }
     case "1":
-      return {fee: BigInt("3402823669209384634633746074317682114"), tickSpacing: 19802}
+      return { fee: BigInt("3402823669209384634633746074317682114"), tickSpacing: 19802 }
     case "5":
-      return {fee: BigInt("17014118346046923173168730371588410572"), tickSpacing: 95310}
+      return { fee: BigInt("17014118346046923173168730371588410572"), tickSpacing: 95310 }
   }
 };
 
@@ -173,7 +174,7 @@ const sortPoolsByFees = (pools: any) => {
 
 const limit = pLimit(5);
 
-export async function fetchTopPools() {
+export async function fetchTopPools(): Promise<EkuboPoolsDisplay[]> {
   try {
     const pools: Array<any> = [];
     const tokens = await fetchTokens();
@@ -196,6 +197,58 @@ export async function fetchTopPools() {
         });
       })
     );
+    const sortedPools = sortPoolsByFees(pools).slice(0, 20);
+
+    const updatedPools = await Promise.all(
+      sortedPools.map((pool: any) =>
+        limit(async () => {
+          pool.totalFees = (await valToUsd(
+            pool.token0,
+            pool.token1,
+            pool.pool.fees0_24h,
+            pool.pool.fees1_24h
+          ));
+          pool.totalTvl = (await valToUsd(
+            pool.token0,
+            pool.token1,
+            pool.pool.tvl0_total,
+            pool.pool.tvl1_total
+          ));
+          return pool;
+        })
+      )
+    );
+
+    return sortPoolsByFees(updatedPools).slice(0, 20);
+  } catch (error) {
+    console.error('Error fetching top pairs:', error);
+    throw error;
+  }
+}
+
+export async function fetchUserFavPools(favPools: any[]): Promise<EkuboPoolsDisplay[]> {
+  try {
+    const pools: Array<any> = [];
+    const tokens = await fetchTokens();
+
+    await Promise.all(
+      favPools.map(async (pool: any) => {
+        const { data } = await axios.get(`${BASE_URL}/pair/${pool.token0}/${pool.token1}/pools`);
+        data.topPools.forEach((poolData: Pool) => {
+          const t0 = tokens.find((token: Token) => token.symbol.toLowerCase() === pool.token0.toLowerCase());
+          const t1 = tokens.find((token: Token) => token.symbol.toLowerCase() === pool.token1.toLowerCase());
+          if (poolData.tick_spacing == pool.tickSpacing && poolData.fee == pool.fee) {
+            pools.push({
+              token0: t0,
+              token1: t1,
+              pool: poolData,
+              totalFees: 0,
+              totalTvl: 0,
+            });
+          }
+        });
+      })
+    )
     const sortedPools = sortPoolsByFees(pools).slice(0, 20);
 
     const updatedPools = await Promise.all(
@@ -272,7 +325,7 @@ export async function fetchLiquidityInRange(
   liquidityData: LiquidityData[],
 
 ): Promise<number | null> {
-  
+
   let liquidity = 0;
   liquidityData.forEach(({ tick, liquidity_net }) => {
     if (minPrice <= Number(tick) && Number(tick) <= maxPrice) {
