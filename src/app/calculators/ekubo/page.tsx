@@ -11,7 +11,7 @@ import Calculator from "@/components/ui/Calculator";
 import LoadingSpinner from "@/components/ui/LoadingSpinner";
 import { fetchCryptoPrice } from "@/lib/utils";
 
-export default function Calculators() {
+export default function EkuboCalculator() {
     const [tokens, setTokens] = useState<Token[]>([]);
     const [fee, setFee] = useState(0);
     const [openTokenSelector, setOpenTokenSelector] = useState(false);
