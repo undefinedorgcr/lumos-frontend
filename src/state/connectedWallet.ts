@@ -1,4 +1,3 @@
-// state/connectedWallet.ts
 import { atomWithStorage } from 'jotai/utils'
 import { StarknetWindowObject } from 'starknetkit'
 
