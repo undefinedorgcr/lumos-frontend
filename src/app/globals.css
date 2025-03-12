@@ -108,3 +108,27 @@ body {
   background-color: white;
   color: black;          
 }
+
+.perspective-container {
+  perspective: 1000px;
+}
+
+.perspective-image {
+  transform: rotateY(20deg) rotateX(5deg);
+  transition: transform 0.3s ease;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.5s ease-in-out forwards;
+}

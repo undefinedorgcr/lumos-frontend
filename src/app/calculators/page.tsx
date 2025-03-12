@@ -26,12 +26,13 @@ export default function Calculators() {
               description="Calculate impermanent loss, estimate yields, and optimize your concentrated liquidity positions in Ekubo pools."
               href="/calculators/ekubo"
             />
-          </div>
 
-          <div className="mt-16 text-center">
-            <p className="text-zinc-500 text-sm">
-              More protocols coming soon...
-            </p>
+            {/* <ProtocolCard
+              imageSrc="/images/HaikoLogo.png"
+              title="Haiko Protocol"
+              description="Estimate yields and optimize your concentrated liquidity positions in Haiko pools."
+              href="/calculators/haiko"
+            /> */}
           </div>
         </div>
       </main>
