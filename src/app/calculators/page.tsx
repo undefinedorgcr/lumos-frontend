@@ -27,12 +27,12 @@ export default function Calculators() {
               href="/calculators/ekubo"
             />
 
-            <ProtocolCard
+            {/* <ProtocolCard
               imageSrc="/images/HaikoLogo.png"
               title="Haiko Protocol"
               description="Estimate yields and optimize your concentrated liquidity positions in Haiko pools."
               href="/calculators/haiko"
-            />
+            /> */}
           </div>
         </div>
       </main>
