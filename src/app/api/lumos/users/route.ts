@@ -56,3 +56,22 @@ export async function PUT(req: Request) {
         return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
     }
 }
+
+export async function DELETE(req: Request) {
+    try {
+        const body = await req.text();
+        const { uId, protocol, pool } = JSON.parse(body);
+
+        const response = await axios.delete(`${API_URL}`, {
+            data: { uId, protocol, pool },
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.LUMOS_API_SECRET_TOKEN}`,
+            }
+        });
+
+        return NextResponse.json({ data: response.data }, { status: 200 });
+    } catch (error: any) {
+        return NextResponse.json({ message: error.message || "Internal Server Error" }, { status: 500 });
+    }
+}
