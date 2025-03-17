@@ -1,5 +1,6 @@
-import { atomWithStorage } from 'jotai/utils'
-import { StarknetWindowObject } from 'starknetkit'
+import { atomWithStorage } from 'jotai/utils';
+import { StarknetWindowObject } from 'starknetkit';
 
-export const walletStarknetkitLatestAtom = atomWithStorage<undefined | null | StarknetWindowObject>
-  ('walletStarknetkitLatest', undefined)
+export const walletStarknetkitLatestAtom = atomWithStorage<
+	undefined | null | StarknetWindowObject
+>('walletStarknetkitLatest', undefined);
