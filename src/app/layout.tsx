@@ -1,8 +1,8 @@
-// app/layout.tsx
 import type { Metadata } from 'next';
 import './globals.css';
 import ChatWidget from '@/components/ui/modals/ChatWidget';
 import TestNetworkBanner from '@/components/ui/TestNetworkBanner';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata: Metadata = {
 	title: 'Lumos',
@@ -21,6 +21,7 @@ export default function RootLayout({
 					<div className="p-6">
 						{children}
 						<ChatWidget />
+						<Analytics />
 					</div>
 				</TestNetworkBanner>
 			</body>
