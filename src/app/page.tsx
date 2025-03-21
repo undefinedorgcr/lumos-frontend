@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-'use client'
+'use client';
 import React, { useEffect, useState, useRef } from 'react';
-import Image from 'next/image'
+import Image from 'next/image';
 import StarField from '@/components/animations/starfield';
 import Link from 'next/link';
 import Footer from '@/components/ui/footer';
@@ -17,17 +17,17 @@ const LandingPage = () => {
   const [currentProtocolIndex, setCurrentProtocolIndex] = useState(0);
   const protocolsRef = useRef(null);
   const user = useAtomValue(activeUser);
-  
+
   const protocols = ['Ekubo', 'Vesu', 'Nostra', 'Haiko'];
 
   const nextProtocol = () => {
-    setCurrentProtocolIndex((prevIndex) => 
+    setCurrentProtocolIndex((prevIndex) =>
       prevIndex === protocols.length - 1 ? 0 : prevIndex + 1
     );
   };
-  
+
   const prevProtocol = () => {
-    setCurrentProtocolIndex((prevIndex) => 
+    setCurrentProtocolIndex((prevIndex) =>
       prevIndex === 0 ? protocols.length - 1 : prevIndex - 1
     );
   };
@@ -49,18 +49,18 @@ const LandingPage = () => {
     const interval = setInterval(() => {
       nextProtocol();
     }, 3000);
-    
+
     return () => clearInterval(interval);
   }, [user]);
 
-  const getVisibleProtocols = () => {
-    const visibleProtocols = [];
-    for (let i = 0; i < 3; i++) {
-      const index = (currentProtocolIndex + i) % protocols.length;
-      visibleProtocols.push(protocols[index]);
-    }
-    return visibleProtocols;
-  };
+	const getVisibleProtocols = () => {
+		const visibleProtocols = [];
+		for (let i = 0; i < 3; i++) {
+			const index = (currentProtocolIndex + i) % protocols.length;
+			visibleProtocols.push(protocols[index]);
+		}
+		return visibleProtocols;
+	};
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -110,7 +110,7 @@ const LandingPage = () => {
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl font-neuethin mb-10 text-center">Supported Protocols</h2>
           <div className="relative" ref={protocolsRef}>
-            <button 
+            <button
               onClick={prevProtocol}
               className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-900 bg-opacity-50 p-3 rounded-full"
               aria-label="Previous protocol"
@@ -126,7 +126,7 @@ const LandingPage = () => {
                   className="flex flex-col items-center transition-all duration-500 ease-in-out opacity-0 translate-x-10 animate-slide-in"
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
-                  <div className="w-36 h-36 rounded-full border border-gray-700 flex items-center justify-center mb-3">
+                  <div className="w-36 h-36 rounded-full flex items-center justify-center mb-3">
                     <span className="text-3xl font-bold">
                       <Image width={100} height={100} src={`/images/${protocol}Logo.png`} alt={''}></Image>
                     </span>
@@ -134,7 +134,7 @@ const LandingPage = () => {
                 </div>
               ))}
             </div>
-            <button 
+            <button
               onClick={nextProtocol}
               className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-900 bg-opacity-50 p-3 rounded-full"
               aria-label="Next protocol"
