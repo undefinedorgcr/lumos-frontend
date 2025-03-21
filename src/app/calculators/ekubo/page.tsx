@@ -64,6 +64,12 @@ export default function EkuboCalculator() {
 			);
 		} else {
 			setIsLoading(true);
+			const token0temp = token0;
+			const token1temp = token1;
+			if (BigInt(token1.decimals) > BigInt(token0.decimals)) {
+				setToken0(token1temp);
+				setToken1(token0temp);
+			}
 			const t0price = Number(await fetchCryptoPrice(token0.symbol));
 			const t1price = Number(await fetchCryptoPrice(token1.symbol));
 			setVolume(
