@@ -2,17 +2,17 @@ import React from 'react';
 
 const Footer = (): React.JSX.Element => {
 	return (
-		<footer className="text-white mt-auto">
+		<footer className="text-white mt-4">
 			<div className="w-full border-t border-gray-800"></div>
 			<div className="container mx-auto p-7">
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 					<div className="md:col-span-1 flex flex-col items-center text-center">
-						<h2 className="text-2xl font-bold mb-4">
+						<h2 className="text-lg font-bold mb-4">
 							Don't Miss Out
 						</h2>
 						<div className="flex space-x-2 mt-6">
 							<a
-								className="p-2 hover:bg-white hover:text-black transition-colors"
+								className="p-2 rounded-lg hover:bg-white hover:text-black transition-all duration-500"
 								href="https://github.com/undefinedorgcr"
 								target="_blank"
 							>
@@ -36,7 +36,7 @@ const Footer = (): React.JSX.Element => {
 								</svg>
 							</a>
 							<a
-								className="p-2 hover:bg-white hover:text-black transition-colors"
+								className="p-2 rounded-lg hover:bg-white hover:text-black transition-all duration-500"
 								href="https://x.com/lumosapp_"
 								target="_blank"
 							>
@@ -52,7 +52,7 @@ const Footer = (): React.JSX.Element => {
 								</svg>
 							</a>
 							<a
-								className="p-2 hover:bg-white hover:text-black transition-colors"
+								className="p-2 rounded-lg hover:bg-white hover:text-black transition-all duration-500"
 								href="https://discord.gg/sEpnC6JB2U"
 								target="_blank"
 							>
@@ -67,7 +67,7 @@ const Footer = (): React.JSX.Element => {
 								</svg>
 							</a>
 							<a
-								className="p-2 hover:bg-white hover:text-black transition-colors"
+								className="p-2 rounded-lg hover:bg-white hover:text-black transition-all duration-500"
 								href="https://t.me/+zB6wXUOsWptjNzQx"
 								target="_blank"
 							>
@@ -84,7 +84,7 @@ const Footer = (): React.JSX.Element => {
 						</div>
 					</div>
 					<div className="md:col-span-1 flex flex-col items-center text-center ">
-						<h3 className="text-lg font-bold mb-4 ">Company</h3>
+						<h3 className="text-sm mb-4 ">Company</h3>
 						<ul className="space-y-2">
 							<li>
 								<a href="/knowmore" className="hover:underline">
@@ -94,34 +94,35 @@ const Footer = (): React.JSX.Element => {
 						</ul>
 					</div>
 					<div className="md:col-span-1 flex flex-col items-center text-center">
-						<h3 className="text-lg font-bold mb-4  ">
+						<h3 className="text-sm mb-4 ">
 							Customer Service
 						</h3>
 						<ul className="space-y-2">
 							<li>
 								<a
 									href="https://t.me/+zB6wXUOsWptjNzQx"
-									className="hover:underline"
+									target="_blank"
+									className="hover:underline text-xs"
 								>
 									Contact Us
 								</a>
 							</li>
 							<li>
-								<a href="/profile" className="hover:underline">
+								<a href="/profile" className="hover:underline text-xs">
 									My Account
 								</a>
 							</li>
 						</ul>
 					</div>
 					<div className="md:col-span-1 flex flex-col items-center text-center">
-						<h3 className="text-lg font-bold mb-4 ">
+						<h3 className="text-sm font-bold mb-4 ">
 							More to Explore
 						</h3>
 						<ul className="space-y-2">
 							<li>
 								<a
 									href="/calculators"
-									className="hover:underline"
+									className="hover:underline text-xs"
 								>
 									Calculators
 								</a>
@@ -129,13 +130,13 @@ const Footer = (): React.JSX.Element => {
 							<li>
 								<a
 									href="/mypositions"
-									className="hover:underline"
+									className="hover:underline text-xs"
 								>
 									Positions
 								</a>
 							</li>
 							<li>
-								<a href="/pools" className="hover:underline">
+								<a href="/pools" className="hover:underline text-xs">
 									Pools
 								</a>
 							</li>
