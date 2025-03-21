@@ -94,9 +94,7 @@ const Footer = (): React.JSX.Element => {
 						</ul>
 					</div>
 					<div className="md:col-span-1 flex flex-col items-center text-center">
-						<h3 className="text-sm mb-4 ">
-							Customer Service
-						</h3>
+						<h3 className="text-sm mb-4 ">Customer Service</h3>
 						<ul className="space-y-2">
 							<li>
 								<a
@@ -108,7 +106,10 @@ const Footer = (): React.JSX.Element => {
 								</a>
 							</li>
 							<li>
-								<a href="/profile" className="hover:underline text-xs">
+								<a
+									href="/profile"
+									className="hover:underline text-xs"
+								>
 									My Account
 								</a>
 							</li>
@@ -136,7 +137,10 @@ const Footer = (): React.JSX.Element => {
 								</a>
 							</li>
 							<li>
-								<a href="/pools" className="hover:underline text-xs">
+								<a
+									href="/pools"
+									className="hover:underline text-xs"
+								>
 									Pools
 								</a>
 							</li>
