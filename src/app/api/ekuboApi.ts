@@ -39,15 +39,29 @@ const tokenPriceCache = new TokenPriceCache(60000);
 
 // TODO: implement this tokens
 export const TOP_TOKENS_SYMBOL = [
-  "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
-  "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+	'STRK',
+	'USDC',
+	'ETH',
+	'EKUBO',
+	'DAI',
+	'WBTC',
+	'USDT',
+	'wstETH',
+	'LORDS',
+	'ZEND',
+	'rETH',
+	'UNI',
+	'NSTR',
+	'CRM',
+	'CASH',
+	'xSTRK',
+	'sSTRK',
+	'kSTRK',
 ];
 
 // export const TOP_TOKENS_SYMBOL = [
 //   "STRK", "USDC", "ETH"
 // ];
-
 
 const TOP_PAIRS = [
 	{ token0: 'ETH', token1: 'USDC' },
