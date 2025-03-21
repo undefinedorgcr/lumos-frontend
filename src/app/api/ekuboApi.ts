@@ -34,16 +34,20 @@ const BASE_URL =
 		? 'https://mainnet-api.ekubo.org'
 		: 'https://sepolia-api.ekubo.org';
 const NODE_URL = getNodeUrl(chainId);
+console.log(NODE_URL, chainId, wallet);
 const tokenPriceCache = new TokenPriceCache(60000);
 
 // TODO: implement this tokens
+export const TOP_TOKENS_SYMBOL = [
+  "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
+  "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
+  "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+];
+
 // export const TOP_TOKENS_SYMBOL = [
-//   "STRK", "USDC", "ETH", "EKUBO", "DAI", "WBTC",
-//   "USDT", "wstETH", "LORDS", "ZEND", "rETH", "UNI",
-//   "NSTR", "CRM", "CASH", "xSTRK", "sSTRK", "kSTRK"
+//   "STRK", "USDC", "ETH"
 // ];
 
-export const TOP_TOKENS_SYMBOL = ['STRK', 'USDC', 'ETH'];
 
 const TOP_PAIRS = [
 	{ token0: 'ETH', token1: 'USDC' },

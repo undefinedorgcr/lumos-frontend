@@ -8,6 +8,7 @@ import { fetchLiquidityData, fetchLiquidityInRange } from '@/app/api/ekuboApi';
 import { calculateDepositAmounts, fetchCryptoPrice } from '@/lib/utils';
 import LiquidityChart from './LiquidityChart';
 import LoadingSpinner from './LoadingSpinner';
+import ILCalculator from './modals/ILCalculator';
 
 interface CalculatorProps {
 	token0: Token;
@@ -18,51 +19,35 @@ interface CalculatorProps {
 	liquidity: number;
 }
 
-const Calculator: React.FC<CalculatorProps> = ({
-	token0,
-	token1,
-	feeRate,
-	initialPrice,
-	volume,
-}) => {
-	const [depositAmount, setDepositAmount] = useState(0);
-	const [fee, setFee] = useState<number>(0);
-	const [minPrice, setMinPrice] = useState(
-		Number((initialPrice - initialPrice * 0.06).toFixed(6))
-	);
-	const [maxPrice, setMaxPrice] = useState(
-		Number((initialPrice + initialPrice * 0.06).toFixed(6))
-	);
-	const [t0CurrentPrice, sett0CurrentPrice] = useState(0);
-	const [t1CurrentPrice, sett1CurrentPrice] = useState(0);
-	const [depositAmounts, setDepositAmounts] = useState([0, 0]);
-	const [priceRangePercentage, setPriceRangePercentage] = useState(6);
-	const [liquidity, setLiquidity] = useState<number | null>(0);
-	const [liquidityData, setLiquidityData] = useState<any>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	useEffect(() => {
-		async function setupCalculator() {
-			try {
-				const t0Price = await fetchCryptoPrice(token0.symbol);
-				const t1Price = await fetchCryptoPrice(token1.symbol);
-				sett0CurrentPrice(t0Price);
-				sett1CurrentPrice(t1Price);
-				setLiquidityData(
-					await fetchLiquidityData(
-						token0,
-						token1,
-						minPrice,
-						maxPrice,
-						feeRate
-					)
-				);
-				setIsLoading(false);
-			} catch (err) {
-				console.log(err);
-			}
-		}
-		setupCalculator();
-	}, [token0.symbol, token1.symbol, feeRate]);
+const Calculator: React.FC<CalculatorProps> = ({ token0, token1, feeRate, initialPrice, volume }) => {
+    const [depositAmount, setDepositAmount] = useState(0);
+    const [fee, setFee] = useState<number>(0);
+    const [minPrice, setMinPrice] = useState(Number((initialPrice - initialPrice * 0.06).toFixed(6)));
+    const [maxPrice, setMaxPrice] = useState(Number((initialPrice + initialPrice * 0.06).toFixed(6)));
+    const [t0CurrentPrice, sett0CurrentPrice] = useState(0);
+    const [t1CurrentPrice, sett1CurrentPrice] = useState(0);
+    const [depositAmounts, setDepositAmounts] = useState([0, 0]);
+    const [priceRangePercentage, setPriceRangePercentage] = useState(6);
+    const [liquidity, setLiquidity] = useState<number | null>(0);
+    const [liquidityData, setLiquidityData] = useState<any>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [openIlCalculator, setOpenIlCalculator] = useState(false);
+
+    useEffect(() => {
+        async function setupCalculator() {
+            try {
+                const t0Price = await fetchCryptoPrice(token0.symbol);
+                const t1Price = await fetchCryptoPrice(token1.symbol);
+                sett0CurrentPrice(t0Price);
+                sett1CurrentPrice(t1Price);
+                setLiquidityData(await fetchLiquidityData(token0, token1, minPrice, maxPrice, feeRate));
+                setIsLoading(false);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        setupCalculator();
+    }, [token0.symbol, token1.symbol, feeRate]);
 
 	async function handlePricesChange(
 		min: number,
@@ -159,55 +144,33 @@ const Calculator: React.FC<CalculatorProps> = ({
 					</div>
 				</div>
 
-				<div className="grid grid-cols-1 lg:grid-cols-5 gap-4 p-4">
-					{/* Left Column: Calculator Inputs */}
-					<div className="lg:col-span-2 space-y-4">
-						<div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
-							<div className="flex items-center justify-between">
-								<h3 className="text-sm font-medium">
-									Estimated Returns
-								</h3>
-								<span className="text-xs text-zinc-400">
-									Based on 24h volume
-								</span>
-							</div>
-							<div className="grid grid-cols-3 gap-4">
-								<div className="bg-zinc-800 rounded-lg p-3 text-center">
-									<span className="text-xs text-zinc-400">
-										Daily
-									</span>
-									<p className="text-lg font-medium text-green-400 overflow-x-auto whitespace-nowrap min-h-7">
-										${fee.toFixed(2)}
-									</p>
-								</div>
-								<div className="bg-zinc-800 rounded-lg p-3 text-center">
-									<span className="text-xs text-zinc-400">
-										Monthly
-									</span>
-									<p className="text-lg font-medium overflow-x-auto whitespace-nowrap min-h-7">
-										${(fee * 30).toFixed(2)}
-									</p>
-								</div>
-								<div className="bg-zinc-800 rounded-lg p-3 text-center">
-									<span className="text-xs text-zinc-400">
-										Yearly (APR)
-									</span>
-									<p className="text-lg font-medium overflow-x-auto whitespace-nowrap min-h-7">
-										${(fee * 365).toFixed(2)}
-									</p>
-								</div>
-							</div>
-							{liquidity === null ||
-							(liquidity == 0 && depositAmount > 0) ? (
-								<p className="text-red-700 rounded-sm p-2 bg-red-400 text-center">
-									Not enough liquidity in the selected range.
-								</p>
-							) : (
-								<p className="rounded-sm p-2 text-center hover:cursor-pointer">
-									Calculate Impermanent Loss
-								</p>
-							)}
-						</div>
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 p-4">
+                    <div className="lg:col-span-2 space-y-4">
+                        <div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-medium">Estimated Returns</h3>
+                                <span className="text-xs text-zinc-400">Based on 24h volume</span>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="bg-zinc-800 rounded-lg p-3 text-center">
+                                    <span className="text-xs text-zinc-400">Daily</span>
+                                    <p className="text-lg font-medium text-green-400 overflow-x-auto whitespace-nowrap min-h-7">${fee.toFixed(2)}</p>
+                                </div>
+                                <div className="bg-zinc-800 rounded-lg p-3 text-center">
+                                    <span className="text-xs text-zinc-400">Monthly</span>
+                                    <p className="text-lg font-medium overflow-x-auto whitespace-nowrap min-h-7">${(fee * 30).toFixed(2)}</p>
+                                </div>
+                                <div className="bg-zinc-800 rounded-lg p-3 text-center">
+                                    <span className="text-xs text-zinc-400">Yearly (APR)</span>
+                                    <p className="text-lg font-medium overflow-x-auto whitespace-nowrap min-h-7">${(fee * 365).toFixed(2)}</p>
+                                </div>
+                            </div>
+                            {liquidity === null || liquidity == 0 && depositAmount > 0 ? (
+                                <p className="text-red-700 rounded-sm p-2 bg-red-400 text-center">Not enough liquidity in the selected range.</p>
+                            ) : (
+                                <p onClick={()=>{setOpenIlCalculator(true)}} className="rounded-sm p-2 text-center hover:cursor-pointer">Calculate Impermanent Loss</p>
+                            )}
+                        </div>
 
 						<div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
 							<h3 className="text-sm font-medium">
@@ -334,28 +297,28 @@ const Calculator: React.FC<CalculatorProps> = ({
 						</button>
 					</div>
 
-					{/* Right Column: Liquidity Chart */}
-					{isLoading ? (
-						<div className="lg:col-span-3 flex items-center justify-center h-full min-h-64">
-							<LoadingSpinner />
-							<p>Loading Liquidity Chart</p>
-						</div>
-					) : (
-						<div className="lg:col-span-3 h-full">
-							<LiquidityChart
-								liquidityData={liquidityData}
-								minPrice={minPrice}
-								maxPrice={maxPrice}
-								currentPrice={t0CurrentPrice / t1CurrentPrice}
-								token0={token0}
-								token1={token1}
-							/>
-						</div>
-					)}
-				</div>
-			</div>
-		</div>
-	);
+                    {isLoading ? (
+                        <div className="lg:col-span-3 flex items-center justify-center h-full min-h-64">
+                            <LoadingSpinner />
+                            <p>Loading Liquidity Chart</p>
+                        </div>
+                    ) : (
+                        <div className="lg:col-span-3 h-full">
+                            <LiquidityChart
+                                liquidityData={liquidityData}
+                                minPrice={minPrice}
+                                maxPrice={maxPrice}
+                                currentPrice={t0CurrentPrice / t1CurrentPrice}
+                                token0={token0}
+                                token1={token1}
+                            />
+                        </div>
+                    )}
+                </div>
+            </div>
+            <ILCalculator isOpen={openIlCalculator} onClose={() => { setOpenIlCalculator(false); } } feeRate={feeRate} depositAmount={depositAmount} token0={token0} token1={token1} t0Amount={depositAmounts[0] / t0CurrentPrice} t1Amount={depositAmounts[1] / t1CurrentPrice} fees={fee} min={minPrice} max={maxPrice}/>
+        </div>
+    );
 };
 
 export default Calculator;
