@@ -554,7 +554,6 @@ export async function fetchLiquidityData(
 ): Promise<LiquidityData[] | null> {
 	const feeTickSpacing = getFeeTickSpacing(fee.toString());
 	if (feeTickSpacing == null) return null;
-
 	try {
 		const { data } = await axios.get(
 			`${BASE_URL}/tokens/${t0.l2_token_address}/${t1.l2_token_address}/liquidity`
@@ -589,7 +588,6 @@ export async function fetchLiquidityData(
 			getAddresses(chainId).EKUBO_CORE,
 			getProvider(NODE_URL !== undefined ? NODE_URL : '')
 		);
-		console.log(ekuboCoreContract);
 		const batchSize = 125;
 		const delayMs = 1000;
 		const limit = pLimit(125);
@@ -616,7 +614,7 @@ export async function fetchLiquidityData(
 								tick:
 									price > 999
 										? price.toFixed(2)
-										: price.toFixed(6),
+										: price.toFixed(12),
 								liquidity_net: liquidity.toString(),
 							};
 						}
@@ -631,7 +629,7 @@ export async function fetchLiquidityData(
 				await new Promise((resolve) => setTimeout(resolve, delayMs));
 			}
 		}
-
+		console.log(liquidityData);
 		return liquidityData;
 	} catch (error) {
 		console.error('Error fetching liquidity data:', error);
