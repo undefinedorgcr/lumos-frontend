@@ -206,7 +206,7 @@ export default function LiquidityChart({
 						<p className="text-xs text-zinc-400">Min Price</p>
 						<p className="text-sm font-medium">
 							{typeof validMinPrice === 'number'
-								? validMinPrice.toFixed(4)
+								? validMinPrice.toFixed(6)
 								: validMinPrice}
 						</p>
 						<p className="text-xs text-zinc-500">
@@ -217,7 +217,7 @@ export default function LiquidityChart({
 						<p className="text-xs text-zinc-400">Current Price</p>
 						<p className="text-sm font-medium text-pink-400">
 							{typeof validCurrentPrice === 'number'
-								? validCurrentPrice.toFixed(4)
+								? validCurrentPrice.toFixed(6)
 								: validCurrentPrice}
 						</p>
 						<p className="text-xs text-zinc-500">
@@ -228,7 +228,7 @@ export default function LiquidityChart({
 						<p className="text-xs text-zinc-400">Max Price</p>
 						<p className="text-sm font-medium">
 							{typeof validMaxPrice === 'number'
-								? validMaxPrice.toFixed(4)
+								? validMaxPrice.toFixed(6)
 								: validMaxPrice}
 						</p>
 						<p className="text-xs text-zinc-500">
