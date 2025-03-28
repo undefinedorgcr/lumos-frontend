@@ -3,23 +3,33 @@
 @tailwind utilities;
 
 @font-face {
-  font-family: "neue";
-  src: url("/fonts/HelveticaNeueLight.otf");
+  font-family: "body";
+  src: url("/fonts/Inter_28pt-Light.ttf");
 }
 
 @font-face {
-  font-family: "neuethin";
-  src: url("/fonts/HelveticaNeueThin.otf");
+  font-family: "bodyBold";
+  src: url("/fonts/Inter_28pt-SemiBold.ttf");
 }
 
 @font-face {
-  font-family: "neueblack";
-  src: url("/fonts/HelveticaNeueMedium.otf");
+  font-family: "bodyRegular";
+  src: url("/fonts/Inter_28pt-Regular.ttf");
+}
+
+@font-face {
+  font-family: "logo";
+  src: url("/fonts/Pirulen.otf");
+}
+
+@font-face {
+  font-family: "gtamerica";
+  src: url("/fonts/GT-America-Condensed-Black-Trial.otf");
 }
 
 
 body {
-  font-family: 'neue';
+  font-family: 'body';
 }
 
 
@@ -99,7 +109,6 @@ body {
   background-color: rgba(255, 255, 255, 0.05);
   font-size: 1.125rem;
   line-height: 1.75rem;
-  font-family: 'Neuethin', sans-serif;
   transition: all 0.5s;
   color: inherit;
 }
@@ -131,4 +140,8 @@ body {
 
 .animate-slide-in {
   animation: slide-in 0.5s ease-in-out forwards;
+}
+
+.card {
+  @apply relative w-full max-w-lg bg-[#212322] rounded-xl overflow-hidden border-4 border-[#212322] transition-all duration-500 hover:border-[#8B9E93] py-10;
 }

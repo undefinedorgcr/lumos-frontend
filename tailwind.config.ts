@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import type { Config } from 'tailwindcss';
 
 export default {
@@ -52,9 +53,11 @@ export default {
 				},
 			},
 			fontFamily: {
-				neue: ['neue', 'sans-serif'],
-				neuethin: ['neuethin', 'sans-serif'],
-				neueblack: ['neueblack', 'sans-serif'],
+				body: ['body', 'sans-serif'],
+				bodyRegular: ['bodyRegular', 'sans-serif'],
+				bodyBold: ['bodyBold', 'sans-serif'],
+				logo: ['logo', 'sans-serif'],
+				gtamerica: ['gtamerica', 'sans-serif'],
 			},
 			keyframes: {
 				twinkle: {

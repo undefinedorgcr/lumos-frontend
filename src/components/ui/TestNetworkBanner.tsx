@@ -15,7 +15,7 @@ export default function TestNetworkBanner({
 			className={`min-h-screen ${wallet?.chainId == 'SN_SEPOLIA' ? 'border-4 border-blue-500 relative' : ''}`}
 		>
 			{wallet?.chainId == 'SN_SEPOLIA' && (
-				<div className="w-full text-center py-2 bg-blue-500 text-white font-bold">
+				<div className="w-full text-center py-2 bg-blue-500 text-white ">
 					TestNet Mode - Sepolia Network
 				</div>
 			)}

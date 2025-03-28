@@ -11,7 +11,7 @@ export default function Calculators() {
 			<main className="relative px-6 py-16">
 				<div className="max-w-6xl mx-auto">
 					<div className="text-center mb-16">
-						<h1 className="text-4xl font-light text-white mb-4">
+						<h1 className="text-4xl  text-white mb-4">
 							DeFi Calculators
 						</h1>
 						<p className="text-zinc-400 max-w-2xl mx-auto">

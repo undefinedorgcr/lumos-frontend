@@ -46,7 +46,7 @@ export default function VesuPositionTable({
 	if (!isWalletConnected) {
 		return (
 			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-				<p className="text-xl font-light text-gray-400">
+				<p className="text-xl  text-gray-400">
 					Please connect your wallet to see your active positions.
 				</p>
 			</div>
@@ -56,7 +56,7 @@ export default function VesuPositionTable({
 	if (!positions || positions.length === 0) {
 		return (
 			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-				<p className="text-xl font-light text-gray-400">
+				<p className="text-xl  text-gray-400">
 					No active positions found
 				</p>
 			</div>
@@ -76,7 +76,7 @@ export default function VesuPositionTable({
 										className="px-6 py-4 text-left"
 									>
 										<div className="flex items-center gap-2">
-											<span className="text-sm font-normal text-gray-400">
+											<span className="text-sm  text-gray-400">
 												{header}
 											</span>
 											<Tooltip>
@@ -107,7 +107,7 @@ export default function VesuPositionTable({
 									</span>
 								</td>
 								<td className="px-6 py-4">
-									<span className="px-3 py-1 rounded-full text-xs font-medium bg-white/10">
+									<span className="px-3 py-1 rounded-full text-xs  bg-white/10">
 										{position.type}
 									</span>
 								</td>

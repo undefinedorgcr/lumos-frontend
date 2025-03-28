@@ -37,12 +37,8 @@ export const InfoModal = ({
 							alt="Lumos app logo"
 						/>
 					</div>
-					<h2 className="text-2xl text-white font-light mb-8">
-						{title}
-					</h2>
-					<p className="text-gray-300 text-lg font-light">
-						{message}
-					</p>
+					<h2 className="text-2xl text-white  mb-8">{title}</h2>
+					<p className="text-gray-300 text-lg ">{message}</p>
 				</div>
 			</div>
 		</div>

@@ -129,7 +129,7 @@ const Checkout = () => {
 				<Navbar />
 				<main className="max-w-7xl mx-auto px-6 py-12">
 					<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-						<p className="text-xl font-light text-gray-400">
+						<p className="text-xl  text-gray-400">
 							Invalid plan selected
 						</p>
 						<Link
@@ -173,7 +173,7 @@ const Checkout = () => {
 							>
 								<ArrowLeft className="w-5 h-5" />
 							</Link>
-							<h1 className="text-3xl font-light">Checkout</h1>
+							<h1 className="text-3xl ">Checkout</h1>
 							<WalletConnector />
 						</header>
 						<p className="text-gray-400">
@@ -184,7 +184,7 @@ const Checkout = () => {
 					<div className="grid md:grid-cols-2 gap-8">
 						<div className="space-y-6">
 							<div className="bg-white/5 rounded-2xl p-6 backdrop-blur-sm ring-1 ring-white/20">
-								<h2 className="text-xl font-light mb-4">
+								<h2 className="text-xl  mb-4">
 									Payment Method
 								</h2>
 								{/* TODO: implement */}
@@ -192,7 +192,7 @@ const Checkout = () => {
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5 ring-1 ring-white/20">
                     <CreditCard className="w-6 h-6 text-gray-400" />
                     <div>
-                      <p className="font-light">Credit Card</p>
+                      <p className="">Credit Card</p>
                       <p className="text-sm text-gray-400">Powered by Stripe</p>
                     </div>
                   </div>
@@ -218,16 +218,14 @@ const Checkout = () => {
 								<div className="space-y-4">
 									<div className="flex items-center gap-3 p-4 rounded-xl bg-white/5 ring-1 ring-white/20">
 										<div>
-											<p className="font-light">
-												Crypto Deposit
-											</p>
+											<p className="">Crypto Deposit</p>
 										</div>
 									</div>
 								</div>
 							</div>
 
 							<div className="bg-white/5 rounded-2xl p-6 backdrop-blur-sm ring-1 ring-white/20">
-								<h2 className="text-xl font-light mb-4">
+								<h2 className="text-xl  mb-4">
 									Billing Information
 								</h2>
 								<div className="space-y-4">
@@ -241,13 +239,11 @@ const Checkout = () => {
 						</div>
 						<div className="space-y-6">
 							<div className="bg-white/5 rounded-2xl p-6 backdrop-blur-sm ring-1 ring-white/20">
-								<h2 className="text-xl font-light mb-4">
-									Order Summary
-								</h2>
+								<h2 className="text-xl  mb-4">Order Summary</h2>
 								<div className="space-y-4">
 									<div className="flex justify-between items-start">
 										<div>
-											<h3 className="font-light">
+											<h3 className="">
 												{plan.name} Plan
 											</h3>
 											<p className="text-sm text-gray-400">
@@ -291,7 +287,7 @@ const Checkout = () => {
 											</div>
 											<div className="flex justify-between text-lg">
 												<span>Total</span>
-												<span className="font-medium">
+												<span className="">
 													${totals.total}
 												</span>
 											</div>

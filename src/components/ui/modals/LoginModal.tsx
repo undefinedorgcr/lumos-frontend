@@ -6,7 +6,6 @@ import { auth, provider } from '@/lib/firebase';
 import {
 	signInWithEmailAndPassword,
 	signInWithPopup,
-	TwitterAuthProvider,
 	createUserWithEmailAndPassword,
 } from 'firebase/auth';
 import { useState } from 'react';
@@ -50,28 +49,6 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 	const handleLoginGoogle = async () => {
 		try {
 			const result = await signInWithPopup(auth, provider);
-			setUser({
-				email: result.user.email ?? '',
-				uid: result.user.uid,
-				displayName: result.user.displayName ?? '',
-				pfp: result.user.photoURL ?? '',
-			});
-			await saveUser({
-				uId: result.user.uid,
-				email: result.user.email ?? '',
-			});
-			onClose(false);
-		} catch (error) {
-			console.error('Error al iniciar sesión:', error);
-		}
-	};
-
-	const handleLoginX = async () => {
-		try {
-			const result = await signInWithPopup(
-				auth,
-				new TwitterAuthProvider()
-			);
 			setUser({
 				email: result.user.email ?? '',
 				uid: result.user.uid,
@@ -199,7 +176,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 							alt="Lumos app logo"
 						/>
 					</div>
-					<h3 className="text-2xl text-white font-light mb-8">
+					<h3 className="text-2xl text-white  mb-8">
 						{useRegister ? 'Sign Up to Lumos' : 'Login to Lumos'}
 					</h3>
 					<div className="w-full space-y-4 mb-6">
@@ -259,7 +236,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 
 						<button
 							className="py-2 w-full rounded-md border border-white/20 bg-white/5 
-                                     hover:bg-white hover:text-black transition-all duration-500 text-lg font-neuethin"
+                                     hover:bg-white hover:text-black transition-all duration-500 text-lg "
 							onClick={useRegister ? handleRegister : handleLogin}
 						>
 							{useRegister ? 'Sign Up' : 'Login'}
@@ -267,9 +244,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 					</div>
 					<div className="w-full flex items-center gap-4 mb-6">
 						<div className="flex-1 h-px bg-gray-700"></div>
-						<span className="text-gray-400 font-light">
-							or continue with
-						</span>
+						<span className="text-gray-400 ">or continue with</span>
 						<div className="flex-1 h-px bg-gray-700"></div>
 					</div>
 					<div className="w-full space-y-3">
@@ -284,23 +259,8 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
 								height={20}
 								alt="Google logo"
 							/>
-							<span className="text-white font-light">
+							<span className="text-white ">
 								Continue with Google
-							</span>
-						</button>
-						<button
-							className="w-full px-4 py-2 bg-[#222222] border border-gray-700 rounded-lg
-                                           hover:bg-[#2a2a2a] transition-colors flex items-center justify-center gap-2"
-							onClick={handleLoginX}
-						>
-							<Image
-								src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/x-social-media-white-icon.png"
-								width={20}
-								height={20}
-								alt="X logo"
-							/>
-							<span className="text-white font-light">
-								Continue with X
 							</span>
 						</button>
 					</div>
