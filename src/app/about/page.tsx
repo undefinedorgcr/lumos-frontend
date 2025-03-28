@@ -67,7 +67,7 @@ const About = () => {
 	];
 
 	return (
-		<div className="min-h-screen p-6">
+		<div className="min-h-screen p-6 py-20">
 			<Navbar />
 			<StarField />
 
@@ -77,7 +77,7 @@ const About = () => {
 				animate={{ opacity: 1 }}
 				transition={{ duration: 0.5 }}
 			>
-				<div className="mb-12 w-[430px] h-[430px] relative animate-float">
+				<div className="mb-12 w-[175px] h-[175px] relative animate-float">
 					<Image
 						src="/images/LumosLogo.png"
 						width={500}

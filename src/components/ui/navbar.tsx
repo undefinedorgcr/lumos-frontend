@@ -41,7 +41,7 @@ export default function Navbar() {
 				/>
 			)}
 			<div
-				className={`md:hidden fixed top-0 left-0 h-full w-64 bg-black/90 backdrop-blur-sm border-r border-white/20 transform transition-transform duration-300 ease-in-out z-40 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+				className={`md:hidden fixed top-0 left-0 h-full w-64 bg-[#212322] backdrop-blur-sm border-r border-white/20 transform transition-transform duration-300 ease-in-out z-40 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
 			>
 				<div className="flex flex-col h-full p-6">
 					<div className="mt-14 mb-8">
