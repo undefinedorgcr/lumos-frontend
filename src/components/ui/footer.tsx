@@ -85,8 +85,11 @@ const Footer = (): React.JSX.Element => {
 						<h3 className="text-sm mb-4 ">Company</h3>
 						<ul className="space-y-2">
 							<li>
-								<a href="/knowmore" className="hover:underline">
-									About
+								<a
+									href="/about"
+									className="hover:underline text-xs"
+								>
+									About Us
 								</a>
 							</li>
 						</ul>
