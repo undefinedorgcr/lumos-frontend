@@ -21,18 +21,17 @@ const LandingPage = () => {
             rounded-t-full opacity-50 blur-[80px] md:blur-[100px]"
 						></div>
 					</div>
+
 					<div className="relative z-10">
-						<h1 className="text-4xl md:text-6xl font-gtamerica text-white mb-6 md:mb-8 leading-tight">
+						<h1 className="text-3xl md:text-6xl font-gtamerica text-white mb-4 md:mb-8 leading-tight">
 							USE DEFI TO POWER
 							<br />
 							YOUR FINANCES
 						</h1>
-						<div className="absolute bottom-[calc(40%-200px)] right-1/2 translate-x-1/2 md:right-[calc(10%-200px)] md:translate-x-0 z-20 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-							<Link
-								href="/calculators"
-								className="custom-button text-xs md:text-md"
-							>
-								Get Started →
+
+						<div className="absolute md:bottom-[calc(43%-280px)] right-1/2 translate-x-1/2 md:right-[calc(10%-200px)] md:translate-x-0 z-20 flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+							<Link href="/calculators" className="custom-button">
+								Get Started
 							</Link>
 							<Link href="/knowmore" className="custom-button">
 								Know More
