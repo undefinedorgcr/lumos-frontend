@@ -79,7 +79,7 @@ export default function EkuboCalculator() {
 		<div>
 			<Navbar />
 			{!showCalculator && (
-				<main className="max-w-4xl mx-auto px-6 py-12">
+				<main className="max-w-4xl mx-auto px-6 py-20">
 					{tokens != undefined && !isLoading ? (
 						<div className="bg-white/5 rounded-2xl backdrop-blur-sm">
 							<div className="p-8 space-y-8">
@@ -94,7 +94,7 @@ export default function EkuboCalculator() {
 										/>
 									</div>
 									<div className="space-y-1">
-										<h1 className="text-2xl font-light">
+										<h1 className="text-2xl ">
 											Ekubo Protocol Calculator
 										</h1>
 										<p className="text-gray-400">
@@ -155,7 +155,7 @@ export default function EkuboCalculator() {
 								<div className="pt-4">
 									<button
 										onClick={handleContinue}
-										className="w-full border border-white px-7 py-3 rounded-md font-neuethin 
+										className="w-full border border-white px-7 py-3 rounded-md  
                                                    transition duration-500 hover:text-black hover:bg-white"
 									>
 										Calculate Returns

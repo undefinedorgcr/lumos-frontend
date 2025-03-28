@@ -16,7 +16,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="bg-[#101010] text-white min-h-screen">
+			<body className="bg-[#141514] font-body text-white min-h-screen tracking-widest">
 				<TestNetworkBanner>
 					<div className="p-6">
 						{children}

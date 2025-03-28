@@ -45,7 +45,7 @@ const ProfilePage = () => {
 				<Navbar />
 				<main className="flex-1 flex items-center justify-center">
 					<div className="text-center p-6 backdrop-blur-sm">
-						<p className="text-2xl font-neuethin mb-6">
+						<p className="text-2xl  mb-6">
 							Please log in to view your profile.
 						</p>
 						<Link
@@ -67,13 +67,13 @@ const ProfilePage = () => {
 			<main className="flex-1 flex items-center px-6 py-12">
 				<div className="max-w-4xl mx-auto w-full">
 					<div className="space-y-8">
-						<h1 className="text-4xl font-neuethin text-center mb-12 bg-clip-text bg-gradient-to-r text-white">
+						<h1 className="text-4xl  text-center mb-12 bg-clip-text bg-gradient-to-r text-white">
 							Your Profile
 						</h1>
 
 						{loading ? (
 							<div className="flex justify-center items-center h-64">
-								<div className="text-2xl font-neuethin animate-pulse">
+								<div className="text-2xl  animate-pulse">
 									Loading...
 								</div>
 							</div>
@@ -97,7 +97,7 @@ const ProfilePage = () => {
 												<p className="text-gray-400 text-sm uppercase tracking-wider">
 													Email
 												</p>
-												<p className="text-2xl font-neuethin bg-clip-text bg-gradient-to-r text-white">
+												<p className="text-2xl  bg-clip-text bg-gradient-to-r text-white">
 													{user.email}
 												</p>
 											</div>
@@ -106,7 +106,7 @@ const ProfilePage = () => {
 								</div>
 
 								<div className="bg-white/5 backdrop-blur-sm rounded-lg p-8">
-									<h2 className="text-2xl font-neuethin mb-6 bg-clip-text text-white bg-gradient-to-r">
+									<h2 className="text-2xl  mb-6 bg-clip-text text-white bg-gradient-to-r">
 										Subscription Details
 									</h2>
 									<div className="space-y-6">
@@ -115,7 +115,7 @@ const ProfilePage = () => {
 												<p className="text-gray-400 text-sm tracking-wider">
 													Current Plan
 												</p>
-												<p className="text-2xl font-neuethin">
+												<p className="text-2xl ">
 													{userDetails?.user_type ||
 														'FREE'}
 												</p>
@@ -139,7 +139,7 @@ const ProfilePage = () => {
 											<p className="text-gray-400 text-sm tracking-wider">
 												Next Payment Date
 											</p>
-											<p className="text-xl font-neuethin">
+											<p className="text-xl ">
 												{userDetails?.plan_exp_date
 													? new Date(
 															userDetails.plan_exp_date

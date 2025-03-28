@@ -70,7 +70,7 @@ export default function LiquidityChart({
 			const tick = payload[0].payload.tick;
 			return (
 				<div className="p-2 bg-zinc-800 border border-zinc-700 text-white rounded-md text-sm shadow-lg">
-					<p className="font-medium">{`Price: ${typeof tick === 'number' ? tick : tick}`}</p>
+					<p className="">{`Price: ${typeof tick === 'number' ? tick : tick}`}</p>
 					<p className="text-zinc-400">{`${token1.symbol} per ${token0.symbol}`}</p>
 				</div>
 			);
@@ -107,7 +107,7 @@ export default function LiquidityChart({
 	return (
 		<div className="bg-zinc-800/50 rounded-lg flex flex-col h-full">
 			<div className="flex items-center justify-between p-4 border-b border-zinc-700">
-				<h2 className="text-sm font-medium">Liquidity Distribution</h2>
+				<h2 className="text-sm ">Liquidity Distribution</h2>
 				<div className="flex items-center space-x-4 text-xs">
 					<div className="flex items-center space-x-1">
 						<div className="w-3 h-3 bg-green-500 rounded-full"></div>
@@ -204,7 +204,7 @@ export default function LiquidityChart({
 				<div className="grid grid-cols-3 gap-4 mt-4">
 					<div className="bg-zinc-800 rounded p-2">
 						<p className="text-xs text-zinc-400">Min Price</p>
-						<p className="text-sm font-medium">
+						<p className="text-sm ">
 							{typeof validMinPrice === 'number'
 								? validMinPrice.toFixed(6)
 								: validMinPrice}
@@ -215,7 +215,7 @@ export default function LiquidityChart({
 					</div>
 					<div className="bg-zinc-800 rounded p-2 border border-pink-500/30">
 						<p className="text-xs text-zinc-400">Current Price</p>
-						<p className="text-sm font-medium text-pink-400">
+						<p className="text-sm  text-pink-400">
 							{typeof validCurrentPrice === 'number'
 								? validCurrentPrice.toFixed(6)
 								: validCurrentPrice}
@@ -226,7 +226,7 @@ export default function LiquidityChart({
 					</div>
 					<div className="bg-zinc-800 rounded p-2">
 						<p className="text-xs text-zinc-400">Max Price</p>
-						<p className="text-sm font-medium">
+						<p className="text-sm ">
 							{typeof validMaxPrice === 'number'
 								? validMaxPrice.toFixed(6)
 								: validMaxPrice}

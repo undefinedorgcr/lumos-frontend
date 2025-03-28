@@ -130,7 +130,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 	};
 
 	return (
-		<div className="w-full max-w-5xl mx-auto p-4">
+		<div className="w-full max-w-5xl mx-auto p-4 py-20">
 			<div className="bg-zinc-900 rounded-lg border border-zinc-800">
 				<div className="p-4 border-b border-zinc-800">
 					<div className="flex items-center space-x-2">
@@ -150,7 +150,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 								className="rounded-full -ml-2"
 							/>
 						</div>
-						<span className="text-lg font-medium">
+						<span className="text-lg ">
 							{token0.symbol}/{token1.symbol}
 						</span>
 						<span className="text-sm text-zinc-400">
@@ -166,9 +166,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 					<div className="lg:col-span-2 space-y-4">
 						<div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
 							<div className="flex items-center justify-between">
-								<h3 className="text-sm font-medium">
-									Estimated Returns
-								</h3>
+								<h3 className="text-sm ">Estimated Returns</h3>
 								<span className="text-xs text-zinc-400">
 									Based on 24h volume
 								</span>
@@ -178,7 +176,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 									<span className="text-xs text-zinc-400">
 										Daily
 									</span>
-									<p className="text-lg font-medium text-green-400 overflow-x-auto whitespace-nowrap min-h-7">
+									<p className="text-lg  text-green-400 overflow-x-auto whitespace-nowrap min-h-7">
 										${fee.toFixed(2)}
 									</p>
 								</div>
@@ -186,7 +184,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 									<span className="text-xs text-zinc-400">
 										Monthly
 									</span>
-									<p className="text-lg font-medium overflow-x-auto whitespace-nowrap min-h-7">
+									<p className="text-lg  overflow-x-auto whitespace-nowrap min-h-7">
 										${(fee * 30).toFixed(2)}
 									</p>
 								</div>
@@ -194,7 +192,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 									<span className="text-xs text-zinc-400">
 										Yearly (APR)
 									</span>
-									<p className="text-lg font-medium overflow-x-auto whitespace-nowrap min-h-7">
+									<p className="text-lg  overflow-x-auto whitespace-nowrap min-h-7">
 										${(fee * 365).toFixed(2)}
 									</p>
 								</div>
@@ -217,9 +215,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 						</div>
 
 						<div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
-							<h3 className="text-sm font-medium">
-								Deposit Amount
-							</h3>
+							<h3 className="text-sm ">Deposit Amount</h3>
 							<div className="bg-zinc-800 rounded-lg p-3 flex items-center space-x-2">
 								<span className="text-lg">$</span>
 								<input
@@ -277,9 +273,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 
 						<div className="bg-zinc-800/50 rounded-lg p-4 space-y-4">
 							<div className="flex items-center justify-between">
-								<h3 className="text-sm font-medium">
-									Price Range
-								</h3>
+								<h3 className="text-sm ">Price Range</h3>
 								<span className="text-xs text-zinc-400">
 									{priceRangePercentage}% range
 								</span>
@@ -302,7 +296,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 									<span className="text-xs text-zinc-400">
 										Min Price
 									</span>
-									<p className="text-lg font-medium overflow-x-auto whitespace-nowrap">
+									<p className="text-lg  overflow-x-auto whitespace-nowrap">
 										{minPrice.toFixed(6)}
 									</p>
 									<span className="text-xs text-zinc-400">
@@ -313,7 +307,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 									<span className="text-xs text-zinc-400">
 										Max Price
 									</span>
-									<p className="text-lg font-medium overflow-x-auto whitespace-nowrap">
+									<p className="text-lg  overflow-x-auto whitespace-nowrap">
 										{maxPrice.toFixed(6)}
 									</p>
 									<span className="text-xs text-zinc-400">
@@ -323,7 +317,7 @@ const Calculator: React.FC<CalculatorProps> = ({
 							</div>
 						</div>
 
-						<button className="w-full bg-white text-black hover:bg-zinc-200 rounded-lg p-3 font-medium flex items-center justify-center space-x-2 transition-colors">
+						<button className="w-full bg-white text-black hover:bg-zinc-200 rounded-lg p-3  flex items-center justify-center space-x-2 transition-colors">
 							<span>Create Position</span>
 							<svg
 								className="w-4 h-4"

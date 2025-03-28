@@ -151,7 +151,7 @@ export default function PoolOverview() {
 		if (filteredPools.length === 0) {
 			return (
 				<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-					<p className="text-xl font-light text-gray-400">
+					<p className="text-xl  text-gray-400">
 						{selectedFee
 							? `No pools found with ${selectedFee} fee`
 							: 'No pools found'}
@@ -233,7 +233,7 @@ export default function PoolOverview() {
 													className="rounded-full"
 												/>
 											</div>
-											<span className="font-medium">
+											<span className="">
 												{item.token0.symbol}/
 												{item.token1.symbol}
 											</span>
@@ -284,7 +284,7 @@ export default function PoolOverview() {
 		if (!user) {
 			return (
 				<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-					<p className="text-xl font-light text-gray-400">
+					<p className="text-xl  text-gray-400">
 						Your favorite pools are waiting! Log in to see them.
 					</p>
 				</div>
@@ -303,7 +303,7 @@ export default function PoolOverview() {
 		if (processedFavPools.length === 0 || processedFavPools === undefined) {
 			return (
 				<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-					<p className="text-xl font-light text-gray-400">
+					<p className="text-xl  text-gray-400">
 						{`You don't have any favorite pools yet. Add your favorite pool collections by clicking the star icon.`}
 					</p>
 				</div>
@@ -403,7 +403,7 @@ export default function PoolOverview() {
 																className="rounded-full"
 															/>
 														</div>
-														<span className="font-medium">
+														<span className="">
 															{
 																favItem.token0
 																	.symbol
@@ -485,9 +485,9 @@ export default function PoolOverview() {
 		<div>
 			<Navbar />
 
-			<main className="max-w-7xl mx-auto px-6 py-12">
+			<main className="max-w-7xl mx-auto px-6 py-20">
 				<div className="flex justify-between items-center mb-8">
-					<h1 className="text-2xl font-light">Pool Overview</h1>
+					<h1 className="text-2xl ">Pool Overview</h1>
 				</div>
 
 				<div className="space-y-6 mb-6">

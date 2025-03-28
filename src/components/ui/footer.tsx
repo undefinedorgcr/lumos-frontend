@@ -7,9 +7,7 @@ const Footer = (): React.JSX.Element => {
 			<div className="container mx-auto p-7">
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 					<div className="md:col-span-1 flex flex-col items-center text-center">
-						<h2 className="text-lg font-bold mb-4">
-							Don't Miss Out
-						</h2>
+						<h2 className="text-lg  mb-4">Don't Miss Out</h2>
 						<div className="flex space-x-2 mt-6">
 							<a
 								className="p-2 rounded-lg hover:bg-white hover:text-black transition-all duration-500"
@@ -119,9 +117,7 @@ const Footer = (): React.JSX.Element => {
 						</ul>
 					</div>
 					<div className="md:col-span-1 flex flex-col items-center text-center">
-						<h3 className="text-sm font-bold mb-4 ">
-							More to Explore
-						</h3>
+						<h3 className="text-sm  mb-4 ">More to Explore</h3>
 						<ul className="space-y-2">
 							<li>
 								<a

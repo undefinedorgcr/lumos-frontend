@@ -47,9 +47,7 @@ export const TokenSelectorModal = ({
 		<div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
 			<div className="bg-zinc-900 rounded-2xl w-full max-w-md">
 				<div className="p-4 border-b border-zinc-800 flex justify-between items-center">
-					<h2 className="text-xl text-white font-medium">
-						Select a token
-					</h2>
+					<h2 className="text-xl text-white ">Select a token</h2>
 					<button
 						onClick={handleClose}
 						className="text-zinc-400 hover:text-white transition-colors"
@@ -93,7 +91,7 @@ export const TokenSelectorModal = ({
 									height={25}
 								/>
 								<div className="flex flex-col items-start">
-									<span className="text-white font-medium">
+									<span className="text-white ">
 										{token.symbol}
 									</span>
 								</div>

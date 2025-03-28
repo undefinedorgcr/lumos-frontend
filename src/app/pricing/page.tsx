@@ -89,9 +89,7 @@ export default function Pricing() {
 				<div className="space-y-8">
 					<div className="space-y-4">
 						<header className="flex justify-between items-center">
-							<h1 className="text-3xl font-light">
-								Pricing Plans
-							</h1>
+							<h1 className="text-3xl ">Pricing Plans</h1>
 							<WalletConnector />
 						</header>
 						<p className="text-gray-400">
@@ -106,11 +104,9 @@ export default function Pricing() {
 								className="bg-white/5 rounded-2xl p-6 backdrop-blur-sm ring-1 ring-white/20 space-y-6 hover:bg-white/10 transition-all duration-300"
 							>
 								<div className="space-y-2">
-									<h2 className="text-2xl font-light">
-										{plan.name}
-									</h2>
+									<h2 className="text-2xl ">{plan.name}</h2>
 									<div className="flex items-baseline gap-1">
-										<span className="text-4xl font-light">
+										<span className="text-4xl ">
 											${plan.price}
 										</span>
 										<span className="text-gray-400">

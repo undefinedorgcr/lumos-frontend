@@ -15,18 +15,14 @@ interface FeatureCardProps {
 const FeatureCard: React.FC<FeatureCardProps> = ({ title, items }) => {
 	return (
 		<div className="relative z-10 rounded-lg border border-gray-800 bg-[#111111] p-8">
-			<h3 className="text-2xl font-light text-white mb-8">{title}</h3>
+			<h3 className="text-2xl  text-white mb-8">{title}</h3>
 			<div className="space-y-6">
 				{items.map((item, index) => (
 					<div key={index} className="flex gap-4">
 						<div className="w-0.5 bg-gray-700 h-auto"></div>
 						<div>
-							<h4 className="text-white font-light mb-2">
-								{item.name}
-							</h4>
-							<p className="text-gray-400 font-light">
-								{item.description}
-							</p>
+							<h4 className="text-white  mb-2">{item.name}</h4>
+							<p className="text-gray-400 ">{item.description}</p>
 						</div>
 					</div>
 				))}
@@ -125,21 +121,21 @@ export default function KnowMore() {
 	];
 
 	return (
-		<div className="min-h-screen p-6">
+		<div className="min-h-screen p-6 py-20">
 			<Navbar></Navbar>
 			<StarField></StarField>
 			<div className="max-w-4xl mx-auto text-center mb-24">
-				<h1 className="text-4xl md:text-5xl font-light text-white mb-12">
+				<h1 className="text-4xl md:text-5xl  text-white mb-12">
 					Advanced Liquidity Management Platform for CLMM Pools
 				</h1>
 
-				<p className="text-gray-400 text-lg md:text-xl mb-6 font-light">
+				<p className="text-gray-400 text-lg md:text-xl mb-6 ">
 					Lumos empowers liquidity providers in DeFi ecosystems with
 					advanced tools for optimizing positions in Concentrated
 					Liquidity Market Maker pools.
 				</p>
 
-				<p className="text-gray-400 text-lg md:text-xl font-light">
+				<p className="text-gray-400 text-lg md:text-xl ">
 					Maximize returns and minimize risk with our comprehensive
 					suite of automated management tools.
 				</p>

@@ -140,7 +140,7 @@ const ChatWidget = () => {
 			{isOpen && (
 				<div className="fixed bottom-6 right-6 w-96 bg-white rounded-lg shadow-xl z-50 overflow-hidden">
 					<div className="bg-white text-black p-4 flex justify-between items-center">
-						<h3 className="font-light text-lg">Lumos AI Agent</h3>
+						<h3 className=" text-lg">Lumos AI Agent</h3>
 						<button
 							onClick={() => setIsOpen(false)}
 							className="text-gray-400 hover:text-gray-300 transition-colors"
