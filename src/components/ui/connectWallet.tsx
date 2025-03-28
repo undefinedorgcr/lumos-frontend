@@ -57,7 +57,7 @@ export default function WalletConnector() {
 				</p>
 			) : (
 				<p
-					className="text-lg text-gray-400 hover:text-white hover:cursor-pointer underline"
+					className="text-l text-gray-400 hover:text-white hover:cursor-pointer underline"
 					onClick={handleConnect}
 				>
 					Connect Wallet

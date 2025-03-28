@@ -70,13 +70,11 @@ export default function MyPositions() {
 		<div>
 			<Navbar />
 
-			<main className="max-w-7xl mx-auto px-6 py-12">
+			<main className="max-w-7xl mx-auto px-6 py-20">
 				<div className="space-y-8">
 					<div className="space-y-4">
 						<header className="flex justify-between items-center">
-							<h1 className="text-3xl font-light">
-								My Positions
-							</h1>
+							<h1 className="text-3xl ">My Positions</h1>
 						</header>
 						<p className="text-gray-400">
 							Manage your liquidity positions across protocols
@@ -104,7 +102,7 @@ export default function MyPositions() {
 									alt={`${p} logo`}
 									className="pointer-events-none"
 								/>
-								<span className="font-light">{p}</span>
+								<span className="">{p}</span>
 							</button>
 						))}
 					</div>

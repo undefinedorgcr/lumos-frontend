@@ -44,7 +44,7 @@ export default function EkuboPositionTable({
 	if (!isWalletConnected) {
 		return (
 			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-				<p className="text-xl font-light text-gray-400">
+				<p className="text-xl  text-gray-400">
 					Please connect your wallet to see your active positions.
 				</p>
 			</div>
@@ -54,7 +54,7 @@ export default function EkuboPositionTable({
 	if (!positions || positions.length === 0) {
 		return (
 			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-				<p className="text-xl font-light text-gray-400">
+				<p className="text-xl  text-gray-400">
 					No active positions found
 				</p>
 			</div>
@@ -74,7 +74,7 @@ export default function EkuboPositionTable({
 										className="px-6 py-4 text-left"
 									>
 										<div className="flex items-center gap-2">
-											<span className="text-sm font-normal text-gray-400">
+											<span className="text-sm  text-gray-400">
 												{header}
 											</span>
 											<Tooltip>

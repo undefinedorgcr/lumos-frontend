@@ -114,7 +114,7 @@ export const ILCalculator = ({
 		<div className="fixed inset-0 bg-[#111111]/50 backdrop-blur-sm flex items-center justify-center p-2 z-50">
 			<div className="bg-[#111111] rounded-lg w-full max-w-md relative border border-zinc-800 p-3">
 				<div className="flex justify-between items-center mb-4">
-					<h2 className="text-lg font-medium text-white">
+					<h2 className="text-lg  text-white">
 						Impermanent Loss Calculator
 					</h2>
 					<button

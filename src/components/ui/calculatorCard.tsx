@@ -21,7 +21,7 @@ const ProtocolCard = ({
 	return (
 		<Link
 			href={href}
-			className="group relative w-full max-w-lg bg-zinc-900/50 rounded-xl overflow-hidden border border-zinc-800 transition-all duration-300 hover:border-zinc-600"
+			className="relative w-full max-w-lg bg-[#212322] rounded-xl overflow-hidden border-4 border-[#212322] transition-all duration-500 hover:border-[#8B9E93]"
 			onMouseEnter={() => setIsHovered(true)}
 			onMouseLeave={() => setIsHovered(false)}
 		>
@@ -35,7 +35,7 @@ const ProtocolCard = ({
 						className="object-contain"
 					/>
 				</div>
-				<h3 className="text-xl font-light text-white mb-3">{title}</h3>
+				<h3 className="text-xl  text-white mb-3">{title}</h3>
 				<p className="text-zinc-400 text-center text-sm">
 					{description}
 				</p>
