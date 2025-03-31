@@ -21,7 +21,7 @@ const LandingPage = () => {
 						playsInline
 					>
 						<source
-							src="/videos/LiquidMetal.mov"
+							src="/videos/LiquidMetal.mp4"
 							type="video/mp4"
 						/>
 						Your browser does not support the video tag.
