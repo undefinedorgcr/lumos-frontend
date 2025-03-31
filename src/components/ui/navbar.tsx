@@ -123,7 +123,7 @@ export default function Navbar() {
 				</div>
 			</div>
 			{/* Desktop Navigation */}
-			<nav className="hidden md:flex fixed top-0 left-0 right-0 backdrop-blur-sm z-40 px-6 py-8 items-center justify-center font-bodyRegular">
+			<nav className="hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-8 items-center justify-center font-bodyRegular">
 				<Link
 					href="/"
 					className="absolute left-6 flex items-center transition duration-500 hover:scale-110 opacity-75 hover:opacity-100 mr-2"
