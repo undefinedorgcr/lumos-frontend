@@ -62,6 +62,10 @@ export default function EkuboCalculator() {
 			setErrorDesc(
 				'Please select different tokens to continue to IL calculator'
 			);
+		} else if (fee == 0) {
+			setOpenError(true);
+			setErrorTitle('Fee not selected');
+			setErrorDesc('Please select the fee to continue to IL calculator');
 		} else {
 			setIsLoading(true);
 			const t0price = Number(await fetchCryptoPrice(token0.symbol));
