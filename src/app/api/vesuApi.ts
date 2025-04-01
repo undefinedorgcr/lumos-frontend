@@ -25,7 +25,7 @@ export async function getEarnPositions(address: string) {
 				(pool: { id: any }) => pool.id === position.pool.id
 			);
 			let poolApy = 0;
-            let rewardsApy = 0;
+			let rewardsApy = 0;
 			let risk = 'Low';
 
 			const tokenPrice = await fetchCryptoPrice(
@@ -39,7 +39,7 @@ export async function getEarnPositions(address: string) {
 				);
 				if (asset) {
 					poolApy = asset.apy;
-                    rewardsApy = asset.defiSpringApy
+					rewardsApy = asset.defiSpringApy;
 					if (asset.currentUtilization > 80) {
 						risk = 'High';
 					} else if (asset.currentUtilization > 50) {
@@ -59,11 +59,11 @@ export async function getEarnPositions(address: string) {
 					tokenPrice,
 				risk,
 				poolApy,
-                rewardsApy
+				rewardsApy,
 			};
 		})
 	);
-    console.log(vesuPositions);
+	console.log(vesuPositions);
 	return vesuPositions;
 }
 
@@ -95,7 +95,7 @@ export async function getVesuPools() {
 					100,
 				decimals: asset.decimals,
 				address: asset.address,
-                vTokenAddress: asset.vToken.address,
+				vTokenAddress: asset.vToken.address,
 			})),
 		}));
 }

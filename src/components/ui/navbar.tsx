@@ -19,14 +19,14 @@ export default function Navbar() {
 
 	const handleScroll = () => {
 		const currentScrollPos = window.scrollY;
-		
+
 		// Determine if the user is scrolling up or down
 		const isScrollingDown = currentScrollPos > prevScrollPos;
-		
+
 		// Only hide navbar after scrolling down more than 10px
 		// and show immediately when scrolling up
 		setVisible(!isScrollingDown || currentScrollPos < 10);
-		
+
 		// Update previous scroll position
 		setPrevScrollPos(currentScrollPos);
 	};
@@ -34,7 +34,7 @@ export default function Navbar() {
 	useEffect(() => {
 		// Add scroll event listener
 		window.addEventListener('scroll', handleScroll);
-		
+
 		// Clean up event listener on component unmount
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
@@ -149,7 +149,7 @@ export default function Navbar() {
 				</div>
 			</div>
 			{/* Desktop Navigation */}
-			<nav 
+			<nav
 				className={`hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-8 items-center justify-center font-bodyRegular transition-transform duration-300 ease-in-out ${
 					visible ? 'transform-none' : '-translate-y-full'
 				}`}

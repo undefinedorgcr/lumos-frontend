@@ -8,10 +8,7 @@ const Footer = (): React.JSX.Element => {
 			<div className="container mx-auto px-6 py-8">
 				<div className="flex flex-col md:flex-row justify-between items-center mb-8">
 					<div className="mb-6 md:mb-0">
-
-						<h2
-							className="flex items-center mr-2"
-						>
+						<h2 className="flex items-center mr-2">
 							<Image
 								src="/images/LumosLogo.png"
 								width={35}
@@ -20,7 +17,9 @@ const Footer = (): React.JSX.Element => {
 							/>
 							<p className="font-logo px-3">Lumos</p>
 						</h2>
-						<p className="text-sm text-gray-400 mt-2">Power your finances with DeFi</p>
+						<p className="text-sm text-gray-400 mt-2">
+							Power your finances with DeFi
+						</p>
 					</div>
 
 					<div className="flex space-x-4">
@@ -93,15 +92,23 @@ const Footer = (): React.JSX.Element => {
 
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
 					<div className="space-y-4">
-						<h3 className="text-sm font-semibold uppercase tracking-wider">Company</h3>
+						<h3 className="text-sm font-semibold uppercase tracking-wider">
+							Company
+						</h3>
 						<ul className="space-y-2">
 							<li>
-								<Link href="/about" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<Link
+									href="/about"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									About Us
 								</Link>
 							</li>
 							<li>
-								<Link href="/knowmore" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<Link
+									href="/knowmore"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									Know More
 								</Link>
 							</li>
@@ -109,20 +116,31 @@ const Footer = (): React.JSX.Element => {
 					</div>
 
 					<div className="space-y-4">
-						<h3 className="text-sm font-semibold uppercase tracking-wider">Tools</h3>
+						<h3 className="text-sm font-semibold uppercase tracking-wider">
+							Tools
+						</h3>
 						<ul className="space-y-2">
 							<li>
-								<Link href="/calculators" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<Link
+									href="/calculators"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									Calculators
 								</Link>
 							</li>
 							<li>
-								<Link href="/mypositions" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<Link
+									href="/mypositions"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									Positions
 								</Link>
 							</li>
 							<li>
-								<Link href="/pools" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<Link
+									href="/pools"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									Pools
 								</Link>
 							</li>
@@ -130,15 +148,24 @@ const Footer = (): React.JSX.Element => {
 					</div>
 
 					<div className="space-y-4">
-						<h3 className="text-sm font-semibold uppercase tracking-wider">Support</h3>
+						<h3 className="text-sm font-semibold uppercase tracking-wider">
+							Support
+						</h3>
 						<ul className="space-y-2">
 							<li>
-								<a href="https://t.me/+zB6wXUOsWptjNzQx" target="_blank" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<a
+									href="https://t.me/+zB6wXUOsWptjNzQx"
+									target="_blank"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									Contact Us
 								</a>
 							</li>
 							<li>
-								<Link href="/profile" className="text-gray-400 hover:text-white transition-colors duration-300 text-sm">
+								<Link
+									href="/profile"
+									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
+								>
 									My Account
 								</Link>
 							</li>
@@ -149,13 +176,20 @@ const Footer = (): React.JSX.Element => {
 				<div className="pt-8 border-t border-gray-800">
 					<div className="flex flex-col md:flex-row justify-between items-center">
 						<p className="text-xs text-gray-400">
-							Lumos App - Copyright © {new Date().getFullYear()} - All rights reserved
+							Lumos App - Copyright © {new Date().getFullYear()}{' '}
+							- All rights reserved
 						</p>
 						<div className="mt-4 md:mt-0">
-							<Link href="#" className="text-xs text-gray-400 hover:text-white mr-4 transition-colors duration-300">
+							<Link
+								href="#"
+								className="text-xs text-gray-400 hover:text-white mr-4 transition-colors duration-300"
+							>
 								Privacy Policy
 							</Link>
-							<Link href="#" className="text-xs text-gray-400 hover:text-white transition-colors duration-300">
+							<Link
+								href="#"
+								className="text-xs text-gray-400 hover:text-white transition-colors duration-300"
+							>
 								Terms of Service
 							</Link>
 						</div>

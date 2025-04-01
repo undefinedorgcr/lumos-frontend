@@ -29,8 +29,8 @@ const headerTooltips = {
 	Risk: 'Risk level associated based on utilization rate, higher utilization means higher risk on being liquidated',
 	'Pool APY':
 		'Annual percentage yield for this pool, this is the expected return on your investment over a year if the pool performs as expected',
-  'Rewards APY':
-    'Annual percentage yield for DeFi Spring Rewards, this will be rewards you will get weekly from Starknet DeFi Spring program'
+	'Rewards APY':
+		'Annual percentage yield for DeFi Spring Rewards, this will be rewards you will get weekly from Starknet DeFi Spring program',
 };
 
 const getRiskColorClass = (risk: string) => {
@@ -144,7 +144,9 @@ export default function VesuPositionTable({
 						disabled={isRefreshing || isLoading}
 						className="flex items-center gap-2 px-6 py-3 bg-[#1B1C1B] text-white border border-[#F0FFF6] font-medium rounded-full transition-all hover:bg-[#F0FFF6] hover:text-black duration-500"
 					>
-						<RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+						<RefreshCw
+							className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`}
+						/>
 						Refresh
 					</button>
 					<button
@@ -242,7 +244,7 @@ export default function VesuPositionTable({
 												</span>
 											)}
 										</td>
-                    <td className="px-6 py-4">
+										<td className="px-6 py-4">
 											{'rewardsApy' in position && (
 												<span className="text-green-400">
 													{position.rewardsApy.toFixed(

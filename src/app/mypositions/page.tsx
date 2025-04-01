@@ -57,9 +57,7 @@ export default function MyPositions() {
 
 	async function refreshVesuPositions() {
 		setIsLoading(true);
-		setVesuPositions(
-			await getEarnPositions(wallet?.account?.address)
-		);
+		setVesuPositions(await getEarnPositions(wallet?.account?.address));
 		setIsLoading(false);
 	}
 

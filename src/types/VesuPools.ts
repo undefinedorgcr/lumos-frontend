@@ -28,7 +28,7 @@ export interface ProcessedAsset {
 	defiSpringApy: number;
 	decimals: number;
 	address: string;
-    vTokenAddress: string;
+	vTokenAddress: string;
 }
 
 export interface VesuPool {
