@@ -12,18 +12,24 @@ const LandingPage = () => {
 		<div className="flex flex-col">
 			<Navbar />
 			<div className="min-h-screen flex flex-col justify-center items-center p-4">
-				<main className="text-center max-w-4xl mx-auto px-4">
-					<div className="absolute inset-0 overflow-hidden pointer-events-none">
-						<div
-							className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 
-            w-[300px] h-[300px] md:w-[400px] md:h-[400px] 
-            bg-gradient-to-r from-blue-500 via-teal-300 to-amber-300 
-            rounded-t-full opacity-50 blur-[80px] md:blur-[100px]"
-						></div>
-					</div>
-
+				<div className="absolute inset-0 w-full h-full overflow-hidden">
+					<video
+						className="absolute w-full h-full object-cover mix-blend-screen"
+						autoPlay
+						muted
+						loop
+						playsInline
+					>
+						<source
+							src="/videos/LiquidMetal.mp4"
+							type="video/mp4"
+						/>
+						Your browser does not support the video tag.
+					</video>
+				</div>
+				<main className="text-center max-w-4xl mx-auto px-4 relative">
 					<div className="relative z-10">
-						<h1 className="text-3xl md:text-6xl font-gtamerica text-white mb-4 md:mb-8 leading-tight">
+						<h1 className="text-3xl md:text-6xl font-gtamerica text-white mb-4 md:mb-8">
 							USE DEFI TO POWER
 							<br />
 							YOUR FINANCES

@@ -4,11 +4,14 @@ import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { EkuboPosition, VesuPosition } from '@/types/Position';
+import { EkuboPosition } from '@/types/Position';
 import { fetchPosition } from '@/app/api/ekuboApi';
 import { useAtomValue } from 'jotai';
 import { walletStarknetkitLatestAtom } from '@/state/connectedWallet';
 import EkuboPositionTable from '@/components/ui/EkuboPositionsTable';
+import { getEarnPositions } from '../api/vesuApi';
+import { VesuEarnPosition } from '@/types/VesuPositions';
+import VesuPositionTable from '@/components/ui/VesuPositionsTable';
 
 export default function MyPositions() {
 	const protocols = ['Ekubo', 'Vesu'];
@@ -17,7 +20,7 @@ export default function MyPositions() {
 		EkuboPosition[] | undefined
 	>(undefined);
 	const [vesuPositions, setVesuPositions] = useState<
-		VesuPosition[] | undefined
+		VesuEarnPosition[] | undefined
 	>(undefined);
 	const [isLoading, setIsLoading] = useState(true);
 	const wallet = useAtomValue(walletStarknetkitLatestAtom);
@@ -28,6 +31,9 @@ export default function MyPositions() {
 			try {
 				const data = await fetchPosition(wallet?.account?.address);
 				setEkuboPositions(data);
+				setVesuPositions(
+					await getEarnPositions(wallet?.account?.address)
+				);
 			} catch (err) {
 				console.error(err);
 				setEkuboPositions(undefined);
@@ -38,32 +44,21 @@ export default function MyPositions() {
 		getPositions();
 	}, [wallet?.account?.address]);
 
-	function handleProtocolChange(protocol: string) {
+	async function handleProtocolChange(protocol: string) {
 		if (protocol == 'Vesu') {
 			if (vesuPositions == undefined) {
-				setVesuPositions([
-					{
-						pool: 'Genesis',
-						type: 'Earn',
-						collateral: 'STRK',
-						total_supplied: 200,
-					},
-					{
-						pool: 'Genesis',
-						type: 'Earn',
-						collateral: 'STRK',
-						total_supplied: 200,
-					},
-					{
-						pool: 'Genesis',
-						type: 'Earn',
-						collateral: 'STRK',
-						total_supplied: 200,
-					},
-				]);
+				setVesuPositions(
+					await getEarnPositions(wallet?.account?.address)
+				);
 			}
 		}
 		setProtocol(protocol);
+	}
+
+	async function refreshVesuPositions() {
+		setIsLoading(true);
+		setVesuPositions(await getEarnPositions(wallet?.account?.address));
+		setIsLoading(false);
 	}
 
 	return (
@@ -115,13 +110,15 @@ export default function MyPositions() {
 						/>
 					)}
 
-					{/* {protocol == "Vesu" &&
-            <VesuPositionTable
-              positions={vesuPositions}
-              isLoading={false}
-              isWalletConnected={!!wallet}
-            />
-          } */}
+					{protocol == 'Vesu' && (
+						<VesuPositionTable
+							earnPositions={vesuPositions}
+							borrowPositions={[]}
+							isLoading={isLoading}
+							isWalletConnected={!!wallet}
+							onRefresh={refreshVesuPositions}
+						/>
+					)}
 				</div>
 			</main>
 

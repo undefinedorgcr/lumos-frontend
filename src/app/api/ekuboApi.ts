@@ -34,7 +34,6 @@ const BASE_URL =
 		? 'https://mainnet-api.ekubo.org'
 		: 'https://sepolia-api.ekubo.org';
 const NODE_URL = getNodeUrl(chainId);
-console.log(NODE_URL, chainId, wallet);
 const tokenPriceCache = new TokenPriceCache(60000);
 
 // TODO: implement this tokens
@@ -629,7 +628,6 @@ export async function fetchLiquidityData(
 				await new Promise((resolve) => setTimeout(resolve, delayMs));
 			}
 		}
-		console.log(liquidityData);
 		return liquidityData;
 	} catch (error) {
 		console.error('Error fetching liquidity data:', error);

@@ -120,7 +120,6 @@ export default function PoolOverview() {
 					protocol: 'EKUBO',
 					newFavPool: newEkuboFavPool,
 				});
-				console.log(res);
 				if (res.status === 200) {
 					setProcessedFavPools((prevFavs) => [...prevFavs, poolItem]);
 				} else {
