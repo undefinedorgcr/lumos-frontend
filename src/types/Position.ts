@@ -13,10 +13,3 @@ export interface EkuboPosition {
 	};
 	currentPrice: number;
 }
-
-export interface VesuPosition {
-	pool: string;
-	type: string;
-	collateral: string;
-	total_supplied: number;
-}

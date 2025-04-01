@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import LoginModal from './modals/LoginModal';
 import { activeUser } from '@/state/user';
 import { auth } from '@/lib/firebase';
@@ -14,6 +14,32 @@ export default function Navbar() {
 	const [openLogin, setOpenLogin] = useState<boolean>(false);
 	const [user, setUser] = useAtom(activeUser);
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+	const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
+	const [visible, setVisible] = useState<boolean>(true);
+
+	const handleScroll = () => {
+		const currentScrollPos = window.scrollY;
+
+		// Determine if the user is scrolling up or down
+		const isScrollingDown = currentScrollPos > prevScrollPos;
+
+		// Only hide navbar after scrolling down more than 10px
+		// and show immediately when scrolling up
+		setVisible(!isScrollingDown || currentScrollPos < 10);
+
+		// Update previous scroll position
+		setPrevScrollPos(currentScrollPos);
+	};
+
+	useEffect(() => {
+		// Add scroll event listener
+		window.addEventListener('scroll', handleScroll);
+
+		// Clean up event listener on component unmount
+		return () => {
+			window.removeEventListener('scroll', handleScroll);
+		};
+	}, [prevScrollPos]);
 
 	const handleLogout = async () => {
 		await signOut(auth);
@@ -123,7 +149,11 @@ export default function Navbar() {
 				</div>
 			</div>
 			{/* Desktop Navigation */}
-			<nav className="hidden md:flex fixed top-0 left-0 right-0 backdrop-blur-sm z-40 px-6 py-8 items-center justify-center font-bodyRegular">
+			<nav
+				className={`hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-8 items-center justify-center font-bodyRegular transition-transform duration-300 ease-in-out ${
+					visible ? 'transform-none' : '-translate-y-full'
+				}`}
+			>
 				<Link
 					href="/"
 					className="absolute left-6 flex items-center transition duration-500 hover:scale-110 opacity-75 hover:opacity-100 mr-2"
