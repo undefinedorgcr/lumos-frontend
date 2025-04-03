@@ -19,6 +19,7 @@ import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ILCalculator from '@/components/ui/modals/ILCalculator';
 import { calculateDepositAmounts, fetchCryptoPrice } from '@/lib/utils';
 import { ChevronDown, Info } from 'lucide-react';
+import Link from 'next/link';
 
 export default function EkuboCalculator() {
 	const [tokens, setTokens] = useState<Token[]>([]);
@@ -304,7 +305,7 @@ export default function EkuboCalculator() {
 							To use this calculator, first select a token pair,
 							we will recommend you a configuration. You can
 							choose from the popular pairs available in the{' '}
-							<a href="/pools">pools</a> section or select custom
+							<Link className='underline' href="/pools">pools</Link> section or select custom
 							tokens.
 						</p>
 					</div>
