@@ -14,6 +14,8 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { CallData, cairo } from 'starknet';
+import axios from 'axios';
+import { Position } from '@/types/PositionDB';
 
 interface CreatePositionModalProps {
 	isOpen: boolean;
@@ -53,6 +55,7 @@ export const CreatePositionModal = ({
 	const wallet = useAtomValue(walletStarknetkitLatestAtom);
 	const node_url = getNodeUrl(wallet?.chainId);
 	const provider = getProvider(node_url);
+	const vesuProtocol = 'VESU';
 
 	useEffect(() => {
 		async function fetchTokens() {
@@ -111,6 +114,15 @@ export const CreatePositionModal = ({
 			console.error('Error waiting for transaction:', error);
 			return false;
 		}
+	};
+
+	const savePosition = async (position: Position) => {
+		const { data } = await axios.post(`/api/lumos/positions`, {
+			token: position.token,
+			total_value: position.total_value,
+			protocol: position.protocol,
+		});
+		return data;
 	};
 
 	async function handleConfirm() {
@@ -175,6 +187,14 @@ export const CreatePositionModal = ({
 						setTransactionStatus('idle');
 						setTransactionMessage('');
 					}, 2000);
+
+					if (selectedToken && Number(tokenAmount) != 0) {
+						await savePosition({
+							token: selectedToken,
+							total_value: Number(tokenAmount),
+							protocol: vesuProtocol,
+						});
+					}
 				} else {
 					setTransactionStatus('error');
 					setTransactionMessage(
