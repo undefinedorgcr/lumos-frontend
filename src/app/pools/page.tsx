@@ -28,7 +28,6 @@ export default function PoolOverview() {
 		setOpenError(true);
 	};
 
-	// Obtener los componentes y datos necesarios de los administradores de pools
 	const ekuboManager = EkuboPoolsManager({
 		onError: () => handleError('Error processing Ekubo pools!'),
 		selectedFee,
@@ -38,7 +37,6 @@ export default function PoolOverview() {
 		setSelectedFee(null);
 	}, [selectedProtocol]);
 
-	// Función para obtener el manager activo según el protocolo seleccionado
 	const getActiveManager = () => {
 		switch (selectedProtocol) {
 			case 'Ekubo':
@@ -73,7 +71,6 @@ export default function PoolOverview() {
 						selectedProtocol={selectedProtocol}
 						onSelectProtocol={setSelectedProtocol}
 					/>
-					{/* Renderizar el componente de pools favoritos */}
 					{activeManager.renderFavPoolsContent()}
 				</div>
 
@@ -98,7 +95,6 @@ export default function PoolOverview() {
 							onSelectFee={setSelectedFee}
 						/>
 					)}
-					{/* Renderizar el componente de todos los pools */}
 					{activeManager.renderPoolsContent()}
 				</div>
 			</main>
