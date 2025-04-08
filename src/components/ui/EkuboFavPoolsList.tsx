@@ -11,9 +11,10 @@ import {
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import { getPoolFeePercentage, getTickSpacing } from '@/lib/utils';
 import { EkuboPoolsDisplay } from '@/types/EkuboPoolsDisplay';
+import { UserAuth } from '@/types/UserAuth';
 
 interface EkuboFavPoolsListProps {
-	user: any;
+	user: UserAuth | undefined; // O User | undefined si tienes el tipo User definido
 	isLoadingFavPools: boolean;
 	processedFavPools: EkuboPoolsDisplay[];
 	handleToggleFavorite: (poolItem: EkuboPoolsDisplay) => void;
