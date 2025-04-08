@@ -7,7 +7,8 @@ import ProtocolSelector from '@/components/ui/ProtocolSelector';
 import FeeSelector from '@/components/ui/FeeSelector';
 
 // Import protocol components
-import EkuboPoolsManager from '@/components/ui/EkuboPoolsManager';
+import EkuboPoolsManager from '@/components/ui/pools/ekubo/EkuboPoolsManager';
+import VesuPoolsManager from '@/components/ui/pools/vesu/VesuPoolsManager';
 
 export default function PoolOverview() {
 	const [selectedProtocol, setSelectedProtocol] = useState<string>('Ekubo');
@@ -17,7 +18,7 @@ export default function PoolOverview() {
 		'Error updating favorite pools!'
 	);
 
-	const availableProtocols = ['Ekubo'];
+	const availableProtocols = ['Ekubo', 'Vesu'];
 
 	const protocolFees: Record<string, string[]> = {
 		Ekubo: ['0.01%', '0.05%', '0.30%', '1.00%'],
@@ -33,6 +34,10 @@ export default function PoolOverview() {
 		selectedFee,
 	});
 
+	const vesuManager = VesuPoolsManager({
+		onError: () => handleError('Error processing Ekubo pools!'),
+	});
+
 	useEffect(() => {
 		setSelectedFee(null);
 	}, [selectedProtocol]);
@@ -41,6 +46,8 @@ export default function PoolOverview() {
 		switch (selectedProtocol) {
 			case 'Ekubo':
 				return ekuboManager;
+			case 'Vesu':
+				return vesuManager;
 			default:
 				return ekuboManager;
 		}
