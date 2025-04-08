@@ -305,8 +305,10 @@ export default function EkuboCalculator() {
 							To use this calculator, first select a token pair,
 							we will recommend you a configuration. You can
 							choose from the popular pairs available in the{' '}
-							<Link className='underline' href="/pools">pools</Link> section or select custom
-							tokens.
+							<Link className="underline" href="/pools">
+								pools
+							</Link>{' '}
+							section or select custom tokens.
 						</p>
 					</div>
 				</div>
