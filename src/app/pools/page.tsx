@@ -13,6 +13,9 @@ export default function PoolOverview() {
 	const [selectedProtocol, setSelectedProtocol] = useState<string>('Ekubo');
 	const [selectedFee, setSelectedFee] = useState<null | string>(null);
 	const [openError, setOpenError] = useState(false);
+	const [errorMessage, setErrorMessage] = useState(
+		'Error updating favorite pools!'
+	);
 
 	const availableProtocols = ['Ekubo'];
 
@@ -20,17 +23,32 @@ export default function PoolOverview() {
 		Ekubo: ['0.01%', '0.05%', '0.30%', '1.00%'],
 	};
 
-	// Obtener los componentes y datos necesarios del administrador de pools
+	const handleError = (message: string) => {
+		setErrorMessage(message);
+		setOpenError(true);
+	};
+
+	// Obtener los componentes y datos necesarios de los administradores de pools
 	const ekuboManager = EkuboPoolsManager({
-		onError: setOpenError,
+		onError: () => handleError('Error processing Ekubo pools!'),
 		selectedFee,
 	});
 
 	useEffect(() => {
-		if (selectedProtocol !== 'Ekubo') {
-			setSelectedFee(null);
-		}
+		setSelectedFee(null);
 	}, [selectedProtocol]);
+
+	// Función para obtener el manager activo según el protocolo seleccionado
+	const getActiveManager = () => {
+		switch (selectedProtocol) {
+			case 'Ekubo':
+				return ekuboManager;
+			default:
+				return ekuboManager;
+		}
+	};
+
+	const activeManager = getActiveManager();
 
 	return (
 		<div>
@@ -46,7 +64,7 @@ export default function PoolOverview() {
 						<h2 className="text-xl">Favorite Pools</h2>
 						<div className="flex items-center gap-4">
 							<span className="text-gray-400">
-								Total: {ekuboManager.favPoolsCount} pool(s)
+								Total: {activeManager.favPoolsCount} pool(s)
 							</span>
 						</div>
 					</div>
@@ -56,7 +74,7 @@ export default function PoolOverview() {
 						onSelectProtocol={setSelectedProtocol}
 					/>
 					{/* Renderizar el componente de pools favoritos */}
-					{ekuboManager.renderFavPoolsContent()}
+					{activeManager.renderFavPoolsContent()}
 				</div>
 
 				<div className="space-y-6">
@@ -64,7 +82,7 @@ export default function PoolOverview() {
 						<h2 className="text-xl">Top Pools</h2>
 						<div className="flex items-center gap-4">
 							<span className="text-gray-400">
-								Total: {ekuboManager.poolsCount} pool(s)
+								Total: {activeManager.poolsCount} pool(s)
 							</span>
 						</div>
 					</div>
@@ -73,24 +91,24 @@ export default function PoolOverview() {
 						selectedProtocol={selectedProtocol}
 						onSelectProtocol={setSelectedProtocol}
 					/>
-					{selectedProtocol === 'Ekubo' && (
+					{protocolFees[selectedProtocol] && (
 						<FeeSelector
-							fees={protocolFees[selectedProtocol] || []}
+							fees={protocolFees[selectedProtocol]}
 							selectedFee={selectedFee}
 							onSelectFee={setSelectedFee}
 						/>
 					)}
 					{/* Renderizar el componente de todos los pools */}
-					{ekuboManager.renderPoolsContent()}
+					{activeManager.renderPoolsContent()}
 				</div>
 			</main>
 
 			<Footer />
 			<ErrorModal
 				isOpen={openError}
-				onClose={setOpenError}
+				onClose={() => setOpenError(false)}
 				title={'Oops!'}
-				message={'Error updating favorite pools!'}
+				message={errorMessage}
 			/>
 		</div>
 	);
