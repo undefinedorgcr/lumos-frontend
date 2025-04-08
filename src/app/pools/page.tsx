@@ -3,57 +3,34 @@ import React, { useEffect, useState } from 'react';
 import Footer from '@/components/ui/footer';
 import Navbar from '@/components/ui/navbar';
 import ErrorModal from '@/components/ui/modals/ErrorModal';
-import { ProtocolInterface } from '@/types/ProtocolInterface';
 import ProtocolSelector from '@/components/ui/ProtocolSelector';
 import FeeSelector from '@/components/ui/FeeSelector';
 
 // Import protocol components
-import EkuboPoolsComponent from '@/components/ui/EkuboPools';
-// import UniswapPoolsComponent from '@/components/protocols/UniswapPoolsComponent';
-// import SushiSwapPoolsComponent from '@/components/protocols/SushiSwapPoolsComponent';
+import EkuboPoolsManager from '@/components/ui/EkuboPoolsManager';
 
 export default function PoolOverview() {
 	const [selectedProtocol, setSelectedProtocol] = useState<string>('Ekubo');
 	const [selectedFee, setSelectedFee] = useState<null | string>(null);
 	const [openError, setOpenError] = useState(false);
 
-	// Define the available protocols
-	const availableProtocols = ['Ekubo']; // Add more as you implement them: 'Uniswap', 'SushiSwap', etc.
+	const availableProtocols = ['Ekubo'];
 
-	// Define the protocol-specific fee options
 	const protocolFees: Record<string, string[]> = {
 		Ekubo: ['0.01%', '0.05%', '0.30%', '1.00%'],
-		// 'Uniswap': ['0.05%', '0.30%', '1.00%'],
-		// 'SushiSwap': ['0.05%', '0.30%', '1.00%'],
 	};
 
-	// Use the protocol components based on the selected protocol
-	const getProtocolComponent = (): ProtocolInterface => {
-		switch (selectedProtocol) {
-			case 'Ekubo':
-				return EkuboPoolsComponent({
-					onError: setOpenError,
-					selectedFee,
-				});
-			// case 'Uniswap':
-			//   return UniswapPoolsComponent({ onError: setOpenError, selectedFee });
-			// case 'SushiSwap':
-			//   return SushiSwapPoolsComponent({ onError: setOpenError, selectedFee });
-			default:
-				return EkuboPoolsComponent({
-					onError: setOpenError,
-					selectedFee,
-				});
-		}
-	};
+	// Obtener los componentes y datos necesarios del administrador de pools
+	const ekuboManager = EkuboPoolsManager({
+		onError: setOpenError,
+		selectedFee,
+	});
 
 	useEffect(() => {
 		if (selectedProtocol !== 'Ekubo') {
 			setSelectedFee(null);
 		}
 	}, [selectedProtocol]);
-
-	const protocolComponent = getProtocolComponent();
 
 	return (
 		<div>
@@ -69,7 +46,7 @@ export default function PoolOverview() {
 						<h2 className="text-xl">Favorite Pools</h2>
 						<div className="flex items-center gap-4">
 							<span className="text-gray-400">
-								Total: {protocolComponent.favPoolsCount} pool(s)
+								Total: {ekuboManager.favPoolsCount} pool(s)
 							</span>
 						</div>
 					</div>
@@ -78,7 +55,8 @@ export default function PoolOverview() {
 						selectedProtocol={selectedProtocol}
 						onSelectProtocol={setSelectedProtocol}
 					/>
-					{protocolComponent.renderFavPoolsContent()}
+					{/* Renderizar el componente de pools favoritos */}
+					{ekuboManager.renderFavPoolsContent()}
 				</div>
 
 				<div className="space-y-6">
@@ -86,7 +64,7 @@ export default function PoolOverview() {
 						<h2 className="text-xl">Top Pools</h2>
 						<div className="flex items-center gap-4">
 							<span className="text-gray-400">
-								Total: {protocolComponent.poolsCount} pool(s)
+								Total: {ekuboManager.poolsCount} pool(s)
 							</span>
 						</div>
 					</div>
@@ -102,7 +80,8 @@ export default function PoolOverview() {
 							onSelectFee={setSelectedFee}
 						/>
 					)}
-					{protocolComponent.renderPoolsContent()}
+					{/* Renderizar el componente de todos los pools */}
+					{ekuboManager.renderPoolsContent()}
 				</div>
 			</main>
 
