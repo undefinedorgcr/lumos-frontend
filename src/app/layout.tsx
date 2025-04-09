@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import ChatWidget from '@/components/ui/modals/ChatWidget';
+// import ChatWidget from '@/components/ui/modals/ChatWidget';
 import TestNetworkBanner from '@/components/ui/TestNetworkBanner';
 import { Analytics } from '@vercel/analytics/next';
 
@@ -16,11 +16,11 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className="bg-[#141514] font-body text-white min-h-screen tracking=[-1px]">
+			<body className="bg-[#1B1C1B] font-body text-white min-h-screen tracking=[-1px]">
 				<TestNetworkBanner>
 					<div className="p-6">
 						{children}
-						<ChatWidget />
+						{/* <ChatWidget /> */}
 						<Analytics />
 					</div>
 				</TestNetworkBanner>
