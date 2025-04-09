@@ -8,13 +8,14 @@ import {
 	TooltipTrigger,
 } from '@/components/ui/tooltip';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import { UserAuth } from '@/types/UserAuth';
 import { VesuPoolDisplay } from '@/types/VesuPoolDisplay';
 import { VesuAssetDisplay } from '@/types/VesuAssetDisplay';
 
-interface VesuPoolsListProps {
-	pools: VesuPoolDisplay[];
-	isLoading: boolean;
-	isPoolInFavorites: (pool: VesuPoolDisplay) => boolean;
+interface VesuFavPoolsListProps {
+	user: UserAuth | undefined;
+	isLoadingFavPools: boolean;
+	processedFavPools: VesuPoolDisplay[];
 	handleToggleFavorite: (poolItem: VesuPoolDisplay) => void;
 	getHighestUtilizationAsset: (
 		assets: VesuAssetDisplay[]
@@ -22,27 +23,39 @@ interface VesuPoolsListProps {
 	calculateAverageApy: (assets: VesuAssetDisplay[]) => number;
 }
 
-export default function VesuPoolsList({
-	pools,
-	isLoading,
-	isPoolInFavorites,
+export default function VesuFavPoolsList({
+	user,
+	isLoadingFavPools,
+	processedFavPools,
 	handleToggleFavorite,
 	getHighestUtilizationAsset,
 	calculateAverageApy,
-}: VesuPoolsListProps) {
-	if (isLoading) {
+}: VesuFavPoolsListProps) {
+	if (!user) {
 		return (
 			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-				<LoadingSpinner />
-				<p className="text-gray-400">Loading pools...</p>
+				<p className="text-xl text-gray-400">
+					Your favorite pools are waiting! Log in to see them.
+				</p>
 			</div>
 		);
 	}
 
-	if (pools.length === 0) {
+	if (isLoadingFavPools) {
 		return (
 			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
-				<p className="text-xl text-gray-400">{'No pools found'}</p>
+				<LoadingSpinner />
+				<p className="text-gray-400">Loading favorite pools...</p>
+			</div>
+		);
+	}
+
+	if (processedFavPools.length === 0 || processedFavPools === undefined) {
+		return (
+			<div className="bg-white/5 rounded-2xl p-12 text-center space-y-4">
+				<p className="text-xl text-gray-400">
+					{`You don't have any favorite pools yet. Add your favorite pool collections by clicking the star icon.`}
+				</p>
 			</div>
 		);
 	}
@@ -119,7 +132,7 @@ export default function VesuPoolsList({
 						</tr>
 					</thead>
 					<tbody>
-						{pools.map((pool) => {
+						{processedFavPools.map((pool) => {
 							const highestUtilAsset = getHighestUtilizationAsset(
 								pool.assets
 							);
@@ -142,11 +155,7 @@ export default function VesuPoolsList({
 											}
 											className="transition-colors"
 										>
-											{isPoolInFavorites(pool) ? (
-												<Star className="w-5 h-5 text-white fill-white" />
-											) : (
-												<Star className="w-5 h-5 text-gray-400 hover:text-white" />
-											)}
+											<Star className="w-5 h-5 text-white fill-white" />
 										</button>
 									</td>
 									<td className="px-6 py-4">

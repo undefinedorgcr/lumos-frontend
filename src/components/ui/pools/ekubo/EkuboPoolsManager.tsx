@@ -8,7 +8,6 @@ import { EkuboPoolsDisplay } from '@/types/EkuboPoolsDisplay';
 import EkuboPoolsList from './EkuboPoolList';
 import EkuboFavPoolsList from './EkuboFavPoolsList';
 import { getPoolFeePercentage } from '@/lib/utils';
-import { getVesuPools } from '@/app/api/vesuApi';
 
 interface EkuboPoolsManagerProps {
 	onError: (open: boolean) => void;
@@ -33,8 +32,6 @@ export default function EkuboPoolsManager({
 			setIsLoadingFavPools(true);
 			try {
 				const data = await fetchTopPools();
-				const data2 = await getVesuPools();
-				console.log(data2);
 				setPools(data);
 				setIsLoading(false);
 				if (user) {

@@ -5,6 +5,9 @@ import { activeUser } from '@/state/user';
 import { getVesuPools } from '@/app/api/vesuApi';
 import { VesuPoolDisplay } from '@/types/VesuPoolDisplay';
 import VesuPoolsList from './VesuPoolList';
+import VesuFavPoolsList from './VesuFavPools';
+import axios from 'axios';
+import { VesuAssetDisplay } from '@/types/VesuAssetDisplay';
 
 interface VesuPoolsManagerProps {
 	onError: (open: boolean) => void;
@@ -28,7 +31,18 @@ export default function VesuPoolsManager({ onError }: VesuPoolsManagerProps) {
 				setPools(data);
 				setIsLoading(false);
 				if (user) {
-					console.log(user);
+					const res = await axios.get(
+						`/api/lumos/users?uId=${user?.uid}`
+					);
+
+					if (res.status == 200 && res?.data?.data?.vesu_fav_pools) {
+						const userFavPoolsData = res.data.data.vesu_fav_pools;
+						const matchedFavPools = matchUserVesuFavPools(
+							userFavPoolsData,
+							data
+						);
+						setProcessedFavPools(matchedFavPools);
+					}
 				} else {
 					setProcessedFavPools([]);
 				}
@@ -43,6 +57,21 @@ export default function VesuPoolsManager({ onError }: VesuPoolsManagerProps) {
 		getPools();
 	}, [user]);
 
+	const matchUserVesuFavPools = (
+		favPoolsFromDb: VesuPoolDisplay[],
+		allVesuPools: VesuPoolDisplay[]
+	) => {
+		const pools: Array<VesuPoolDisplay> = [];
+		favPoolsFromDb.map(async (pool: VesuPoolDisplay) => {
+			allVesuPools.forEach((poolData: VesuPoolDisplay) => {
+				if (poolData.name == pool.name) {
+					pools.push(poolData);
+				}
+			});
+		});
+		return pools;
+	};
+
 	const isPoolInFavorites = (pool: VesuPoolDisplay) => {
 		if (!processedFavPools || processedFavPools.length === 0) return false;
 
@@ -51,8 +80,68 @@ export default function VesuPoolsManager({ onError }: VesuPoolsManagerProps) {
 		);
 	};
 
+	const getHighestUtilizationAsset = (assets: VesuAssetDisplay[]) => {
+		if (!assets || assets.length === 0) return null;
+		return assets.reduce(
+			(highest, current) =>
+				current.currentUtilization > highest.currentUtilization
+					? current
+					: highest,
+			assets[0]
+		);
+	};
+
+	const calculateAverageApy = (assets: VesuAssetDisplay[]) => {
+		if (!assets || assets.length === 0) return 0;
+		const validApys = assets.filter((asset) => asset.apy > 0);
+		if (validApys.length === 0) return 0;
+		const sum = validApys.reduce((total, asset) => total + asset.apy, 0);
+		return sum / validApys.length;
+	};
+
 	const handleToggleFavorite = async (poolItem: VesuPoolDisplay) => {
-		console.log(poolItem);
+		try {
+			const isAlreadyFavorite = isPoolInFavorites(poolItem);
+
+			if (isAlreadyFavorite) {
+				const resp = await axios.delete('/api/lumos/users', {
+					data: {
+						uId: user?.uid,
+						protocol: 'VESU',
+						pool: {
+							name: poolItem.name,
+						},
+					},
+				});
+				if (resp.status === 200) {
+					setProcessedFavPools((prevFavs) =>
+						prevFavs.filter(
+							(favPool) => !(favPool.name === poolItem.name)
+						)
+					);
+				} else {
+					onError(true);
+				}
+			} else {
+				const newVesuFavPool = {
+					name: poolItem.name,
+				};
+
+				const res = await axios.put('/api/lumos/users', {
+					uId: user?.uid,
+					protocol: 'VESU',
+					newFavPool: newVesuFavPool,
+				});
+				if (res.status === 200) {
+					setProcessedFavPools((prevFavs) => [...prevFavs, poolItem]);
+				} else {
+					onError(true);
+				}
+			}
+		} catch (error) {
+			console.log(error);
+			onError(true);
+		}
 	};
 
 	return {
@@ -62,14 +151,18 @@ export default function VesuPoolsManager({ onError }: VesuPoolsManagerProps) {
 				isLoading={isLoading}
 				isPoolInFavorites={isPoolInFavorites}
 				handleToggleFavorite={handleToggleFavorite}
+				getHighestUtilizationAsset={getHighestUtilizationAsset}
+				calculateAverageApy={calculateAverageApy}
 			/>
 		),
 		renderFavPoolsContent: () => (
-			<VesuPoolsList
-				pools={pools}
-				isLoading={isLoading}
-				isPoolInFavorites={isPoolInFavorites}
+			<VesuFavPoolsList
+				user={user}
+				isLoadingFavPools={isLoadingFavPools}
+				processedFavPools={processedFavPools}
 				handleToggleFavorite={handleToggleFavorite}
+				getHighestUtilizationAsset={getHighestUtilizationAsset}
+				calculateAverageApy={calculateAverageApy}
 			/>
 		),
 		favPoolsCount: processedFavPools.length,
