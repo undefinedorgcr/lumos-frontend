@@ -2,17 +2,17 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import LoginModal from './modals/LoginModal';
-import { activeUser } from '@/state/user';
-import { auth } from '@/lib/firebase';
-import { signOut } from 'firebase/auth';
-import { useAtom } from 'jotai';
+// import LoginModal from './modals/LoginModal';
+// import { activeUser } from '@/state/user';
+// import { auth } from '@/lib/firebase';
+// import { signOut } from 'firebase/auth';
+// import { useAtom } from 'jotai';
 import { Menu, X } from 'lucide-react';
-import WalletConnector from './connectWallet';
+// import WalletConnector from './connectWallet';
 
 export default function Navbar() {
-	const [openLogin, setOpenLogin] = useState<boolean>(false);
-	const [user, setUser] = useAtom(activeUser);
+	// const [openLogin, setOpenLogin] = useState<boolean>(false);
+	// const [user, setUser] = useAtom(activeUser);
 	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [prevScrollPos, setPrevScrollPos] = useState<number>(0);
 	const [visible, setVisible] = useState<boolean>(true);
@@ -20,32 +20,26 @@ export default function Navbar() {
 	const handleScroll = () => {
 		const currentScrollPos = window.scrollY;
 
-		// Determine if the user is scrolling up or down
 		const isScrollingDown = currentScrollPos > prevScrollPos;
 
-		// Only hide navbar after scrolling down more than 10px
-		// and show immediately when scrolling up
 		setVisible(!isScrollingDown || currentScrollPos < 10);
 
-		// Update previous scroll position
 		setPrevScrollPos(currentScrollPos);
 	};
 
 	useEffect(() => {
-		// Add scroll event listener
 		window.addEventListener('scroll', handleScroll);
 
-		// Clean up event listener on component unmount
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
 		};
 	}, [prevScrollPos]);
 
-	const handleLogout = async () => {
-		await signOut(auth);
-		setUser(undefined);
-		setIsMenuOpen(false);
-	};
+	// const handleLogout = async () => {
+	// 	await signOut(auth);
+	// 	setUser(undefined);
+	// 	setIsMenuOpen(false);
+	// };
 
 	return (
 		<>
@@ -66,7 +60,7 @@ export default function Navbar() {
 					onClick={() => setIsMenuOpen(false)}
 				/>
 			)}
-			<div
+			{/* <div
 				className={`md:hidden fixed top-0 left-0 h-full w-64 bg-[#212322] backdrop-blur-sm border-r border-white/20 transform transition-transform duration-300 ease-in-out z-40 ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
 			>
 				<div className="flex flex-col h-full p-6">
@@ -147,7 +141,7 @@ export default function Navbar() {
 						<WalletConnector />
 					</div>
 				</div>
-			</div>
+			</div> */}
 			{/* Desktop Navigation */}
 			<nav
 				className={`hidden md:flex fixed top-0 left-0 right-0 z-40 px-6 py-8 items-center justify-center font-bodyRegular transition-transform duration-300 ease-in-out ${
@@ -166,7 +160,7 @@ export default function Navbar() {
 					/>
 					<p className="font-logo px-3">Lumos</p>
 				</Link>
-				<div className="flex space-x-6">
+				{/* <div className="flex space-x-6">
 					<Link
 						href="/calculators"
 						className="text-gray-400 hover:text-white transition-colors duration-300"
@@ -218,11 +212,11 @@ export default function Navbar() {
 							Login
 						</button>
 					)}
-				</div>
+				</div> */}
 			</nav>
 
 			{/* Login Modal */}
-			<LoginModal isOpen={openLogin} onClose={setOpenLogin} />
+			{/* <LoginModal isOpen={openLogin} onClose={setOpenLogin} /> */}
 		</>
 	);
 }

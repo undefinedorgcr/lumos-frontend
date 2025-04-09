@@ -115,7 +115,7 @@ const Footer = (): React.JSX.Element => {
 						</ul>
 					</div>
 
-					<div className="space-y-4">
+					{/* <div className="space-y-4">
 						<h3 className="text-sm font-semibold uppercase tracking-wider">
 							Tools
 						</h3>
@@ -145,7 +145,7 @@ const Footer = (): React.JSX.Element => {
 								</Link>
 							</li>
 						</ul>
-					</div>
+					</div> */}
 
 					<div className="space-y-4">
 						<h3 className="text-sm font-semibold uppercase tracking-wider">
@@ -161,14 +161,14 @@ const Footer = (): React.JSX.Element => {
 									Contact Us
 								</a>
 							</li>
-							<li>
+							{/* <li>
 								<Link
 									href="/profile"
 									className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
 								>
 									My Account
 								</Link>
-							</li>
+							</li> */}
 						</ul>
 					</div>
 				</div>
