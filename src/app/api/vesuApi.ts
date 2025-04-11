@@ -63,7 +63,6 @@ export async function getEarnPositions(address: string) {
 			};
 		})
 	);
-	console.log(vesuPositions);
 	return vesuPositions;
 }
 
